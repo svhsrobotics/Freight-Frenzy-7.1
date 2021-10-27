@@ -198,7 +198,7 @@ public class Drive2 {
 
     }
 
-    public void vroom_vroom_phi (double targetSpeed, double targetTheta) {
+    public void navigationByPhi(double targetSpeed, double targetTheta) {
         double rightFrontPowerFactor, leftFrontPowerFactor, rightBackPowerFactor, leftBackPowerFactor;
         double pi = Math.PI;
         double thetaRight = targetTheta;
@@ -274,7 +274,7 @@ public class Drive2 {
     //    |                   |
     //    |      top view     |
     //    ---------------------
-    public void vroomVroomMonitorTicks(double speed, double xInches, double yInches, double timeout) {
+    public void navigationMonitorTicks(double speed, double xInches, double yInches, double timeout) {
         //Borrowed Holonomic robot navigation ideas from https://www.bridgefusion.com/blog/2019/4/10/robot-localization-dead-reckoning-in-first-tech-challenge-ftc
         //    Robot Localization -- Dead Reckoning in First Tech Challenge (FTC)
         double theta = Math.atan2(yInches, xInches);
@@ -286,7 +286,7 @@ public class Drive2 {
         double cycleMillisNow = 0, cycleMillisPrior = System.currentTimeMillis(), cycleMillisDelta, startMillis = System.currentTimeMillis();
         //vroom_vroom(speed, theta, speed, theta);
         getImuAngle();
-        vroom_vroom_phi(speed, theta);
+        navigationByPhi(speed, theta);
         adjustThetaInit();
         //setTargetAngle(mImuCalibrationAngle);
         while (opMode.opModeIsActive() && runtime.seconds() < timeout && inchesTraveledTotal <= magnitude){
@@ -413,7 +413,7 @@ public class Drive2 {
         //Speeds speeds = getSpeeds(targetSpeed, nowTheta);
 //        vroom_vroom(targetSpeed, adjustedTargetTheta, targetSpeed, adjustedTargetTheta);
         //vroom_vroom(speeds.rightSpeed, adjustedTargetTheta, speeds.leftSpeed, adjustedTargetTheta);
-        vroom_vroom_phi(targetSpeed, adjustedTargetTheta);
+        navigationByPhi(targetSpeed, adjustedTargetTheta);
 //        vroom_vroom(targetSpeed, targetTheta, targetSpeed, targetTheta);
         Log.i("Drive", String.format("IMU angle: %.2f, adj angle: %.2f", mCurrentImuAngle, mAdjustedAngle));
         Log.i("Drive", String.format("adjustTheta: (degrees) target: %.4f, now: %.4f, adjusted: %.4f, error: %.4f",
