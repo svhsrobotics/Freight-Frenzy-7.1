@@ -564,18 +564,6 @@ public class Drive2 {
         return new SpeedsPhi(adjustedLeftFrontSpeed, adjustedLeftBackSpeed, adjustedRightFrontSpeed, adjustedRightBackSpeed);
     }
 
-    public void turnSweeper(double revolutionsToTurn, double power){
-        Sweep.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Sweep.setTargetPosition((int)Math.round(revolutionsToTurn*383.6*2));  //goBilda 5202 435 rpm motor with 2:1 speed reduction via external gears
-        Sweep.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        Sweep.setPower(power);
-        while(Sweep.isBusy()){
-            //opMode.sleep(25);
-        }
-        Sweep.setPower(0);
-        //Sweep.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    }
-
     private double calculateAngleDifference(double targetAngle, double nowAngle){
         double angle1 = 0, angle2 = 0, angleDiff180 = 0, angleDiff0 = 0, angleDifference = 0, returnAngle = 0;
         if(targetAngle >= 0 && nowAngle <= 0){
