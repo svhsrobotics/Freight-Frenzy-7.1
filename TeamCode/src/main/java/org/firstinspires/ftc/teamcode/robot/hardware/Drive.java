@@ -47,6 +47,14 @@ public class Drive {
     }
 
     /**
+     * Sets the zero power behavior
+     * @param zeroPowerBehavior
+     */
+    public void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior zeroPowerBehavior) {
+        this.motor.setZeroPowerBehavior(zeroPowerBehavior);
+    }
+
+    /**
      * Gets the current drive mode
      * @return current mode
      */
@@ -78,5 +86,20 @@ public class Drive {
         DcMotor.RunMode current = this.getMode();
         this.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         this.setMode(current);
+    }
+
+    /**
+     * Sets zero power behavior to float as well as setting the mode to run with encoder
+     */
+    public void run() {
+        this.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        this.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+    /**
+     * Sets the zero power behavior to break and sets the power to zero
+     */
+    public void brake() {
+        this.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.setPower(0);
     }
 }

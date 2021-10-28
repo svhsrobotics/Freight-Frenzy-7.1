@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.robot;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.robot.hardware.Drive;
@@ -26,7 +27,7 @@ public class Robot {
 
     private HardwareMap hardwareMap;
 
-    enum DrivePos {
+    public enum DrivePos {
         FRONT_LEFT,
         FRONT_RIGHT,
         BACK_LEFT,
@@ -84,5 +85,11 @@ public class Robot {
         this.Drives.put(DrivePos.BACK_RIGHT,
                 new Drive(this.hardwareMap.get(DcMotor.class, Hardware.backRightMotorName),
                         Hardware.revCounts,Hardware.gearReduction,Hardware.wheelDiameter));
+
+        for (Drive drive : this.Drives.values())
+            drive.run();
+
+        this.Drives.get(DrivePos.FRONT_LEFT).setDirection(DcMotorSimple.Direction.REVERSE);
+        this.Drives.get(DrivePos.BACK_LEFT).setDirection(DcMotorSimple.Direction.REVERSE);
     }
 }

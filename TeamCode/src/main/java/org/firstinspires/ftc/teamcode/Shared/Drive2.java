@@ -5,7 +5,6 @@ import android.util.Log;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -14,12 +13,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.robot.Robot;
+import org.firstinspires.ftc.teamcode.robot.hardware.Drive;
 
 import java.util.HashMap;
 
 public class Drive2 {
     String TAG = "Drive";
-    public DcMotor leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive = null;
+    public Drive leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive = null;
     private DcMotor Sweep;
     LinearOpMode opMode;
     Telemetry telemetry;
@@ -35,104 +36,31 @@ public class Drive2 {
     static final double     DRIVE_SPEED             = 1;
     static final double     TURN_SPEED              = 0.5;
 
-    HashMap <DcMotor, Integer> motorInitialPositions, motorTargetPositions;
-    HashMap <DcMotor, Double> motorPowerFactors;
+    HashMap <Drive, Integer> motorInitialPositions, motorTargetPositions;
+    HashMap <Drive, Double> motorPowerFactors;
 
     static BNO055IMU        imu = null;
     static double imuSecondOpModeAdjustment = 0;
     Orientation lastAngles = new Orientation();
 
+    Robot robot;
+
     public Drive2(LinearOpMode _opMode){
         opMode = _opMode;
         hardwareMap = opMode.hardwareMap;
         telemetry = opMode.telemetry;
+        this.robot = new Robot(hardwareMap);
 
         motorPowerFactors = new HashMap<>();
     }
 
     public void init() {
-        /* Initialize the hardware variables.
-         * The init() method of the hardware class does all the work here
-         */
-        //robot.init(hardwareMap);
-
-        // Send telemetry message to signify robot waiting;
-        //telemetry.addData("Say", "Hello Driver");
-
-        // Initialize the hardware variables. Note that the strings used here as parameters
-        // to 'get' must correspond to the names assigned during the robot configuration
-        // step (using the FTC Robot Controller app on the phone).
-        leftFrontDrive  = opMode.hardwareMap.get(DcMotor.class, "front_left_motor");  //For test robot
-        rightFrontDrive = opMode.hardwareMap.get(DcMotor.class, "front_right_motor");
-        leftBackDrive = opMode.hardwareMap.get(DcMotor.class, "back_left_motor");
-        rightBackDrive = opMode.hardwareMap.get(DcMotor.class, "back_right_motor");
-//        leftFrontDrive  = opMode.hardwareMap.get(DcMotor.class, "LM DT");  //For Competition robot
-//        rightFrontDrive = opMode.hardwareMap.get(DcMotor.class, "RM DT");
-//        leftBackDrive = opMode.hardwareMap.get(DcMotor.class, "LR DT");
-//        rightBackDrive = opMode.hardwareMap.get(DcMotor.class, "RR DT");
-
-        //Sweep = hardwareMap.get(DcMotor.class, "Sweep");  //For Competition robot
-        //Sweep.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        //if(imu == null) {
-        if(true) {
-            telemetry.log().add("Drive Init: Initializing IMU");
-            Log.w(TAG, "Always initializing IMU because of simulator bug.");
-            telemetry.update();
-            BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-            //parameters.mode                = BNO055IMU.SensorMode.GYRONLY;
-            parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-            parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-            parameters.loggingEnabled = true;
-            parameters.loggingTag = "IMU";
-            //parameters.calibrationDataFile = "IMUCalibration.json"; // see the calibration sample opmode
-
-            // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
-            // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
-            // and named "imu".
-            imu = hardwareMap.get(BNO055IMU.class, "imu");
-
-            imu.initialize(parameters);
-
-            telemetry.log().add("Drive Init: Skipping IMU calibration. Is this a simulator?");
-            Log.w(TAG, "Skipping IMU calibration! Calibrations should only be skipped if this is a simulator!");
-            telemetry.update();
-            /*
-            // make sure the imu gyro is calibrated before continuing.
-            while (!opMode.isStopRequested() && !imu.isGyroCalibrated()) {
-                opMode.sleep(50);
-                opMode.idle();
-            }
-            telemetry.log().add("Drive: init: Gyro calibrated");
-            telemetry.update();
-
-            // make sure the imu gyro is calibrated before continuing.
-            long startMillis = System.currentTimeMillis();
-            while (!opMode.isStopRequested() && !imu.isAccelerometerCalibrated() && System.currentTimeMillis() - startMillis < 5000) {
-                opMode.sleep(50);
-                opMode.idle();
-            }
-            if(System.currentTimeMillis() - startMillis > 5000)
-                telemetry.log().add("Drive: init: Accel calibration timed out");
-            else
-                telemetry.log().add("Drive: init: Accel calibrated");
-            telemetry.update();
-            imuSecondOpModeAdjustment = 0;
-             */
-        } else {
-            opMode.telemetry.log().add("Drive Init: IMU already initialized");
-            //imuSecondOpModeAdjustment = -2.75;
-            //imuSecondOpModeAdjustment = getImuAngle();
-            imuSecondOpModeAdjustment = 0;
-        }
+        robot.initHardware();
+        this.leftFrontDrive = robot.Drives.get(Robot.DrivePos.FRONT_LEFT);
+        this.rightFrontDrive = robot.Drives.get(Robot.DrivePos.FRONT_RIGHT);
+        this.leftBackDrive = robot.Drives.get(Robot.DrivePos.BACK_LEFT);
+        this.rightBackDrive = robot.Drives.get(Robot.DrivePos.BACK_RIGHT);
         setTargetAngle(0);
-        //opMode.telemetry.log().add("Drive: init: IMU: status: %s, calibr: %s", imu.getSystemStatus().toString(), imu.getCalibrationStatus().toString());
-        telemetry.update();
-        //Log.i(TAG, "init: IMU status: " + imu.getSystemStatus());
-        //Log.i(TAG, "init: IMU calibration status: " + imu.getCalibrationStatus());
     }
 
     public void vroom_vroom (double magRight, double thetaRight, double magLeft, double thetaLeft) {
@@ -590,7 +518,7 @@ public class Drive2 {
      * @param targetSpeed
      * @return
      */
-    private SpeedsPhi getPhiSpeeds(double targetSpeed, HashMap<DcMotor, Double> motorPowerFactors){
+    private SpeedsPhi getPhiSpeeds(double targetSpeed, HashMap<Drive, Double> motorPowerFactors){
         double powerCorrection = getPowerCorrection();
         double adjustedLeftFrontSpeed, adjustedLeftBackSpeed, adjustedRightFrontSpeed, adjustedRightBackSpeed;
 
