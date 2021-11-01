@@ -63,7 +63,7 @@ public class Drive2 {
         setTargetAngle(0);
     }
 
-    public void vroom_vroom (double magRight, double thetaRight, double magLeft, double thetaLeft) {
+    public void check_and_set_drive(double magRight, double thetaRight, double magLeft, double thetaLeft) {
         double rightFrontPowerFactor, leftFrontPowerFactor, rightBackPowerFactor, leftBackPowerFactor;
         double pi = Math.PI;
 
