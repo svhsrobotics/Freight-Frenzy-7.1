@@ -80,9 +80,14 @@ public class grimOp1 extends LinearOpMode {
         while(aPressed){
 
             Drive2 drive = Drive2 (this);
+            drive.init();
+
+            drive.navigationMonitorTicks(.5, -5, -5, 1);
 
 
 
         }
     }
+
+
 }
