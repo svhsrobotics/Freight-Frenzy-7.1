@@ -1,36 +1,39 @@
 package org.firstinspires.ftc.teamcode.op1;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+//import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Shared.Drive2;
-import org.firstinspires.ftc.teamcode.Shared.DriveOBJ;
 
-@TeleOp(name="grimOp1")
-public class grimOp1 extends LinearOpMode {
+@TeleOp
+public class navTest extends LinearOpMode {
 
-    DcMotor leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive = null;
-    boolean aPressed = false;
+    @Override
+    public void runOpMode() {
+        DcMotor leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive = null;
 
-    public void runOpMode(){
+        leftFrontDrive = hardwareMap.get(DcMotor.class, "LM DT");
+        rightFrontDrive = hardwareMap.get(DcMotor.class, "RM DT");
+        leftBackDrive = hardwareMap.get(DcMotor.class, "LR DT");
+        rightBackDrive = hardwareMap.get(DcMotor.class, "RR DT");
 
-        if(gamepad1.a){
-            aPressed = true;
-        }
-        if(gamepad1.b){
-            aPressed = false;
-        }
-        while(!aPressed){
-            DriveOBJ drive = new DriveOBJ(this);
+        rightFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        Drive2 drive = new Drive2(this);
+        drive.init();
+        waitForStart();
 
-
+        while (opModeIsActive()){
             double frontRightPowerFactor, frontLeftPowerFactor, backRightPowerFactor, backLeftPowerFactor;
             double magRight = Math.hypot(gamepad1.right_stick_x, gamepad1.right_stick_y);
             double thetaRight = Math.atan2(-gamepad1.right_stick_y, gamepad1.right_stick_x);
             double magLeft = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
             double thetaLeft = Math.atan2(-gamepad1.left_stick_y, gamepad1.left_stick_x);
             double pi = Math.PI;
+
 
             if (thetaRight > 0 && thetaRight < pi / 2) {
                 frontRightPowerFactor = -Math.cos(2 * thetaRight);
@@ -77,17 +80,6 @@ public class grimOp1 extends LinearOpMode {
             leftBackDrive.setPower((backLeftPowerFactor * magLeft)*(backLeftPowerFactor * magLeft));
             rightBackDrive.setPower(-(backRightPowerFactor * magRight)*(backRightPowerFactor * magRight));
         }
-        while(aPressed){
 
-            Drive2 drive = Drive2 (this);
-            drive.init();
-
-            drive.navigationMonitorTicks(.5, -5, -5, 1);
-
-
-
-        }
     }
-
-
 }
