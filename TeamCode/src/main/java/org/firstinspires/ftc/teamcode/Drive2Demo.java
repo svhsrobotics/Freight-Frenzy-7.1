@@ -17,10 +17,10 @@ public class Drive2Demo extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            drive.check_and_set_drive(.5, -24, -24, 10);
-            drive.check_and_set_drive(.5, 0, 24, 10);
-            drive.check_and_set_drive(.5, 24, -24, 10);
-            drive.check_and_set_drive(.5, 0, 24, 10);
+            drive.navigationMonitorTicks(.5, -24, -24, 10);
+            drive.navigationMonitorTicks(.5, 0, 24, 10);
+            drive.navigationMonitorTicks(.5, 24, -24, 10);
+            drive.navigationMonitorTicks(.5, 0, 24, 10);
         }
 
         // Only do this in simulator; real robot needs time to stop.

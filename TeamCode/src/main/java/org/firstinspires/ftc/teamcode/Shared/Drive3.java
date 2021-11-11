@@ -5,23 +5,24 @@ import android.util.Log;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.robot.Robot;
-import org.firstinspires.ftc.teamcode.robot.hardware.Drive;
-import org.firstinspires.ftc.teamcode.robot.testRobot;
+import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
+import java.io.File;
 import java.util.HashMap;
 
-public class Drive2 {
+public class Drive3 {
     String TAG = "Drive";
-    public Drive leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive = null;
+    public DcMotor leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive = null;
     private DcMotor Sweep;
     LinearOpMode opMode;
     Telemetry telemetry;
@@ -37,34 +38,99 @@ public class Drive2 {
     static final double     DRIVE_SPEED             = 1;
     static final double     TURN_SPEED              = 0.5;
 
-    HashMap <Drive, Integer> motorInitialPositions, motorTargetPositions;
-    HashMap <Drive, Double> motorPowerFactors;
+    HashMap <DcMotor, Integer> motorInitialPositions, motorTargetPositions;
+    HashMap <DcMotor, Double> motorPowerFactors;
 
     static BNO055IMU        imu = null;
     static double imuSecondOpModeAdjustment = 0;
     Orientation lastAngles = new Orientation();
 
-    Robot robot;
-
-    public Drive2(LinearOpMode _opMode){
+    public Drive3(LinearOpMode _opMode){
         opMode = _opMode;
         hardwareMap = opMode.hardwareMap;
         telemetry = opMode.telemetry;
-        this.robot = new Robot(hardwareMap);
 
         motorPowerFactors = new HashMap<>();
     }
 
     public void init() {
-        robot.initHardware();
-        this.leftFrontDrive = robot.Drives.get(Robot.DrivePos.FRONT_LEFT);
-        this.rightFrontDrive = robot.Drives.get(Robot.DrivePos.FRONT_RIGHT);
-        this.leftBackDrive = robot.Drives.get(Robot.DrivePos.BACK_LEFT);
-        this.rightBackDrive = robot.Drives.get(Robot.DrivePos.BACK_RIGHT);
+        /* Initialize the hardware variables.
+         * The init() method of the hardware class does all the work here
+         */
+        //robot.init(hardwareMap);
+
+        // Send telemetry message to signify robot waiting;
+        //telemetry.addData("Say", "Hello Driver");
+
+        // Initialize the hardware variables. Note that the strings used here as parameters
+        // to 'get' must correspond to the names assigned during the robot configuration
+        // step (using the FTC Robot Controller app on the phone).
+        leftFrontDrive  = opMode.hardwareMap.get(DcMotor.class, "left_front_drive");  //For test robot
+        rightFrontDrive = opMode.hardwareMap.get(DcMotor.class, "right_front_drive");
+        leftBackDrive = opMode.hardwareMap.get(DcMotor.class, "left_back_drive");
+        rightBackDrive = opMode.hardwareMap.get(DcMotor.class, "right_back_drive");
+//        leftFrontDrive  = opMode.hardwareMap.get(DcMotor.class, "LM DT");  //For Competition robot
+//        rightFrontDrive = opMode.hardwareMap.get(DcMotor.class, "RM DT");
+//        leftBackDrive = opMode.hardwareMap.get(DcMotor.class, "LR DT");
+//        rightBackDrive = opMode.hardwareMap.get(DcMotor.class, "RR DT");
+
+        //Sweep = hardwareMap.get(DcMotor.class, "Sweep");  //For Competition robot
+        //Sweep.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        if(imu == null) {
+            telemetry.log().add("Drive Init: IMU Null; Initializing");
+            telemetry.update();
+            BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+            //parameters.mode                = BNO055IMU.SensorMode.GYRONLY;
+            parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+            parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+            parameters.loggingEnabled = true;
+            parameters.loggingTag = "IMU";
+            //parameters.calibrationDataFile = "IMUCalibration.json"; // see the calibration sample opmode
+
+            // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
+            // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
+            // and named "imu".
+            imu = hardwareMap.get(BNO055IMU.class, "imu");
+
+            imu.initialize(parameters);
+            // make sure the imu gyro is calibrated before continuing.
+            while (!opMode.isStopRequested() && !imu.isGyroCalibrated()) {
+                opMode.sleep(50);
+                opMode.idle();
+            }
+            telemetry.log().add("Drive: init: Gyro calibrated");
+            telemetry.update();
+
+            // make sure the imu gyro is calibrated before continuing.
+            long startMillis = System.currentTimeMillis();
+            while (!opMode.isStopRequested() && !imu.isAccelerometerCalibrated() && System.currentTimeMillis() - startMillis < 5000) {
+                opMode.sleep(50);
+                opMode.idle();
+            }
+            if(System.currentTimeMillis() - startMillis > 5000)
+                telemetry.log().add("Drive: init: Accel calibration timed out");
+            else
+                telemetry.log().add("Drive: init: Accel calibrated");
+            telemetry.update();
+            imuSecondOpModeAdjustment = 0;
+        } else {
+            opMode.telemetry.log().add("Drive Init: IMU already initialized");
+            //imuSecondOpModeAdjustment = -2.75;
+            //imuSecondOpModeAdjustment = getImuAngle();
+            imuSecondOpModeAdjustment = 0;
+        }
         setTargetAngle(0);
+        opMode.telemetry.log().add("Drive: init: IMU: status: %s, calibr: %s", imu.getSystemStatus().toString(), imu.getCalibrationStatus().toString());
+        telemetry.update();
+        Log.i(TAG, "init: IMU status: " + imu.getSystemStatus());
+        Log.i(TAG, "init: IMU calibration status: " + imu.getCalibrationStatus());
     }
 
-    public void check_and_set_drive(double magRight, double thetaRight, double magLeft, double thetaLeft) {
+    public void vroom_vroom (double magRight, double thetaRight, double magLeft, double thetaLeft) {
         double rightFrontPowerFactor, leftFrontPowerFactor, rightBackPowerFactor, leftBackPowerFactor;
         double pi = Math.PI;
 
@@ -127,14 +193,7 @@ public class Drive2 {
 
     }
 
-    /**navigationByPhi
-     *
-     * @param targetSpeed Desired Speed
-     * @param targetTheta Desired Orientation of Robot
-     *
-     * Utilizes orientation away from the desired location(phi) in order to alter power power facotrs on the motors.
-     */
-    public void navigationByPhi(double targetSpeed, double targetTheta) {
+    public void vroom_vroom_phi (double targetSpeed, double targetTheta) {
         double rightFrontPowerFactor, leftFrontPowerFactor, rightBackPowerFactor, leftBackPowerFactor;
         double pi = Math.PI;
         double thetaRight = targetTheta;
@@ -210,20 +269,8 @@ public class Drive2 {
     //    |                   |
     //    |      top view     |
     //    ---------------------
-
-    /** navigationMonitorTicks
-     *
-     * @param speed
-     * @param xInches
-     * @param yInches
-     * @param timeout
-     *
-     * Utilizes wheel encoders in order to track the location of the robot.
-     * Imu heading tracks the direction the robot is pointing.
-     * Tracking the location with the wheel encoders allows for a direct input for location and time in order to direect the robot's movement.
-     */
-    public void navigationMonitorTicks(double speed, double xInches, double yInches, double timeout) {
-        //Borrowed Holonomic robot navigation ideas from https://www.bridgefusion.com/blog/2019/4/10/robot-localization-dead-reckoning-in-f  irst-tech-challenge-ftc
+    public void vroomVroomMonitorTicks(double speed, double xInches, double yInches, double timeout) {
+        //Borrowed Holonomic robot navigation ideas from https://www.bridgefusion.com/blog/2019/4/10/robot-localization-dead-reckoning-in-first-tech-challenge-ftc
         //    Robot Localization -- Dead Reckoning in First Tech Challenge (FTC)
         double theta = Math.atan2(yInches, xInches);
         double magnitude = Math.hypot(xInches, yInches);
@@ -234,7 +281,7 @@ public class Drive2 {
         double cycleMillisNow = 0, cycleMillisPrior = System.currentTimeMillis(), cycleMillisDelta, startMillis = System.currentTimeMillis();
         //vroom_vroom(speed, theta, speed, theta);
         getImuAngle();
-        navigationByPhi(speed, theta);
+        vroom_vroom_phi(speed, theta);
         adjustThetaInit();
         //setTargetAngle(mImuCalibrationAngle);
         while (opMode.opModeIsActive() && runtime.seconds() < timeout && inchesTraveledTotal <= magnitude){
@@ -296,9 +343,6 @@ public class Drive2 {
         }
     }
 
-    /**stopResetEncoder
-     * Performs "STOP_AND_RESET_ENCODER" on all drive motors
-     */
     public void stopResetEncoder(){
         leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -306,10 +350,6 @@ public class Drive2 {
         rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
-    /**runUsingEncoder
-     * Sets all drive motors to RUN_USING_ENCODER
-     * Sets zero power behavior to float, allowing for no active force resisting rotation
-     */
     public void runUsingEncoder(){
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -321,10 +361,8 @@ public class Drive2 {
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
 
-    /**ceaseMotion
-     *Stop all motion;
-     */
     public void ceaseMotion(){
+        // Stop all motion;
         leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -334,18 +372,14 @@ public class Drive2 {
         rightFrontDrive.setPower(0);
         rightBackDrive.setPower(0);
     }
-    /**setMotorPowers
-     *Set power factors of all drive motors using magLeft and magRight
-     */
+
     public void setMotorPowers(double magLeft, double magRight){
         leftFrontDrive.setPower(motorPowerFactors.get(leftFrontDrive) * magLeft);
         rightFrontDrive.setPower(motorPowerFactors.get(leftBackDrive) * magRight);
         leftBackDrive.setPower(motorPowerFactors.get(rightFrontDrive) * magLeft);
         rightBackDrive.setPower(motorPowerFactors.get(rightBackDrive) * magRight);
     }
-    /**setMotorPowersPhi
-     *Set power factors of all drive motors using speedsPhi
-     */
+
     public void setMotorPowersPhi(SpeedsPhi speedsPhi){
         leftFrontDrive.setPower(speedsPhi.leftFrontSpeed);
         rightFrontDrive.setPower(speedsPhi.rightFrontSpeed);
@@ -374,7 +408,7 @@ public class Drive2 {
         //Speeds speeds = getSpeeds(targetSpeed, nowTheta);
 //        vroom_vroom(targetSpeed, adjustedTargetTheta, targetSpeed, adjustedTargetTheta);
         //vroom_vroom(speeds.rightSpeed, adjustedTargetTheta, speeds.leftSpeed, adjustedTargetTheta);
-        navigationByPhi(targetSpeed, adjustedTargetTheta);
+        vroom_vroom_phi(targetSpeed, adjustedTargetTheta);
 //        vroom_vroom(targetSpeed, targetTheta, targetSpeed, targetTheta);
         Log.i("Drive", String.format("IMU angle: %.2f, adj angle: %.2f", mCurrentImuAngle, mAdjustedAngle));
         Log.i("Drive", String.format("adjustTheta: (degrees) target: %.4f, now: %.4f, adjusted: %.4f, error: %.4f",
@@ -387,21 +421,18 @@ public class Drive2 {
         mPriorImuAngle = mTargetAngle = targetAngle + imuSecondOpModeAdjustment;
     }
 
-    /**
-     *We experimentally determined the Z axis is the axis we want to use for heading angle.
-     *We have to process the angle because the imu works in euler angles so the Z axis is
-     *returned as 0 to +180 or 0 to -180 rolling back to -179 or +179 when rotation passes
-     *180 degrees. We detect this transition and track the total cumulative angle of rotation.
-     * @return 0
-     */
     public double getImuAngle(){
+        // We experimentally determined the Z axis is the axis we want to use for heading angle.
+        // We have to process the angle because the imu works in euler angles so the Z axis is
+        // returned as 0 to +180 or 0 to -180 rolling back to -179 or +179 when rotation passes
+        // 180 degrees. We detect this transition and track the total cumulative angle of rotation.
+
         Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES);
         double adjustedHeading = angles.firstAngle + imuSecondOpModeAdjustment;
         telemetry.addData("IMU Angles (X/Y/Z)", "%.1f / %.1f / %.1f", angles.secondAngle, angles.thirdAngle, angles.firstAngle);
         telemetry.update();
         Log.i(TAG, String.format("getImuAngle: IMU Angles (X/Y/Z): %.1f / %.1f / %.1f", angles.secondAngle, angles.thirdAngle, angles.firstAngle));
         return mCurrentImuAngle = angles.firstAngle;
-
     }
 
     /**
@@ -553,7 +584,7 @@ public class Drive2 {
      * @param targetSpeed
      * @return
      */
-    private SpeedsPhi getPhiSpeeds(double targetSpeed, HashMap<Drive, Double> motorPowerFactors){
+    private SpeedsPhi getPhiSpeeds(double targetSpeed, HashMap<DcMotor, Double> motorPowerFactors){
         double powerCorrection = getPowerCorrection();
         double adjustedLeftFrontSpeed, adjustedLeftBackSpeed, adjustedRightFrontSpeed, adjustedRightBackSpeed;
 
@@ -599,13 +630,18 @@ public class Drive2 {
         return new SpeedsPhi(adjustedLeftFrontSpeed, adjustedLeftBackSpeed, adjustedRightFrontSpeed, adjustedRightBackSpeed);
     }
 
+    public void turnSweeper(double revolutionsToTurn, double power){
+        Sweep.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Sweep.setTargetPosition((int)Math.round(revolutionsToTurn*383.6*2));  //goBilda 5202 435 rpm motor with 2:1 speed reduction via external gears
+        Sweep.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Sweep.setPower(power);
+        while(Sweep.isBusy()){
+            opMode.sleep(25);
+        }
+        Sweep.setPower(0);
+        //Sweep.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
 
-    /**
-     *
-     * @param targetAngle
-     * @param nowAngle
-     * @return Difference in target angle and nowAngle
-     */
     private double calculateAngleDifference(double targetAngle, double nowAngle){
         double angle1 = 0, angle2 = 0, angleDiff180 = 0, angleDiff0 = 0, angleDifference = 0, returnAngle = 0;
         if(targetAngle >= 0 && nowAngle <= 0){

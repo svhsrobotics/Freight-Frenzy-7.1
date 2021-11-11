@@ -13,6 +13,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.Shared.Drive2;
+import org.firstinspires.ftc.teamcode.Shared.Drive3;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 
 import java.util.List;
 
@@ -54,7 +56,7 @@ public class autoTest extends LinearOpMode {
     private TFObjectDetector tfod;
     @Override
     public void runOpMode() {
-        Drive2 drive = new Drive2(this);
+        Drive3 drive = new Drive3(this);
         drive.init();
         initVuforia();
         initTfod();
@@ -79,24 +81,33 @@ public class autoTest extends LinearOpMode {
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
         double SPEED = 1;
+ //       String objectLabel = null;
         waitForStart();
         while (opModeIsActive()) {
             if (tfod != null) {
                 // getUpdatedRecognitions() will return null if no new information is available since
                 // the last time that call was made.
                 List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-                if (updatedRecognitions != null) {
-                    drive.navigationMonitorTicks(SPEED / 2, 0, 4, 5);
-                    Log.i("DriveByEncoderOpMode", "************************ xyzabc *****************************");
-                    drive.navigationMonitorTicks(SPEED, 60, 0, 30);
-                    Log.i("DriveByEncoderOpMode", "************************ xyzabc *****************************");
-
-                }else{
-                    drive.navigationMonitorTicks(SPEED / 2, 0, 4, 5);
-                    Log.i("DriveByEncoderOpMode", "************************ xyzabc *****************************");
-                    drive.navigationMonitorTicks(SPEED / 2, 0, -4, 5);
-                    Log.i("DriveByEncoderOpMode", "************************ xyzabc *****************************");
+                if(updatedRecognitions==null) {
+                    continue;
                 }
+                    for (Recognition recognition : updatedRecognitions) {
+
+
+                        if (recognition.getLabel() == "Duck") {
+                            drive.vroomVroomMonitorTicks(SPEED / 2, 0, 4, 5);
+                            Log.i("DriveByEncoderOpMode", "************************ xyzabc *****************************");
+                            drive.vroomVroomMonitorTicks(SPEED, 50, 0, 30);
+                            Log.i("DriveByEncoderOpMode", "************************ xyzabc *****************************");
+
+                        } else {
+                            drive.vroomVroomMonitorTicks(SPEED / 2, 0, 4, 5);
+                            Log.i("DriveByEncoderOpMode", "************************ xyzabc *****************************");
+                            drive.vroomVroomMonitorTicks(SPEED / 2, 0, -4, 5);
+                            Log.i("DriveByEncoderOpMode", "************************ xyzabc *****************************");
+                        }
+                    }
+
             }
         }
     }
