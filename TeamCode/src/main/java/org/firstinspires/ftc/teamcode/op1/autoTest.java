@@ -81,6 +81,7 @@ public class autoTest extends LinearOpMode {
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
         double SPEED = 1;
+        int checks = 0;
  //       String objectLabel = null;
         waitForStart();
         while (opModeIsActive()) {
@@ -88,25 +89,32 @@ public class autoTest extends LinearOpMode {
                 // getUpdatedRecognitions() will return null if no new information is available since
                 // the last time that call was made.
                 List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-                if(updatedRecognitions==null) {
-                    continue;
-                }
+                if(checks>1000){
+                    drive.vroomVroomMonitorTicks(SPEED, 0, 20, 5);
+                    Log.i("DriveByEncoderOpMode", "************************ xyzabc *****************************");
+                }else{
+                    if(updatedRecognitions==null) {
+                        checks++;
+                        continue;
+                    }
                     for (Recognition recognition : updatedRecognitions) {
 
 
-                        if (recognition.getLabel() == "Duck") {
+                        if (recognition.getLabel() == "Duck", recognition.getLeft() < 0 ) {
                             drive.vroomVroomMonitorTicks(SPEED / 2, 0, 4, 5);
                             Log.i("DriveByEncoderOpMode", "************************ xyzabc *****************************");
                             drive.vroomVroomMonitorTicks(SPEED, 50, 0, 30);
                             Log.i("DriveByEncoderOpMode", "************************ xyzabc *****************************");
 
-                        } else {
+                        } else if(recognition.getLabel() == "Duck", recognition.getRight() > 0 ){
                             drive.vroomVroomMonitorTicks(SPEED / 2, 0, 4, 5);
                             Log.i("DriveByEncoderOpMode", "************************ xyzabc *****************************");
                             drive.vroomVroomMonitorTicks(SPEED / 2, 0, -4, 5);
                             Log.i("DriveByEncoderOpMode", "************************ xyzabc *****************************");
                         }
                     }
+
+                }
 
             }
         }
