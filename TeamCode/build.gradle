@@ -10,7 +10,7 @@
 
 
 // Custom definitions may go here
-
+apply plugin: 'kotlin-android' // Kotlin
 // Include common definitions from above.
 apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
@@ -19,4 +19,9 @@ dependencies {
     implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
     implementation 'org.openftc:easyopencv:1.5.1'
+    implementation "androidx.core:core-ktx:+" // Kotlin
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version" // Kotlin
+}
+repositories {
+    mavenCentral()
 }
