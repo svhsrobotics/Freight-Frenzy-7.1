@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.vision
 
-import org.opencv.core.*
+import org.opencv.core.Core
+import org.opencv.core.Mat
+import org.opencv.core.Point
 import org.opencv.imgproc.Imgproc
 import org.openftc.easyopencv.OpenCvPipeline
 
@@ -13,7 +15,14 @@ class TeamElementDetector : OpenCvPipeline() {
     private val region2: Region = Region(Point(320 / 3 * 1.0, 0.0), 320 / 3.0, 240.0)
     private val region3: Region = Region(Point(320 / 3 * 2.0, 0.0), 320 / 3.0, 240.0)
 
-    private var Cb: Mat = Mat()
+    private val regions: Map<TeamElementPosition, Region> = mapOf(
+        TeamElementPosition.LEFT to region1,
+        TeamElementPosition.CENTER to region2,
+        TeamElementPosition.RIGHT to region3,
+    )
+
+    // Because regions are internally linked to their parent mat, it must be initialized here.
+    private var parent: Mat = Mat()
 
     // Volatile since accessed by OpMode thread w/o synchronization
     @Volatile
@@ -21,8 +30,8 @@ class TeamElementDetector : OpenCvPipeline() {
 
     // Converts frame to YCrCb and extracts Cb channel
     private fun Mat.toCb(): Mat {
-        var YCrCb: Mat = Mat()
-        var Cb: Mat = Mat()
+        val YCrCb = Mat()
+        val Cb = Mat()
         Imgproc.cvtColor(this, YCrCb, Imgproc.COLOR_RGB2YCrCb)
         Core.extractChannel(YCrCb, Cb, 2)
         return Cb
@@ -30,37 +39,25 @@ class TeamElementDetector : OpenCvPipeline() {
 
     override fun init(firstFrame: Mat) {
         // Get the Cb channel from the frame
-        Cb = firstFrame.toCb()
+        parent = firstFrame.toCb()
 
         // Initialize the internal submats in the regions
-        region1.init(Cb)
-        region2.init(Cb)
-        region3.init(Cb)
+        regions.forEach { it.value.submatOf(parent) }
     }
 
     override fun processFrame(input: Mat): Mat {
         // Get the Cb channel of the input frame after conversion to YCrCb
-        Cb = input.toCb()
+        parent = input.toCb()
 
-        region1.outline(input)
-        region2.outline(input)
-        region3.outline(input)
+        // Outline all the regions
+        regions.forEach { it.value.outline(input) }
 
-        // Find the max of the 3 averages
-        when (maxOf(region1.average, region2.average, region3.average)) {
-            region1.average -> {
-                position = TeamElementPosition.LEFT
-                region1.highlight(input)
-            }
-            region2.average -> {
-                position = TeamElementPosition.CENTER
-                region2.highlight(input)
-            }
-            region3.average -> {
-                position = TeamElementPosition.RIGHT
-                region3.highlight(input)
-            }
-        }
+        // Get the entry with the highest average
+        val entry = regions.maxByOrNull { it.value.getAverage(0)!! }!!
+        entry.value.highlight(input)
+
+        // Set the position
+        position = entry.key
 
         // Render input to the viewport, with annotations.
         return input
