@@ -29,17 +29,14 @@ class TeamElementDetector : OpenCvPipeline() {
     private var position = TeamElementPosition.LEFT
 
     // Converts frame to YCrCb and extracts Cb channel
-    private fun Mat.toCb(): Mat {
-        val YCrCb = Mat()
-        val Cb = Mat()
-        Imgproc.cvtColor(this, YCrCb, Imgproc.COLOR_RGB2YCrCb)
-        Core.extractChannel(YCrCb, Cb, 2)
-        return Cb
+    private fun toCb(input: Mat, output: Mat) {
+        Imgproc.cvtColor(input, output, Imgproc.COLOR_RGB2YCrCb)
+        Core.extractChannel(output, output, 2)
     }
 
     override fun init(firstFrame: Mat) {
         // Get the Cb channel from the frame
-        parent = firstFrame.toCb()
+        toCb(firstFrame, parent)
 
         // Initialize the internal submats in the regions
         regions.forEach { it.value.submatOf(parent) }
@@ -47,7 +44,7 @@ class TeamElementDetector : OpenCvPipeline() {
 
     override fun processFrame(input: Mat): Mat {
         // Get the Cb channel of the input frame after conversion to YCrCb
-        parent = input.toCb()
+        toCb(input, parent)
 
         // Outline all the regions
         regions.forEach { it.value.outline(input) }
