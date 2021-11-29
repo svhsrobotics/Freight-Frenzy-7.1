@@ -100,17 +100,20 @@ public class autoTest extends LinearOpMode {
                     for (Recognition recognition : updatedRecognitions) {
 
 
-                        if (recognition.getLabel() == "Duck", recognition.getLeft() < 0 ) {
+                        if (recognition.getLabel() == "Duck" && recognition.getLeft() < 0 ) {
                             drive.vroomVroomMonitorTicks(SPEED / 2, 0, 4, 5);
                             Log.i("DriveByEncoderOpMode", "************************ xyzabc *****************************");
-                            drive.vroomVroomMonitorTicks(SPEED, 50, 0, 30);
+                            drive.vroomVroomMonitorTicks(SPEED, 10, 0, 30);
                             Log.i("DriveByEncoderOpMode", "************************ xyzabc *****************************");
 
-                        } else if(recognition.getLabel() == "Duck", recognition.getRight() > 0 ){
+                        } else if(recognition.getLabel() == "Duck" && recognition.getRight() > 0 ){
                             drive.vroomVroomMonitorTicks(SPEED / 2, 0, 4, 5);
                             Log.i("DriveByEncoderOpMode", "************************ xyzabc *****************************");
                             drive.vroomVroomMonitorTicks(SPEED / 2, 0, -4, 5);
                             Log.i("DriveByEncoderOpMode", "************************ xyzabc *****************************");
+                        } else if(recognition.getLabel()== "Marker"){
+                            checks++;
+                            continue;
                         }
                     }
 
