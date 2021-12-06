@@ -35,4 +35,8 @@ class Region(private val rect: Rect) {
     fun getAverage(channel: Int): Double? {
         return mean(submat).`val`.getOrNull(channel)
     }
+
+    fun getMean(): Scalar {
+        return mean(submat)
+    }
 }
