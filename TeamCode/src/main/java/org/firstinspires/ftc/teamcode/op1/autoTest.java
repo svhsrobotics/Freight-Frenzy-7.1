@@ -82,46 +82,55 @@ public class autoTest extends LinearOpMode {
         telemetry.update();
         double SPEED = 1;
         int checks = 0;
- //       String objectLabel = null;
+        int rightvotes = 0;
+        int leftvotes = 0;
+
         waitForStart();
-        while (opModeIsActive()) {
+
+
+        while (checks < 1000) {
             if (tfod != null) {
                 // getUpdatedRecognitions() will return null if no new information is available since
                 // the last time that call was made.
-                List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-                if(checks>1000){
-                    drive.vroomVroomMonitorTicks(SPEED, 0, 20, 5);
-                    Log.i("DriveByEncoderOpMode", "************************ xyzabc *****************************");
-                }else{
-                    if(updatedRecognitions==null) {
-                        checks++;
-                        continue;
-                    }
+                List<Recognition> updatedRecognitions = tfod.getRecognitions();
+                if (updatedRecognitions != null) {
+                    checks++;
+                    // step through the list of recognitions and display boundary info.
                     for (Recognition recognition : updatedRecognitions) {
-
-
-                        if (recognition.getLabel() == "Duck" && recognition.getLeft() < 0 ) {
-                            drive.vroomVroomMonitorTicks(SPEED / 2, 0, 4, 5);
-                            Log.i("DriveByEncoderOpMode", "************************ xyzabc *****************************");
-                            drive.vroomVroomMonitorTicks(SPEED, 10, 0, 30);
-                            Log.i("DriveByEncoderOpMode", "************************ xyzabc *****************************");
-
-                        } else if(recognition.getLabel() == "Duck" && recognition.getRight() > 0 ){
-                            drive.vroomVroomMonitorTicks(SPEED / 2, 0, 4, 5);
-                            Log.i("DriveByEncoderOpMode", "************************ xyzabc *****************************");
-                            drive.vroomVroomMonitorTicks(SPEED / 2, 0, -4, 5);
-                            Log.i("DriveByEncoderOpMode", "************************ xyzabc *****************************");
-                        } else if(recognition.getLabel()== "Marker"){
-                            checks++;
+                        if (recognition.getLabel() == "marker") {
                             continue;
                         }
+                        if (recognition.getLeft() < 0) {
+                            rightvotes++;
+                            telemetry.addData("Right Votes", rightvotes);
+                        } else if (recognition.getRight() > 0) {
+                            leftvotes++;
+                            telemetry.addData("Left Votes",leftvotes);
+                        }
                     }
-
                 }
-
             }
         }
-    }
+// if the duck is on the right
+            if (rightvotes / checks > .6) {
+                drive.vroomVroomMonitorTicks(SPEED / 2, 0, 4, 5);
+                Log.i("DriveByEncoderOpMode", "************************ xyzabc *****************************");
+                drive.vroomVroomMonitorTicks(SPEED, 10, 0, 30);
+                Log.i("DriveByEncoderOpMode", "************************ xyzabc *****************************");
+//if the duck si on the left
+            } else if (leftvotes / checks > .6) {
+                drive.vroomVroomMonitorTicks(SPEED / 2, 0, 4, 5);
+                Log.i("DriveByEncoderOpMode", "************************ xyzabc *****************************");
+                drive.vroomVroomMonitorTicks(SPEED / 2, 0, -4, 5);
+                Log.i("DriveByEncoderOpMode", "************************ xyzabc *****************************");
+//if the neither right or left is decided
+            } else {
+                drive.vroomVroomMonitorTicks(SPEED, 0, 20, 5);
+                Log.i("DriveByEncoderOpMode", "************************ xyzabc *****************************");
+            }
+        }
+
+
 
 
 
