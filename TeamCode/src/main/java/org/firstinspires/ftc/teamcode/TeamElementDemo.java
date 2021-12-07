@@ -14,8 +14,7 @@ public class TeamElementDemo extends LinearOpMode {
     @Override
     public void runOpMode()
     {
-        // TODO: Figure out what that camera monitor thing I removed did...
-
+        // Note: Camera monitor (viewer for camera on control hub HDMI has been removed).
         // Get the camera from the hardware map
         OpenCvWebcam webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
         // Create a new pipeline object
