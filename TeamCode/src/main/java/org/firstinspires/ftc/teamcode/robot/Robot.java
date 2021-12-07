@@ -3,9 +3,13 @@ package org.firstinspires.ftc.teamcode.robot;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.internal.ui.GamepadUser;
 import org.firstinspires.ftc.teamcode.robot.hardware.Drive;
+import org.firstinspires.ftc.teamcode.robot.hardware.gamepad.GamepadDispatcher;
+import org.firstinspires.ftc.teamcode.robot.hardware.gamepad.Key;
 import org.firstinspires.ftc.teamcode.util.Timeout;
 
 import java.util.EnumMap;
@@ -45,6 +49,13 @@ public class Robot {
     public void initHardware() {
         initDrives();
         initIMU();
+        GamepadDispatcher gamepad = new GamepadDispatcher("gamepad1", hardwareMap);
+        gamepad.add_handler((this::handleKey));
+        gamepad.start();
+    }
+
+    private void handleKey(Key key) {
+        android.util.Log.i("Key Pressed: ", key.name());
     }
 
     public void initIMU() {
