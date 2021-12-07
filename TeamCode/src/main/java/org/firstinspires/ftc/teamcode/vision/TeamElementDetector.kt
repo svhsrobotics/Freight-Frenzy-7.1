@@ -14,7 +14,7 @@ class TeamElementDetector : OpenCvPipeline() {
         LEFT, CENTER, RIGHT
     }
 
-    //private val region1: Region = Region(Point(320 / 3 * 0.0, 0.0), 320 / 3.0, 240.0)
+    private val region1: Region = Region(Point(320 / 3 * 0.0, 0.0), 320 / 3.0, 240.0)
     private val region2: Region = Region(Point(320 / 3 * 1.0, 0.0), 320 / 3.0, 240.0)
     private val region3: Region = Region(Point(320 / 3 * 2.0, 0.0), 320 / 3.0, 240.0)
 
@@ -46,11 +46,11 @@ class TeamElementDetector : OpenCvPipeline() {
     private val weights: Array<Double> = arrayOf(1.0, 1.0, 1.0)
 
     // Target color
-    private val target: Scalar = Scalar(1.1,0.1,0.0)
+    private val target: Scalar = Scalar(27.0,222.0,172.0)
 
     // Threshold: if it is higher than this value, assume the element is off-screen (on the left dot)
     // TODO: Calibrate this value
-    private val threshold = 8.0
+    private val threshold = 35.0
 
     // Score the value based on the target
     private fun score(weights: Array<Double>, value: Scalar, target: Scalar): Double {
@@ -102,15 +102,15 @@ class TeamElementDetector : OpenCvPipeline() {
         println("DEBUG: ${min.key} has the lowest score of ${min.value}")
 
         // Check if it is on the left dot
-        position = if (min.value >= threshold) {
+        if (min.value >= threshold) {
             // If it's not one of these 2, it must be the leftmost one which is offscreen
-            TeamElementPosition.LEFT
+            position = TeamElementPosition.LEFT
+            region1.highlight(input)
         } else {
-            min.key
+            position = min.key
+            // Highlight the winning position on the camera stream
+            regions[position]?.highlight(input)
         }
-
-        // Highlight the winning position on the camera stream
-        regions[position]?.highlight(input)
 
         // Render input to the viewport, with annotations.
         return input
