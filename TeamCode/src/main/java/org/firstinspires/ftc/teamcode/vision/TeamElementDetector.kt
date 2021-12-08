@@ -9,7 +9,7 @@ import org.openftc.easyopencv.OpenCvPipeline
 import kotlin.math.abs
 import kotlin.math.round
 
-class TeamElementDetector : OpenCvPipeline() {
+class TeamElementDetector(private val target: Scalar) : OpenCvPipeline() {
     enum class TeamElementPosition {
         LEFT, CENTER, RIGHT
     }
@@ -46,7 +46,7 @@ class TeamElementDetector : OpenCvPipeline() {
     private val weights: Array<Double> = arrayOf(1.0, 1.0, 1.0)
 
     // Target color
-    private val target: Scalar = Scalar(27.0,222.0,172.0)
+    //private val target: Scalar = Scalar(27.0,222.0,172.0)
 
     // Threshold: if it is higher than this value, assume the element is off-screen (on the left dot)
     // TODO: Calibrate this value

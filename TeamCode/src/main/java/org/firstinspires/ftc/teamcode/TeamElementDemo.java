@@ -18,7 +18,7 @@ public class TeamElementDemo extends LinearOpMode {
         // Get the camera from the hardware map
         OpenCvWebcam webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
         // Create a new pipeline object
-        TeamElementDetector pipeline = new TeamElementDetector();
+        TeamElementDetector pipeline = new TeamElementDetector(CalibrateTargetColor.getCalibration());
         // Tell the camera to use the pipeline
         webcam.setPipeline(pipeline);
 

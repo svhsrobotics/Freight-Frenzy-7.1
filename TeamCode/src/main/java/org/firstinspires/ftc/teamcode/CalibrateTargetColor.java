@@ -15,6 +15,8 @@ import java.io.File;
 @TeleOp(name = "Calibrate Target Color", group = "Calibration")
 public class CalibrateTargetColor extends LinearOpMode {
 
+    static final String FILENAME = "calibrateTargetColor.txt";
+
     @Override
     public void runOpMode() {
         Webcam webcam = new Webcam("Webcam 1", hardwareMap);
@@ -33,12 +35,30 @@ public class CalibrateTargetColor extends LinearOpMode {
         }
     }
 
-    public void saveCalibration(Scalar color) {
-        String filename = "calibration.txt";
+    private static String serialize(Scalar scalar) {
+        StringBuilder builder = new StringBuilder();
+        for(Double i : scalar.val) {
+            builder.append(",").append(i.toString());
+        }
+        return builder.toString();
+    }
 
-        File file = AppUtil.getInstance().getSettingsFile(filename);
+    private static Scalar deserialize(String string) {
+        String[] split = string.split(",");
+        return new Scalar(
+                Double.parseDouble(split[0]),
+                Double.parseDouble(split[1]),
+                Double.parseDouble(split[2])
+        );
+    }
 
-        ReadWriteFile.writeFile(file, color.toString());
+    public static void saveCalibration(Scalar color) {
+        File file = AppUtil.getInstance().getSettingsFile(FILENAME);
+        ReadWriteFile.writeFile(file, serialize(color));
+    }
 
+    public static Scalar getCalibration() {
+        File file = AppUtil.getInstance().getSettingsFile(FILENAME);
+        return deserialize(ReadWriteFile.readFile(file));
     }
 }
