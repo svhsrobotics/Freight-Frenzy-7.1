@@ -18,7 +18,7 @@ class TeamElementDetector(private val target: Scalar) : OpenCvPipeline() {
     private val region2: Region = Region(Point(320 / 3 * 1.0, 0.0), 320 / 3.0, 240.0)
     private val region3: Region = Region(Point(320 / 3 * 2.0, 0.0), 320 / 3.0, 240.0)
 
-    private val regions: Map<TeamElementPosition, Region> = mapOf(
+    private val regions: HashMap<TeamElementPosition, Region> = hashMapOf(
         //TeamElementPosition.LEFT to region1,
         TeamElementPosition.CENTER to region2,
         TeamElementPosition.RIGHT to region3,
