@@ -32,7 +32,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.Gamepad;
 
 /**
  * This OpMode scans a single servo back and forwards until Stop is pressed.
@@ -58,9 +57,11 @@ public class ConceptScanServoLM extends LinearOpMode {
     static final double MIN_V =  0.0;     // Minimum rotational position
 
     // Define class members
-    CRServo   servo;
+    CRServo rightCarousel;
+    CRServo leftCarousel;
     double velocity = (MAX_V - MIN_V) / 2; // Start at halfway position
     boolean rampUp = true;
+
 
 
 
@@ -69,7 +70,8 @@ public class ConceptScanServoLM extends LinearOpMode {
 
         // Connect to servo (Assume PushBot Left Hand)
         // Change the text in quotes to match any servo name on your robot.
-        servo = hardwareMap.get(CRServo.class, "servo0");
+        rightCarousel = hardwareMap.get(CRServo.class, "rightCarousel");
+        leftCarousel = hardwareMap.get(CRServo.class, "leftCarousel");
         //gamepad = hardwareMap.get(Gamepad.class, "gamepad1");
 
         // Wait for the start button
@@ -77,7 +79,7 @@ public class ConceptScanServoLM extends LinearOpMode {
         telemetry.update();
         waitForStart();
         velocity = 0;
-
+        long time = System.currentTimeMillis();
         // Scan servo till stop pressed.
         while(opModeIsActive()){
 
@@ -100,24 +102,31 @@ public class ConceptScanServoLM extends LinearOpMode {
                 }
             }*/
             if (gamepad1.right_bumper) {
-                velocity = MAX_V;
+                velocity = 1;
             }
             if (gamepad1.left_bumper) {
+                velocity = -1;
+            }
+            if (gamepad1.dpad_up && velocity < 1 && System.currentTimeMillis() - time >= 150) {
+                velocity = velocity + .05;
+                time = System.currentTimeMillis();
+            }
+            if (gamepad1.dpad_down && velocity > -1 && System.currentTimeMillis() - time >= 150) {
+                velocity = velocity - .05;
+                time = System.currentTimeMillis();
+            }
+            if(gamepad1.b) {
                 velocity = 0;
             }
-            if (gamepad1.dpad_up && velocity < 1) {
-                velocity = velocity + .2;
-            }
-            if (gamepad1.dpad_down && velocity > -1) {
-                velocity = velocity - .2;
-            }
+
             // Display the current value
             telemetry.addData("Servo Position", "%5.2f", velocity);
             telemetry.addData(">", "Press Stop to end test." );
             telemetry.update();
 
             // Set the servo to the new position and pause;
-            servo.setPower(velocity);
+            rightCarousel.setPower(velocity);
+            leftCarousel.setPower(velocity);
             sleep(CYCLE_MS);
             idle();
         }
