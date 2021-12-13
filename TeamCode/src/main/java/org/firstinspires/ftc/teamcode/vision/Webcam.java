@@ -38,7 +38,7 @@ public class Webcam {
      * Opens the camera device. Will automatically unpause the stream and pipeline.
      * This will prevent Vuforia and Tensorflow from accessing the camera.
      */
-    public void open() {
+    public void openAsync() {
         this.webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() { resume(); }
@@ -46,6 +46,11 @@ public class Webcam {
             @Override
             public void onError(int errorCode) { }
         });
+    }
+
+    public void open() {
+        this.webcam.openCameraDevice();
+        resume();
     }
 
     /**

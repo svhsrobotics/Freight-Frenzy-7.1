@@ -3,7 +3,9 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.vision.TeamElementCalibrator;
 import org.firstinspires.ftc.teamcode.vision.TeamElementDetector;
+import org.firstinspires.ftc.teamcode.vision.Webcam;
 import org.openftc.easyopencv.*;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -14,30 +16,15 @@ public class TeamElementDemo extends LinearOpMode {
     @Override
     public void runOpMode()
     {
-        // Note: Camera monitor (viewer for camera on control hub HDMI has been removed).
-        // Get the camera from the hardware map
-        OpenCvWebcam webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
-        // Create a new pipeline object
-        TeamElementDetector pipeline = new TeamElementDetector();
-        // Tell the camera to use the pipeline
-        webcam.setPipeline(pipeline);
+        // Get the webcam from the hardware map
+        Webcam webcam = new Webcam("Webcam 1", hardwareMap);
+        
+        // Setup the detector pipeline
+        TeamElementDetector detector = new TeamElementDetector(CalibrateTargetColor.getCalibration());
+        webcam.setPipeline(detector);
 
         // Open the camera
-        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
-            {
-                // Start streaming
-                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-            }
-
-            @Override
-            public void onError(int errorCode)
-            {
-                //TODO: Handle errors opening the camera
-            }
-        });
+        webcam.open();
 
         // Wait for the OpMode to start
         waitForStart();
@@ -46,7 +33,7 @@ public class TeamElementDemo extends LinearOpMode {
         while (opModeIsActive())
         {
             // Log the result of our analysis
-            telemetry.addData("Analysis", pipeline.getAnalysis());
+            telemetry.addData("Analysis", detector.getAnalysis());
             telemetry.update();
 
             // Don't burn CPU cycles busy-looping

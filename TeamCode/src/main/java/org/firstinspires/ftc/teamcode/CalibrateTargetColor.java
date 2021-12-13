@@ -15,6 +15,8 @@ import java.io.File;
 @TeleOp(name = "Calibrate Target Color", group = "Calibration")
 public class CalibrateTargetColor extends LinearOpMode {
 
+    static final String FILENAME = "calibrateTargetColor.txt";
+
     @Override
     public void runOpMode() {
         Webcam webcam = new Webcam("Webcam 1", hardwareMap);
@@ -22,23 +24,43 @@ public class CalibrateTargetColor extends LinearOpMode {
         webcam.setPipeline(calibrator);
         webcam.open();
 
-        Gamepad gamepad = hardwareMap.get(Gamepad.class, "gamepad1");
 
         waitForStart();
 
         while (opModeIsActive()) {
-            if (gamepad.a) {
+            if (gamepad1.a) {
                 saveCalibration(calibrator.getAnalysis());
+                telemetry.log().add("Saved calibration data.");
             }
         }
     }
 
-    public void saveCalibration(Scalar color) {
-        String filename = "calibration.txt";
+    private static String serialize(Scalar scalar) {
+        StringBuilder builder = new StringBuilder();
+        for(Double i : scalar.val) {
+            builder.append(",").append(i.toString());
+        }
+        return builder.toString();
+    }
 
-        File file = AppUtil.getInstance().getSettingsFile(filename);
+    private static Scalar deserialize(String string) {
+        android.util.Log.i("Calibration", "Deserializing calibration data:");
+        android.util.Log.i("Calibration", string);
+        String[] split = string.split(",");
+        return new Scalar(
+                Double.parseDouble(split[1]),
+                Double.parseDouble(split[2]),
+                Double.parseDouble(split[3])
+        );
+    }
 
-        ReadWriteFile.writeFile(file, color.toString());
+    public static void saveCalibration(Scalar color) {
+        File file = AppUtil.getInstance().getSettingsFile(FILENAME);
+        ReadWriteFile.writeFile(file, serialize(color));
+    }
 
+    public static Scalar getCalibration() {
+        File file = AppUtil.getInstance().getSettingsFile(FILENAME);
+        return deserialize(ReadWriteFile.readFile(file));
     }
 }
