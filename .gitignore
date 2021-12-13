@@ -74,3 +74,6 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 # lint/reports/
+
+# Some kind of really big unnecessary file
+*.hprof
