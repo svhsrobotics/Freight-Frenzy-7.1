@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.util;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
@@ -21,7 +22,9 @@ public class Configuration {
     private final HashMap<String, Object> map = new HashMap<>();
     private final String filename;
 
-    private final Gson gson = new Gson();
+    private final Gson gson = new GsonBuilder()
+            .setPrettyPrinting()
+            .create();
 
     public Configuration(String filename) {
         this.filename = filename;
@@ -44,8 +47,10 @@ public class Configuration {
      * @param map to append
      */
     public void append(Map<String, Object> map) {
-        for (String key : map.keySet()) {
-            this.map.put(key, map.get(key));
+        if (map != null) {
+            for (String key : map.keySet()) {
+                this.map.put(key, map.get(key));
+            }
         }
         save();
     }
