@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.vision.TeamElementDetector;
+import org.opencv.core.Scalar;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -18,7 +19,7 @@ public class OpenCvTest extends LinearOpMode {
         // Get the camera from the hardware map
         OpenCvWebcam webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"));
         // Create a new pipeline object
-        TeamElementDetector pipeline = new TeamElementDetector();
+        TeamElementDetector pipeline = new TeamElementDetector(new Scalar(0.0,0.0,0.0));
         // Tell the camera to use the pipeline
         webcam.setPipeline(pipeline);
 
