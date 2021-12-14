@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+import org.firstinspires.ftc.teamcode.util.Configuration;
 import org.firstinspires.ftc.teamcode.vision.Calibration;
 import org.firstinspires.ftc.teamcode.vision.HSVColor;
 import org.firstinspires.ftc.teamcode.vision.Region;
@@ -22,8 +23,6 @@ import java.util.Map;
 @TeleOp(name = "Calibrate Target Color", group = "Calibration")
 public class CalibrateTargetColor extends LinearOpMode {
 
-    static final String FILENAME = "calibrateTargetColor.txt";
-
     @Override
     public void runOpMode() {
         Webcam webcam = new Webcam("Webcam 1", hardwareMap);
@@ -31,50 +30,34 @@ public class CalibrateTargetColor extends LinearOpMode {
         webcam.setPipeline(calibrator);
         webcam.open();
 
-        //Gamepad gamepad = hardwareMap.get(Gamepad.class, "gamepad1");
-
         waitForStart();
 
-        /*while (opModeIsActive()) {
-            if (gamepad.a) {
-                saveCalibration(calibrator.getAnalysis());
-            }
-        }*/
-        HashMap<TeamElementDetector.TeamElementPosition, Region> regions = new HashMap<TeamElementDetector.TeamElementPosition, Region>();
-        regions.put(TeamElementDetector.TeamElementPosition.LEFT, new Region(new Point(320 / 3 * 0.0, 0.0), 320 / 3.0, 240.0));
-        Calibration cal = new Calibration(regions, new HSVColor(1.0,2.0,3.0), 4.0);
-        save(cal.serialize());
-    }
+        Configuration config = new Configuration();
 
-    private static String serialize(Scalar scalar) {
-        StringBuilder builder = new StringBuilder();
-        for(Double i : scalar.val) {
-            builder.append(",").append(i.toString());
+        // Add default values if they do not exist
+        if (config.get("regions") == null) {
+            HashMap<TeamElementDetector.TeamElementPosition, Region> regions = new HashMap<>();
+            regions.put(TeamElementDetector.TeamElementPosition.LEFT,
+                    new Region(new Point(0.0, 0.0), 10, 10));
+            config.set("regions", regions);
         }
-        return builder.toString();
-    }
 
-    private static Scalar deserialize(String string) {
-        String[] split = string.split(",");
-        return new Scalar(
-                Double.parseDouble(split[0]),
-                Double.parseDouble(split[1]),
-                Double.parseDouble(split[2])
-        );
-    }
+        if (config.get("target") == null) {
+            HSVColor target = new HSVColor(0.0,0.0,0.0);
+            config.set("target", target);
+        }
 
-    public static void saveCalibration(Scalar color) {
-        File file = AppUtil.getInstance().getSettingsFile(FILENAME);
-        ReadWriteFile.writeFile(file, serialize(color));
-    }
+        if (config.get("threshold") == null) {
+            Double threshold = 0.0;
+            config.set("threshold", threshold);
+        }
 
-    public static void save(String data) {
-        File file = AppUtil.getInstance().getSettingsFile(FILENAME);
-        ReadWriteFile.writeFile(file, data);
-    }
+        while (opModeIsActive()) {
+            if (gamepad1.a) {
+                HSVColor target = new HSVColor(calibrator.getAnalysis());
+                config.set("target", target);
+            }
+        }
 
-    public static Scalar getCalibration() {
-        File file = AppUtil.getInstance().getSettingsFile(FILENAME);
-        return deserialize(ReadWriteFile.readFile(file));
     }
 }
