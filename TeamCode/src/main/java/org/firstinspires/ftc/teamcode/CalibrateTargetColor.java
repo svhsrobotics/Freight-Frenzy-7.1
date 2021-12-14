@@ -6,16 +6,22 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+import org.firstinspires.ftc.teamcode.util.Configuration;
+import org.firstinspires.ftc.teamcode.vision.Calibration;
+import org.firstinspires.ftc.teamcode.vision.HSVColor;
+import org.firstinspires.ftc.teamcode.vision.Region;
 import org.firstinspires.ftc.teamcode.vision.TeamElementCalibrator;
+import org.firstinspires.ftc.teamcode.vision.TeamElementDetector;
 import org.firstinspires.ftc.teamcode.vision.Webcam;
+import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 @TeleOp(name = "Calibrate Target Color", group = "Calibration")
 public class CalibrateTargetColor extends LinearOpMode {
-
-    static final String FILENAME = "calibrateTargetColor.txt";
 
     @Override
     public void runOpMode() {
@@ -24,43 +30,34 @@ public class CalibrateTargetColor extends LinearOpMode {
         webcam.setPipeline(calibrator);
         webcam.open();
 
-
         waitForStart();
+
+        Configuration config = new Configuration();
+
+        // Add default values if they do not exist
+        if (config.get("regions") == null) {
+            HashMap<TeamElementDetector.TeamElementPosition, Region> regions = new HashMap<>();
+            regions.put(TeamElementDetector.TeamElementPosition.LEFT,
+                    new Region(new Point(0.0, 0.0), 10, 10));
+            config.set("regions", regions);
+        }
+
+        if (config.get("target") == null) {
+            HSVColor target = new HSVColor(0.0,0.0,0.0);
+            config.set("target", target);
+        }
+
+        if (config.get("threshold") == null) {
+            Double threshold = 0.0;
+            config.set("threshold", threshold);
+        }
 
         while (opModeIsActive()) {
             if (gamepad1.a) {
-                saveCalibration(calibrator.getAnalysis());
-                telemetry.log().add("Saved calibration data.");
+                HSVColor target = new HSVColor(calibrator.getAnalysis());
+                config.set("target", target);
             }
         }
-    }
 
-    private static String serialize(Scalar scalar) {
-        StringBuilder builder = new StringBuilder();
-        for(Double i : scalar.val) {
-            builder.append(",").append(i.toString());
-        }
-        return builder.toString();
-    }
-
-    private static Scalar deserialize(String string) {
-        android.util.Log.i("Calibration", "Deserializing calibration data:");
-        android.util.Log.i("Calibration", string);
-        String[] split = string.split(",");
-        return new Scalar(
-                Double.parseDouble(split[1]),
-                Double.parseDouble(split[2]),
-                Double.parseDouble(split[3])
-        );
-    }
-
-    public static void saveCalibration(Scalar color) {
-        File file = AppUtil.getInstance().getSettingsFile(FILENAME);
-        ReadWriteFile.writeFile(file, serialize(color));
-    }
-
-    public static Scalar getCalibration() {
-        File file = AppUtil.getInstance().getSettingsFile(FILENAME);
-        return deserialize(ReadWriteFile.readFile(file));
     }
 }
