@@ -47,17 +47,20 @@ public class Configuration {
         for (String key : map.keySet()) {
             this.map.put(key, map.get(key));
         }
+        save();
     }
 
     /**
      * Sets a configuration value
-     * Make sure to save after calling this function
+     * This function will automatically save
      * @param key String to be used as a key in the configuration
      * @param value Value
      */
     public void set(String key, Object value) {
         this.map.put(key, value);
+        save();
     }
+
 
     /**
      * Unsets a configuration value
@@ -65,6 +68,7 @@ public class Configuration {
      */
     public void unset(String key) {
         this.map.remove(key);
+        save();
     }
 
     /**
@@ -77,10 +81,12 @@ public class Configuration {
 
     /**
      * Loads the configuration from the JSON file
+     * Note that if no configuration file exists, a new one will be created automatically.
      */
     public void load() {
         File file = AppUtil.getInstance().getSettingsFile(filename);
         clear(); // Note: loading from file will clear the map
+        // Because append calls save, if the json does not exist, it will be created.
         append(gson.fromJson(ReadWriteFile.readFile(file), Map.class));
     }
 
