@@ -2,13 +2,13 @@ package org.firstinspires.ftc.teamcode.util;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
+import java.lang.reflect.Type;
 
 /**
  * This is a helper class used to store and retrieve non-volatile configuration values
@@ -35,18 +35,20 @@ public class Configurator {
      * Loads the configuration from the JSON file
      * Note that if no configuration file exists, a new one will be created automatically.
      */
-    public static Configuration load(String filename) {
+    public static <T> T load(String filename) {
         Gson gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .create();
         File file = AppUtil.getInstance().getSettingsFile(filename);
-        return gson.fromJson(ReadWriteFile.readFile(file), Configuration.class);
+        // Use reflection to get the type
+        Type type = new TypeToken<T>(){}.getType();
+        return gson.fromJson(ReadWriteFile.readFile(file), type);
     }
 
     /**
      * Saves the configuration to the JSON file
      */
-    public static void save(Configuration config, String filename) {
+    public static <T> void save(T config, String filename) {
         Gson gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .create();
