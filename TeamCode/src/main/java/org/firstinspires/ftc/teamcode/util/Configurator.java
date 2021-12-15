@@ -10,6 +10,7 @@ import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import java.io.File;
 import java.lang.reflect.Type;
 
+
 /**
  * This is a helper class used to store and retrieve non-volatile configuration values
  * as JSON files.
@@ -35,20 +36,18 @@ public class Configurator {
      * Loads the configuration from the JSON file
      * Note that if no configuration file exists, a new one will be created automatically.
      */
-    public static <T> T load(String filename) {
+    public static Configuration load(String filename) {
         Gson gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .create();
         File file = AppUtil.getInstance().getSettingsFile(filename);
-        // Use reflection to get the type
-        Type type = new TypeToken<T>(){}.getType();
-        return gson.fromJson(ReadWriteFile.readFile(file), type);
+        return gson.fromJson(ReadWriteFile.readFile(file), Configuration.class);
     }
 
     /**
      * Saves the configuration to the JSON file
      */
-    public static <T> void save(T config, String filename) {
+    public static void save(Configuration config, String filename) {
         Gson gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .create();
