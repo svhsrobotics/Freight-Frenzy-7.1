@@ -33,22 +33,28 @@ public class ArmDemo extends LinearOpMode {
 
 
         while (opModeIsActive()) {
-            if (gamepad2.y) {
+
+            if(gamepad2.back) {
+                Arm.setTargetPosition(0);
+                Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                Arm.setPower(0.5);
+                Wrist.setPosition(0.53);
+            } else if(gamepad2.y){
+                GoToHubLevel(1);
+            } else if (gamepad2.x){
+                GoToHubLevel(2);
+            } else if (gamepad2.b){
+                GoToHubLevel(3);
+            } else if (gamepad2.a) {
+                GoToHubLevel(4);
+            } else if (gamepad2.dpad_right){
+                Wrist.setPosition(-gamepad2.right_stick_y * pivotCollectorFactor + pivotCollectorDifference);
+            } else if (gamepad2.dpad_up) {
+                Arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 Arm.setPower((gamepad2.right_trigger + (-gamepad2.left_trigger)) / 2);
             }
 
-            if(gamepad2.a){
-                Wrist.setPosition(0.5);
-            }
-            else if (gamepad2.b){
-                Wrist.setPosition(0.53);
-            }
-            else if (gamepad2.x){
-                GoToHubLevel(3);
-            } else if (gamepad2.y){
-                Wrist.setPosition(-gamepad2.left_stick_y * pivotCollectorFactor + pivotCollectorDifference);
-            }
-            Collector.setPower(-gamepad2.right_stick_y);
+            Collector.setPower(-gamepad2.left_stick_y / 2);
 
             telemetry.addData("Ticks", Arm.getCurrentPosition());
             telemetry.addData("WristPos", Wrist.getPosition());
@@ -65,30 +71,41 @@ public class ArmDemo extends LinearOpMode {
         //drive.ceaseMotion();
     }
     private void GoToHubLevel (int hubLevel) {
-        Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        if (hubLevel == 3){
-            Arm.setTargetPosition(-4444);
-            Arm.setPower(1);
-            Wrist.setPosition(0.36);
 
-        }
-        /* if (hubLevel == 2){
-        Arm.setTargetPosition();
-        Wrist.setPosition();
-        Arm.setPower(0.5);
-        }
-         */
-        /* if (hubLevel == 4){
-        Arm.setTargetPosition();
-        Wrist.setPosition();
-        Arm.setPower(0.5);
-        }
-         */
         /* if (hubLevel == 1){
-        Arm.setTargetPosition();
-        Wrist.setPosition();
-        Arm.setPower(0.5);
+            Arm.setTargetPosition();
+            Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            Arm.setPower(0.5);
+            Wrist.setPosition();
+            } */
+
+        if (hubLevel == 2){
+            if(gamepad2.dpad_down) {
+                Arm.setTargetPosition(-4100);
+                Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                Wrist.setPosition(0.36);
+                Arm.setPower(1);
+            } else if (gamepad2.dpad_up){
+                Arm.setTargetPosition(-2200);
+                Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                Wrist.setPosition(0.53);
+                Arm.setPower(1);
+            }
         }
-         */
+
+        if (hubLevel == 3){
+        Arm.setTargetPosition(-5238);
+        Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Wrist.setPosition(0.44);
+        Arm.setPower(1);
+        }
+
+        if (hubLevel == 4){
+        Arm.setTargetPosition(-6300);
+        Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Wrist.setPosition(0.49);
+        Arm.setPower(1);
+        }
+
     }
 }
