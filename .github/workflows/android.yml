@@ -16,9 +16,10 @@ jobs:
         java-version: '8'
         distribution: 'temurin'
         cache: gradle
-    - name: Set up Android NDK
-    - uses: android-actions/setup-android@v2
-    - run: sdkmanager "ndk;21.3.6528147"
+    - name: Set up Android SDK
+      uses: android-actions/setup-android@v2
+    - name: Install correct NDK
+      run: sdkmanager "ndk;21.3.6528147"
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build with Gradle
