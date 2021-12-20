@@ -13,7 +13,7 @@ public class DistanceCalibration extends LinearOpMode {
         DistanceSensor distanceLeftFront = hardwareMap.get(DistanceSensor.class,"DistanceLF");
         DistanceSensor distanceLeftSide = hardwareMap.get(DistanceSensor.class,"DistanceLS");
         DistanceSensor distanceRightFront = hardwareMap.get(DistanceSensor.class,"DistanceRF");
-        DistanceSensor distanceRightSide = hardwareMap.get(DistanceSensor.class,"DisatcmeRS");
+        DistanceSensor distanceRightSide = hardwareMap.get(DistanceSensor.class,"DistanceRS");
 
         double DistanceLF = 0;
         double DistanceLS =0;
@@ -23,44 +23,66 @@ public class DistanceCalibration extends LinearOpMode {
         waitForStart();
         boolean currentA = false;
         boolean currentB = false;
+        double totalRF = 0;
+        double totalLS = 0;
+        double totalLF = 0;
+        double totalRS = 0;
         while(opModeIsActive()){
             currentA = gamepad1.a;
             currentB = gamepad1.b;
+            telemetry.addLine("Press A for Blue Carousel");
+            telemetry.addLine("Press B for Red Carousel");
             if (currentA==true){
                 //create an array with the data of the right front sensor
               double  arrayRF[] = new double[5];
-              for(int i=0;i<5;i++){
+              for(int i=0;i< arrayRF.length;i++){
                   DistanceRF =  distanceRightFront.getDistance(DistanceUnit.INCH);
                   arrayRF[i]= DistanceRF;
+                  totalRF = totalRF + arrayRF[i];
                   sleep(10);
 
               }
                 //craete an array with the data of the left side sensor
                 double  arrayLS[] = new double[5];
-                for(int i=0;i<5;i++){
+                for(int i=0;i< arrayLS.length;i++){
                     DistanceLS =  distanceLeftSide.getDistance(DistanceUnit.INCH);
                     arrayLS[i]= DistanceLS;
+                    totalLS =totalLS + arrayLS[i];
                     sleep(10);
 
                 }
+                double averageRF= totalLF/ arrayRF.length;
+                double averageLS = totalRS/ arrayLS.length;
+                telemetry.addData("Right Front Distance:", averageRF);
+                telemetry.addData("Left Side Distance:", averageLS);
+                telemetry.update();
+                currentA=false;
             }
             if (currentB==true){
                 //create an array with the data of the left front sensor
                 double  arrayLF[] = new double[5];
-                for(int i=0;i<5;i++){
+                for(int i=0;i< arrayLF.length;i++){
                     DistanceLF =  distanceLeftFront.getDistance(DistanceUnit.INCH);
                     arrayLF[i]= DistanceLF;
+                    totalLF = totalLF + arrayLF[i];
                     sleep(10);
 
                 }
                 //craete an array with the data of the left side sensor
                 double  arrayRS[] = new double[5];
-                for(int i=0;i<5;i++){
+                for(int i=0;i< arrayRS.length;i++){
                     DistanceRS =  distanceRightSide.getDistance(DistanceUnit.INCH);
                     arrayRS[i]= DistanceRS;
+                    totalRS = totalRS + arrayRS[i];
                     sleep(10);
 
                 }
+                double averageLF= totalLF/ arrayLF.length;
+                double averageRS = totalRS/ arrayRS.length;
+                telemetry.addData("Left Front Distance:", averageLF);
+                telemetry.addData("Right Side Distance:", averageRS);
+                telemetry.update();
+                currentB=false;
             }
         }
     }
