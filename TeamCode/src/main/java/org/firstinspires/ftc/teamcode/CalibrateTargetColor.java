@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.util.ReadWriteFile;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.util.Configuration;
 import org.firstinspires.ftc.teamcode.util.Configurator;
-import org.firstinspires.ftc.teamcode.vision.Calibration;
 import org.firstinspires.ftc.teamcode.vision.HSVColor;
 import org.firstinspires.ftc.teamcode.vision.Region;
 import org.firstinspires.ftc.teamcode.vision.TeamElementCalibrator;
