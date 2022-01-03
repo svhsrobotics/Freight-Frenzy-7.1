@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.util.Configuration;
+import org.firstinspires.ftc.teamcode.util.Configurator;
 import org.firstinspires.ftc.teamcode.vision.Calibration;
 import org.firstinspires.ftc.teamcode.vision.HSVColor;
 import org.firstinspires.ftc.teamcode.vision.Region;
@@ -32,30 +33,30 @@ public class CalibrateTargetColor extends LinearOpMode {
 
         waitForStart();
 
-        Configuration config = new Configuration();
+        Configuration config = Configurator.load();
 
         // Add default values if they do not exist
-        if (config.get("regions") == null) {
+        if (config.regions == null) {
             HashMap<TeamElementDetector.TeamElementPosition, Region> regions = new HashMap<>();
             regions.put(TeamElementDetector.TeamElementPosition.LEFT,
                     new Region(new Point(0.0, 0.0), 10, 10));
-            config.set("regions", regions);
+            config.regions = regions;
         }
 
-        if (config.get("target") == null) {
+        if (config.target == null) {
             HSVColor target = new HSVColor(0.0,0.0,0.0);
-            config.set("target", target);
+            config.target = target;
         }
 
-        if (config.get("threshold") == null) {
+        if (config.threshold == null) {
             Double threshold = 0.0;
-            config.set("threshold", threshold);
+            config.threshold = threshold;
         }
 
         while (opModeIsActive()) {
             if (gamepad1.a) {
                 HSVColor target = new HSVColor(calibrator.getAnalysis());
-                config.set("target", target);
+                config.target = target;
             }
         }
 
