@@ -83,6 +83,8 @@ public class DistanceCalibration extends LinearOpMode {
                 telemetry.addData("Right Side Distance:", averageRS);
                 telemetry.update();
                 currentB=false;
+
+                //put averages in the json file
             }
         }
     }
