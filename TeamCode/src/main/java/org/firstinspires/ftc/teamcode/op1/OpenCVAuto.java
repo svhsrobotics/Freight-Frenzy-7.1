@@ -26,8 +26,8 @@ public class OpenCVAuto extends LinearOpMode {
 
         HSVColor hsv = null;
 
-        if (config.get("target") != null) {
-            hsv = (HSVColor) config.get("target");
+        if (config.target != null) {
+            hsv = config.target;
         } else {
             telemetry.log().add("WARNING WARNING WARNING:");
             telemetry.log().add("TARGET COLOR WAS NOT CALIBRATED!!!");
