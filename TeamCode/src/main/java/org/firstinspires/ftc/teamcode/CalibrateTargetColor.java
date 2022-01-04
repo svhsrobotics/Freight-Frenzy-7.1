@@ -2,23 +2,17 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.util.ReadWriteFile;
 
-import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.util.Configuration;
 import org.firstinspires.ftc.teamcode.util.Configurator;
 import org.firstinspires.ftc.teamcode.vision.HSVColor;
 import org.firstinspires.ftc.teamcode.vision.Region;
 import org.firstinspires.ftc.teamcode.vision.TeamElementCalibrator;
 import org.firstinspires.ftc.teamcode.vision.TeamElementDetector;
-import org.firstinspires.ftc.teamcode.vision.Webcam;
+import org.firstinspires.ftc.teamcode.robot.hardware.Webcam;
 import org.opencv.core.Point;
-import org.opencv.core.Scalar;
 
-import java.io.File;
 import java.util.HashMap;
-import java.util.Map;
 
 @TeleOp(name = "Calibrate Target Color", group = "Calibration")
 public class CalibrateTargetColor extends LinearOpMode {
@@ -43,19 +37,17 @@ public class CalibrateTargetColor extends LinearOpMode {
         }
 
         if (config.target == null) {
-            HSVColor target = new HSVColor(0.0,0.0,0.0);
-            config.target = target;
+            config.target = new HSVColor(0.0,0.0,0.0);
         }
 
         if (config.threshold == null) {
-            Double threshold = 0.0;
-            config.threshold = threshold;
+            config.threshold = 0.0;
         }
 
         while (opModeIsActive()) {
             if (gamepad1.a) {
-                HSVColor target = new HSVColor(calibrator.getAnalysis());
-                config.target = target;
+                config.target = new HSVColor(calibrator.getAnalysis());
+                break; // Break the loop so we stop calibrating
             }
         }
 

@@ -3,18 +3,10 @@ package org.firstinspires.ftc.teamcode.op1;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.CalibrateTargetColor;
 import org.firstinspires.ftc.teamcode.util.Configuration;
 import org.firstinspires.ftc.teamcode.vision.HSVColor;
 import org.firstinspires.ftc.teamcode.vision.TeamElementDetector;
-import org.firstinspires.ftc.teamcode.vision.Webcam;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvWebcam;
-
-import kotlin.math.UMathKt;
+import org.firstinspires.ftc.teamcode.robot.hardware.Webcam;
 
 @Autonomous
 public class OpenCVAuto extends LinearOpMode {
