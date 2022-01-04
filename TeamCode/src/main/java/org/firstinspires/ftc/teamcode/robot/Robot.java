@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode.robot;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.robot.hardware.Arm;
 import org.firstinspires.ftc.teamcode.robot.hardware.Drive;
 import org.firstinspires.ftc.teamcode.util.Timeout;
 
@@ -38,12 +41,15 @@ public class Robot {
 
     public BNO055IMU imu;
 
+    public Arm arm;
+
     public Robot(HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
     }
 
     public void initHardware() {
         initDrives();
+        initArm();
         initIMU();
     }
 
@@ -70,6 +76,14 @@ public class Robot {
         while (!imu.isAccelerometerCalibrated() && !t.timeout()) {
             Thread.yield();
         }
+    }
+
+    public void initArm() {
+        this.arm = new Arm(
+                this.hardwareMap.get(DcMotor.class, "Arm"),
+                this.hardwareMap.get(Servo.class, "pivotCollector"),
+                this.hardwareMap.get(CRServo.class, "spinCollector")
+        );
     }
 
     public void initDrives() {
