@@ -24,10 +24,13 @@ public class CompetitionAuto extends LinearOpMode {
         TeamElementDetector detector = new TeamElementDetector(target);
         webcam.setPipeline(detector);
 
-        Drive2 drive = new Drive2(this);
+        Robot robot = new Robot(hardwareMap);
+        robot.initHardware();
+
+        Drive2 drive = new Drive2(robot,this);
         drive.init();
 
-        Arm arm = new Arm(null, null, null);
+        Arm arm = robot.arm;
 
         // Open the camera
         webcam.open();
