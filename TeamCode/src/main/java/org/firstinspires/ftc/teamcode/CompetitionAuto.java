@@ -3,6 +3,9 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.Shared.Drive2;
+import org.firstinspires.ftc.teamcode.robot.Robot;
+import org.firstinspires.ftc.teamcode.robot.hardware.Arm;
 import org.firstinspires.ftc.teamcode.util.Configuration;
 import org.firstinspires.ftc.teamcode.vision.HSVColor;
 import org.firstinspires.ftc.teamcode.vision.TeamElementDetector;
@@ -21,6 +24,11 @@ public class CompetitionAuto extends LinearOpMode {
         TeamElementDetector detector = new TeamElementDetector(target);
         webcam.setPipeline(detector);
 
+        Drive2 drive = new Drive2(this);
+        drive.init();
+
+        Arm arm = new Arm(null, null, null);
+
         // Open the camera
         webcam.open();
 
@@ -29,15 +37,30 @@ public class CompetitionAuto extends LinearOpMode {
 
         TeamElementDetector.TeamElementPosition position = detector.getAnalysis();
         telemetry.addData("Position of the Team Element:", position);
+        //Drive away from wall
+        drive.navigationMonitorTicks(1/4, 0, -5, 10);
+
+        //set arm height
         switch (position) {
             case LEFT:
-                //
+                arm.toLevel(Arm.HubLevel.Bottom);
+                break;
             case CENTER:
-                //
+                arm.toLevel(Arm.HubLevel.Middle);
+                break;
             case RIGHT:
-                //
+                arm.toLevel(Arm.HubLevel.Top);
+                break;
         }
-
+        //To Hub
+        drive.navigationMonitorTicks(1/2, -20, -5, 10);
+        arm.setCollectorMode(Arm.CollectorMode.Eject);
+        //Sleeping so the collector has time to eject before stopping the servo
+        sleep(2000);
+        arm.setCollectorMode(Arm.CollectorMode.Stop);
+        //Drive over to Carousel
+        drive.navigationMonitorTicks(1, 40, 10,10);
+        //TODO: Include Code Using Sensor Data
         telemetry.update();
 
     }
