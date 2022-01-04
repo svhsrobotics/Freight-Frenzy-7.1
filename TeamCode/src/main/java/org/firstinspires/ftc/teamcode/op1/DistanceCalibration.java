@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.util.Configuration;
+import org.firstinspires.ftc.teamcode.util.Configurator;
 
 @TeleOp
 public class DistanceCalibration extends LinearOpMode {
@@ -19,6 +21,8 @@ public class DistanceCalibration extends LinearOpMode {
         double DistanceLS =0;
         double DistanceRF = 0;
         double DistanceRS =0;
+
+        Configuration config = Configurator.load();
 
         waitForStart();
         boolean currentA = false;

@@ -13,4 +13,9 @@ public class Configuration {
     public HashMap<TeamElementDetector.TeamElementPosition, Region> regions;
     public HSVColor target;
     public Double threshold;
+    public Double rfdistance;
+    public Double lfdistance;
+    public Double rsdistance;
+    public Double lsdistance;
+
 }
