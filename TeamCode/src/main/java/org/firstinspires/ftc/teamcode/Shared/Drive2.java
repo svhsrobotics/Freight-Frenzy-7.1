@@ -46,17 +46,17 @@ public class Drive2 {
 
     Robot robot;
 
-    public Drive2(LinearOpMode _opMode){
-        opMode = _opMode;
-        hardwareMap = opMode.hardwareMap;
-        telemetry = opMode.telemetry;
-        this.robot = new Robot(hardwareMap);
+
+    public Drive2(Robot robot, LinearOpMode opMode){
+        this.robot = robot;
+        this.opMode = opMode;
+        this.telemetry = opMode.telemetry;
 
         motorPowerFactors = new HashMap<>();
     }
 
     public void init() {
-        robot.initHardware();
+        //robot.initHardware();
         this.leftFrontDrive = robot.Drives.get(Robot.DrivePos.FRONT_LEFT);
         this.rightFrontDrive = robot.Drives.get(Robot.DrivePos.FRONT_RIGHT);
         this.leftBackDrive = robot.Drives.get(Robot.DrivePos.BACK_LEFT);
