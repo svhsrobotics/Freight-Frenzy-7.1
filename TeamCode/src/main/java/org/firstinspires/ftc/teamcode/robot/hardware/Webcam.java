@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.vision;
+package org.firstinspires.ftc.teamcode.robot.hardware;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -48,6 +48,7 @@ public class Webcam {
         });
     }
 
+    @Deprecated
     public void open() {
         this.webcam.openCameraDevice();
         resume();

@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.Shared.Drive3;
 import org.firstinspires.ftc.teamcode.util.Configuration;
 import org.firstinspires.ftc.teamcode.vision.HSVColor;
 import org.firstinspires.ftc.teamcode.vision.TeamElementDetector;
-import org.firstinspires.ftc.teamcode.vision.Webcam;
+import org.firstinspires.ftc.teamcode.robot.hardware.Webcam;
 
 @Autonomous
 public class RedTeamNav extends LinearOpMode {

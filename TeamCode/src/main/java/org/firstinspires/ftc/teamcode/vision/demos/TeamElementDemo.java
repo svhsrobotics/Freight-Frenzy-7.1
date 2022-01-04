@@ -5,13 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.util.Configuration;
 import org.firstinspires.ftc.teamcode.vision.HSVColor;
-import org.firstinspires.ftc.teamcode.vision.TeamElementCalibrator;
 import org.firstinspires.ftc.teamcode.vision.TeamElementDetector;
-import org.firstinspires.ftc.teamcode.vision.Webcam;
-import org.opencv.core.Scalar;
-import org.openftc.easyopencv.*;
-
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.robot.hardware.Webcam;
 
 
 @Autonomous
