@@ -37,19 +37,17 @@ public class CalibrateTargetColor extends LinearOpMode {
         }
 
         if (config.target == null) {
-            HSVColor target = new HSVColor(0.0,0.0,0.0);
-            config.target = target;
+            config.target = new HSVColor(0.0,0.0,0.0);
         }
 
         if (config.threshold == null) {
-            Double threshold = 0.0;
-            config.threshold = threshold;
+            config.threshold = 0.0;
         }
 
         while (opModeIsActive()) {
             if (gamepad1.a) {
-                HSVColor target = new HSVColor(calibrator.getAnalysis());
-                config.target = target;
+                config.target = new HSVColor(calibrator.getAnalysis());
+                break; // Break the loop so we stop calibrating
             }
         }
 

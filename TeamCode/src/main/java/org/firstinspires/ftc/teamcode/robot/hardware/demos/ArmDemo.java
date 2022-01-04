@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.robot.hardware.demos;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -6,9 +6,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.Shared.Drive2;
-
-@TeleOp(name = "Arm Demo", group = "Drive2")
+@TeleOp(name = "Arm Demo", group = "Hardware Demos")
 public class ArmDemo extends LinearOpMode {
     //private final String TAG = getClass().getName();
     DcMotor Arm = null;
