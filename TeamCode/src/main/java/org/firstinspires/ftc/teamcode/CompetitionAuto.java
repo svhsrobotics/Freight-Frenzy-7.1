@@ -43,7 +43,15 @@ public class CompetitionAuto extends LinearOpMode {
         //Drive away from wall
         drive.navigationMonitorTicks(1/4, 0, -5, 10);
 
-        //set arm height
+        //
+        // Position to level mapping:
+        //        []
+        //    \___||___/  <-- RIGHT
+        //        ||
+        //   \____||____/  <-- CENTER
+        //        ||
+        //  \_____||_____/  <-- LEFT
+        //
         switch (position) {
             case LEFT:
                 arm.toLevel(Arm.HubLevel.Bottom);
