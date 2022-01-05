@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.op1;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.util.Configuration;
@@ -9,6 +10,7 @@ import org.firstinspires.ftc.teamcode.vision.TeamElementDetector;
 import org.firstinspires.ftc.teamcode.robot.hardware.Webcam;
 
 @Autonomous
+@Disabled
 public class OpenCVAuto extends LinearOpMode {
     @Override
     public void runOpMode() {

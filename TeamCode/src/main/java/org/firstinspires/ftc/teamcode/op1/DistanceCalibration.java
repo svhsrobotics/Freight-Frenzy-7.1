@@ -8,7 +8,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.util.Configuration;
 import org.firstinspires.ftc.teamcode.util.Configurator;
 
-@TeleOp
+@TeleOp(name= "Distance Calibartion", group= "Teleop")
 public class DistanceCalibration extends LinearOpMode {
     @Override
     public void runOpMode(){
@@ -60,6 +60,9 @@ public class DistanceCalibration extends LinearOpMode {
                 telemetry.addData("Right Front Distance:", averageRF);
                 telemetry.addData("Left Side Distance:", averageLS);
                 telemetry.update();
+                config.rfdistance = averageRF;
+                config.lsdistance = averageLS;
+                Configurator.save(config);
                 currentA=false;
             }
             if (currentB==true){
@@ -86,10 +89,23 @@ public class DistanceCalibration extends LinearOpMode {
                 telemetry.addData("Left Front Distance:", averageLF);
                 telemetry.addData("Right Side Distance:", averageRS);
                 telemetry.update();
+                config.lfdistance = averageLF;
+                config.rsdistance = averageRS;
+                Configurator.save(config);
                 currentB=false;
 
                 //put averages in the json file
             }
+            if (config.lfdistance != null) {
+                telemetry.addData("left front saved as", config.lfdistance);
+            }else if (config.lsdistance != null) {
+                telemetry.addData("left side saved as", config.lsdistance);
+            }else if(config.rfdistance != null) {
+                telemetry.addData("right front saved as", config.rfdistance);
+            }else if(config.rsdistance != null) {
+                telemetry.addData("right side saved as", config.rsdistance);
+            }
+            telemetry.update();
         }
     }
 }

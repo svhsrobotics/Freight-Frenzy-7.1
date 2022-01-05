@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.op1;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.teamcode.vision.TeamElementDetector;
 import org.firstinspires.ftc.teamcode.robot.hardware.Webcam;
 
 @Autonomous
+@Disabled
 public class RedTeamNav extends LinearOpMode {
     @Override
     public void runOpMode(){
