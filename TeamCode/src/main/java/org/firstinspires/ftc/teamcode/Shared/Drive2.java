@@ -46,6 +46,8 @@ public class Drive2 {
 
     Robot robot;
 
+    double TotalMotorCurrent;
+
 
     public Drive2(Robot robot, LinearOpMode opMode){
         this.robot = robot;
@@ -63,6 +65,7 @@ public class Drive2 {
         this.rightBackDrive = robot.Drives.get(Robot.DrivePos.BACK_RIGHT);
         setTargetAngle(0);
     }
+
 
     public void check_and_set_drive(double magRight, double thetaRight, double magLeft, double thetaLeft) {
         double rightFrontPowerFactor, leftFrontPowerFactor, rightBackPowerFactor, leftBackPowerFactor;
@@ -238,6 +241,14 @@ public class Drive2 {
         adjustThetaInit();
         //setTargetAngle(mImuCalibrationAngle);
         while (opMode.opModeIsActive() && runtime.seconds() < timeout && inchesTraveledTotal <= magnitude){
+
+            TotalMotorCurrent = leftFrontDrive.getCurrent();
+            TotalMotorCurrent += leftBackDrive.getCurrent();
+            TotalMotorCurrent += rightFrontDrive.getCurrent();
+            TotalMotorCurrent += rightBackDrive.getCurrent();
+            Log.i(TAG,"navigationMonitorTicks: Total Motor Current= "+ TotalMotorCurrent);
+
+
             int tickCountNowLeftFront = leftFrontDrive.getCurrentPosition();
             int tickCountNowLeftBack = leftBackDrive.getCurrentPosition();
             int tickCountNowRightFront = rightFrontDrive.getCurrentPosition();

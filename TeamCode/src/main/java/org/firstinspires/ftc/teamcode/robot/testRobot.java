@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.robot;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -74,16 +75,16 @@ public class testRobot {
 
     public void initDrives() {
         this.Drives.put(DrivePos.FRONT_LEFT,
-                new Drive(this.hardwareMap.get(DcMotor.class, Hardware.frontLeftMotorName),
+                new Drive(this.hardwareMap.get(DcMotorEx.class, Hardware.frontLeftMotorName),
                         Hardware.revCounts, Hardware.gearReduction, Hardware.wheelDiameter));
         this.Drives.put(DrivePos.FRONT_RIGHT,
-                new Drive(this.hardwareMap.get(DcMotor.class, Hardware.frontRightMotorName),
+                new Drive(this.hardwareMap.get(DcMotorEx.class, Hardware.frontRightMotorName),
                         Hardware.revCounts, Hardware.gearReduction, Hardware.wheelDiameter));
         this.Drives.put(DrivePos.BACK_LEFT,
-                new Drive(this.hardwareMap.get(DcMotor.class, Hardware.backLeftMotorName),
+                new Drive(this.hardwareMap.get(DcMotorEx.class, Hardware.backLeftMotorName),
                         Hardware.revCounts, Hardware.gearReduction, Hardware.wheelDiameter));
         this.Drives.put(DrivePos.BACK_RIGHT,
-                new Drive(this.hardwareMap.get(DcMotor.class, Hardware.backRightMotorName),
+                new Drive(this.hardwareMap.get(DcMotorEx.class, Hardware.backRightMotorName),
                         Hardware.revCounts, Hardware.gearReduction, Hardware.wheelDiameter));
 
         for (Drive drive : this.Drives.values())

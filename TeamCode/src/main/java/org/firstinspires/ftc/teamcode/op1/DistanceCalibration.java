@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.op1;
 
+import android.nfc.Tag;
+import android.util.Log;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -8,18 +11,18 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.util.Configuration;
 import org.firstinspires.ftc.teamcode.util.Configurator;
 
-@TeleOp(name= "Distance Calibartion", group= "Teleop")
+@TeleOp(name= "Distance Calibration", group= "Teleop")
 public class DistanceCalibration extends LinearOpMode {
     @Override
     public void runOpMode(){
-        DistanceSensor distanceLeftFront = hardwareMap.get(DistanceSensor.class,"DistanceLF");
-        DistanceSensor distanceLeftSide = hardwareMap.get(DistanceSensor.class,"DistanceLS");
-        DistanceSensor distanceRightFront = hardwareMap.get(DistanceSensor.class,"DistanceRF");
-        DistanceSensor distanceRightSide = hardwareMap.get(DistanceSensor.class,"DistanceRS");
+        DistanceSensor distanceLeftFront = hardwareMap.get(DistanceSensor.class,"distance left");
+   //     DistanceSensor distanceLeftSide = hardwareMap.get(DistanceSensor.class,"distance right");
+  //     DistanceSensor distanceRightFront = hardwareMap.get(DistanceSensor.class,"DistanceRF");
+        DistanceSensor distanceRightSide = hardwareMap.get(DistanceSensor.class,"distance right");
 
         double DistanceLF = 0;
-        double DistanceLS =0;
-        double DistanceRF = 0;
+  //      double DistanceLS =0;
+  //      double DistanceRF = 0;
         double DistanceRS =0;
 
         Configuration config = Configurator.load();
@@ -36,7 +39,7 @@ public class DistanceCalibration extends LinearOpMode {
             currentB = gamepad1.b;
             telemetry.addLine("Press A for Blue Carousel");
             telemetry.addLine("Press B for Red Carousel");
-            if (currentA==true){
+    /*        if (currentA==true){
                 //create an array with the data of the right front sensor
               double  arrayRF[] = new double[5];
               for(int i=0;i< arrayRF.length;i++){
@@ -65,7 +68,7 @@ public class DistanceCalibration extends LinearOpMode {
                 Configurator.save(config);
                 currentA=false;
             }
-            if (currentB==true){
+     */       if (currentB==true){
                 //create an array with the data of the left front sensor
                 double  arrayLF[] = new double[5];
                 for(int i=0;i< arrayLF.length;i++){
@@ -97,13 +100,16 @@ public class DistanceCalibration extends LinearOpMode {
                 //put averages in the json file
             }
             if (config.lfdistance != null) {
-                telemetry.addData("left front saved as", config.lfdistance);
-            }else if (config.lsdistance != null) {
-                telemetry.addData("left side saved as", config.lsdistance);
-            }else if(config.rfdistance != null) {
-                telemetry.addData("right front saved as", config.rfdistance);
-            }else if(config.rsdistance != null) {
-                telemetry.addData("right side saved as", config.rsdistance);
+                Log.i ("Double","left front saved as: "+ config.lfdistance);
+            }
+            if (config.lsdistance != null) {
+                Log.i ("Double","left side saved as: "+ config.lsdistance);
+            }
+            if(config.rfdistance != null) {
+                Log.i ("Double","right front saved as: "+ config.rfdistance);
+            }
+            if(config.rsdistance != null) {
+                Log.i ("Double","right side saved as: "+ config.rsdistance);
             }
             telemetry.update();
         }

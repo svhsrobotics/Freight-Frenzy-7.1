@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robot;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -21,10 +22,10 @@ public class Robot {
         static final double gearReduction = 40;
         static final double wheelDiameter = 3;
 
-        static final String frontLeftMotorName = "front_left_motor";
-        static final String frontRightMotorName = "front_right_motor";
-        static final String backLeftMotorName = "back_left_motor";
-        static final String backRightMotorName = "back_right_motor";
+        static final String frontLeftMotorName = "FL";
+        static final String frontRightMotorName = "FR";
+        static final String backLeftMotorName = "BL";
+        static final String backRightMotorName = "BR";
         static final String imuName = "imu";
     }
 
@@ -88,16 +89,16 @@ public class Robot {
 
     public void initDrives() {
         this.Drives.put(DrivePos.FRONT_LEFT,
-                new Drive(this.hardwareMap.get(DcMotor.class, Hardware.frontLeftMotorName),
+                new Drive(this.hardwareMap.get(DcMotorEx.class, Hardware.frontLeftMotorName),
                         Hardware.revCounts,Hardware.gearReduction,Hardware.wheelDiameter));
         this.Drives.put(DrivePos.FRONT_RIGHT,
-                new Drive(this.hardwareMap.get(DcMotor.class, Hardware.frontRightMotorName),
+                new Drive(this.hardwareMap.get(DcMotorEx.class, Hardware.frontRightMotorName),
                         Hardware.revCounts,Hardware.gearReduction,Hardware.wheelDiameter));
         this.Drives.put(DrivePos.BACK_LEFT,
-                new Drive(this.hardwareMap.get(DcMotor.class, Hardware.backLeftMotorName),
+                new Drive(this.hardwareMap.get(DcMotorEx.class, Hardware.backLeftMotorName),
                         Hardware.revCounts,Hardware.gearReduction,Hardware.wheelDiameter));
         this.Drives.put(DrivePos.BACK_RIGHT,
-                new Drive(this.hardwareMap.get(DcMotor.class, Hardware.backRightMotorName),
+                new Drive(this.hardwareMap.get(DcMotorEx.class, Hardware.backRightMotorName),
                         Hardware.revCounts,Hardware.gearReduction,Hardware.wheelDiameter));
 
         for (Drive drive : this.Drives.values())
