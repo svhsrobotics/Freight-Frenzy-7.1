@@ -6,6 +6,10 @@ public class Logger {
     private final Telemetry telemetry;
     private final boolean debug;
 
+    public Logger() {
+        this(null, true);
+    }
+
     public Logger(Telemetry telemetry) {
         this(telemetry, true);
     }
@@ -14,33 +18,43 @@ public class Logger {
         this.telemetry = telemetry;
         this.debug = debug;
 
-        this.telemetry.setDisplayFormat(Telemetry.DisplayFormat.HTML);
-        this.telemetry.update(); // Prevent weird stuff from happening
+        if (telemetry != null) {
+            this.telemetry.setDisplayFormat(Telemetry.DisplayFormat.HTML);
+            this.telemetry.update(); // Apply change in display format
+        } else {
+            warning("Telemetry was null, logs will not be available in telemetry!");
+        }
     }
 
     // LOG LEVELS
 
     public void info(String msg) {
         android.util.Log.i(getCallerTag(getCallerClassName()), msg);
-        telemetry.log().add(formatColor(prefix(msg, "INFO"), "#4CAF50"));
-        telemetry.update();
+        if (telemetry != null) {
+            telemetry.log().add(formatColor(prefix(msg, "INFO"), "#4CAF50"));
+            telemetry.update();
+        }
     }
 
     public void warning(String msg) {
         android.util.Log.w(getCallerTag(getCallerClassName()), msg);
-        telemetry.log().add(formatColor(prefix(msg, "WARNING"), "#FFC107"));
-        telemetry.update();
+        if (telemetry != null) {
+            telemetry.log().add(formatColor(prefix(msg, "WARNING"), "#FFC107"));
+            telemetry.update();
+        }
     }
 
     public void error(String msg) {
         android.util.Log.e(getCallerTag(getCallerClassName()), msg);
-        telemetry.log().add(formatColor(prefix(msg, "ERROR"), "#F44336"));
-        telemetry.update();
+        if (telemetry != null) {
+            telemetry.log().add(formatColor(prefix(msg, "ERROR"), "#F44336"));
+            telemetry.update();
+        }
     }
 
     public void debug(String msg) {
         android.util.Log.d(getCallerTag(getCallerClassName()), msg);
-        if (debug) {
+        if (debug && telemetry != null) {
             telemetry.log().add(formatColor(prefix(msg, "DEBUG"), "#2196F3"));
             telemetry.update();
         }
