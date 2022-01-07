@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode.robot.hardware;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.util.HardwareNotFoundException;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -21,7 +24,7 @@ public class Webcam {
      * Convenience class for interacting with OpenCV webcams.
      * @param webcam OpenCV webcam to wrap
      */
-    public Webcam(OpenCvWebcam webcam) {
+    public Webcam(@NonNull OpenCvWebcam webcam) {
         this.webcam = webcam;
     }
 
@@ -31,7 +34,11 @@ public class Webcam {
      * @param hardwareMap hardware map to get the camera from
      */
     public Webcam(String name, HardwareMap hardwareMap) {
-        this.webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, name));
+        try {
+            this.webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, name));
+        } catch (IllegalArgumentException e) {
+            throw new HardwareNotFoundException(e, "Webcam"); // Use Webcam instead of WebcamName
+        }
     }
 
     /**

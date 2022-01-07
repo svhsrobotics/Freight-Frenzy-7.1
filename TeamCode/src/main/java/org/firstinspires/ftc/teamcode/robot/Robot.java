@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot;
 
+import android.util.Log;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -10,6 +12,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.robot.hardware.Arm;
 import org.firstinspires.ftc.teamcode.robot.hardware.Drive;
+import org.firstinspires.ftc.teamcode.util.HardwareNotFoundException;
+import org.firstinspires.ftc.teamcode.util.Logger;
 import org.firstinspires.ftc.teamcode.util.Timeout;
 
 import java.util.EnumMap;
@@ -44,14 +48,26 @@ public class Robot {
 
     public Arm arm;
 
-    public Robot(HardwareMap hardwareMap) {
+    private final Logger logger;
+
+    public Robot(HardwareMap hardwareMap, Logger logger) {
         this.hardwareMap = hardwareMap;
+        this.logger = logger;
     }
 
-    public void initHardware() {
-        initDrives();
-        initArm();
-        initIMU();
+    public Robot(HardwareMap hardwareMap) {
+        this.hardwareMap = hardwareMap;
+        this.logger = new Logger();
+    }
+
+    public void initHardware() throws IllegalArgumentException {
+        try {
+            initDrives();
+            initArm();
+            initIMU();
+        } catch (IllegalArgumentException e) {
+            throw new HardwareNotFoundException(e);
+        }
     }
 
     public void initIMU() {
