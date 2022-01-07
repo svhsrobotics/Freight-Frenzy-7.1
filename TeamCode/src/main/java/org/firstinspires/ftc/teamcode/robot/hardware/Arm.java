@@ -96,11 +96,10 @@ public class Arm {
     public void toLevel(@NonNull HubLevel level, boolean front) {
         switch (level) {
             case Cap:
-                // TODO: Implement Cap level
+                setArmPosition(-3720, 0.38);
                 break;
             case Top:
                 if (front) {
-                    // TODO: Get calibration for levels from config, add calibration OpMode?
                     setArmPosition(-2200, 0.53);
 
                 } else {
@@ -109,14 +108,14 @@ public class Arm {
                 break;
             case Middle:
                 if (front) {
-                    // TODO: Implement front load
+                    setArmPosition(-1450, 0.48);
                 } else {
                     setArmPosition(-5238, 0.44);
                 }
                 break;
             case Bottom:
                 if (front) {
-                    // TODO: Implement front load
+                    setArmPosition(-430, 0.43);
                 } else {
                     setArmPosition(-6300, 0.49);
                 }
