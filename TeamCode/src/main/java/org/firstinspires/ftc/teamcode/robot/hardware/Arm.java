@@ -63,10 +63,13 @@ public class Arm {
             case Eject:
                 // TODO: Figure out which one of these should be negative
                 collector.setPower(-0.5);
+                break;
             case Collect:
                 collector.setPower(0.5);
+                break;
             case Stop:
                 collector.setPower(0);
+                break;
         }
     }
 
@@ -94,6 +97,7 @@ public class Arm {
         switch (level) {
             case Cap:
                 // TODO: Implement Cap level
+                break;
             case Top:
                 if (front) {
                     // TODO: Get calibration for levels from config, add calibration OpMode?
@@ -102,20 +106,24 @@ public class Arm {
                 } else {
                     setArmPosition(-4100, 0.36);
                 }
+                break;
             case Middle:
                 if (front) {
                     // TODO: Implement front load
                 } else {
                     setArmPosition(-5238, 0.44);
                 }
+                break;
             case Bottom:
                 if (front) {
                     // TODO: Implement front load
                 } else {
                     setArmPosition(-6300, 0.49);
                 }
+                break;
             case Ground:
                 setArmPosition(0, 0.53);
+                break;
         }
     }
 
