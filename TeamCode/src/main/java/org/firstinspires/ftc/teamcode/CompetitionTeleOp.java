@@ -20,15 +20,15 @@ public class CompetitionTeleOp extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        //DcMotor arm = hardwareMap.get(DcMotor.class, "Arm");
-        //Servo wrist = hardwareMap.get(Servo.class, "pivotCollector");
-        //CRServo collector = hardwareMap.get(CRServo.class, "spinCollector");
+        DcMotor arm = hardwareMap.get(DcMotor.class, "Arm");
+        Servo wrist = hardwareMap.get(Servo.class, "pivotCollector");
+        CRServo collector = hardwareMap.get(CRServo.class, "spinCollector");
 
-        //this.arm = new Arm(arm, wrist, collector);
+        this.arm = new Arm(arm, wrist, collector);
 
-        //this.robot = new Robot(hardwareMap, logger);
+        this.robot = new Robot(hardwareMap, logger);
 
-        //logger.info("Button to level mapping:");
+        logger.info("Button to level mapping:");
         logger.info("<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Y]</tt>");
         logger.info("<tt>&nbsp;&nbsp;&nbsp;&nbsp;\\___|X|___/</tt>");
         logger.info("<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;|</tt>");
@@ -38,9 +38,9 @@ public class CompetitionTeleOp extends LinearOpMode {
         logger.info("Special positions:");
         logger.info("Collect: &uarr;");
         logger.info("Starting position: &#10096; + &darr;");
-        logger.warning("Test");
-        telemetry.addData("Test", "test");
-        telemetry.update();
+        //logger.warning("Test");
+        //telemetry.addData("Test", "test");
+        //telemetry.update();
 
         waitForStart();
 
