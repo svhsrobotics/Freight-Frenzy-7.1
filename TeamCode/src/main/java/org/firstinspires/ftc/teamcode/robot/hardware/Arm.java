@@ -10,9 +10,9 @@ import com.qualcomm.robotcore.hardware.Servo;
  * Arm Component. Currently uses hard-coded calibration data.
  */
 public class Arm {
-    private final DcMotor arm;
-    private final Servo wrist;
-    private final CRServo collector;
+    public final DcMotor arm;
+    public final Servo wrist;
+    public final CRServo collector;
 
     /**
      * Constructs a new arm from the main lift motor, the wrist servo, and the collector servo.
@@ -121,7 +121,11 @@ public class Arm {
                 }
                 break;
             case Ground:
-                setArmPosition(0, 0.53);
+                if (front) {
+                    setArmPosition(-340, 0.5);
+                } else {
+                    setArmPosition(0, 0.53);
+                }
                 break;
         }
     }

@@ -7,37 +7,40 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.robot.Robot;
+import org.firstinspires.ftc.teamcode.robot.hardware.Arm;
+import org.firstinspires.ftc.teamcode.util.Logger;
+
 @TeleOp(name = "Competition", group = "Competition")
 public class CompetitionTeleOp extends LinearOpMode {
-    //private final String TAG = getClass().getName();
-    DcMotor Arm = null;
-    Servo Wrist = null;
-    CRServo Collector = null;
-    double pivotCollectorFactor = 0.17 / 2;
-    double pivotCollectorDifference = (0.17 / 2) + 0.36;
-    DcMotor leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive = null;
-
+    Logger logger = new Logger(telemetry);
+    Arm arm;
+    Robot robot;
 
     @Override
     public void runOpMode() {
-        //final Drive2 drive = new Drive2(this);
 
-        //drive.init();
+        //DcMotor arm = hardwareMap.get(DcMotor.class, "Arm");
+        //Servo wrist = hardwareMap.get(Servo.class, "pivotCollector");
+        //CRServo collector = hardwareMap.get(CRServo.class, "spinCollector");
 
-        Arm = hardwareMap.get(DcMotor.class, "Arm");
-        Wrist = hardwareMap.get(Servo.class, "pivotCollector");
-        Collector = hardwareMap.get(CRServo.class, "spinCollector");
-        // Initialize the hardware variables. Note that the strings used here as parameters
-        // to 'get' must correspond to the names assigned during the robot configuration
-        // step (using the FTC Robot Controller app on the phone).
-        leftFrontDrive = hardwareMap.get(DcMotor.class, "FL");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "FR");
-        leftBackDrive = hardwareMap.get(DcMotor.class, "BL");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "BR");
+        //this.arm = new Arm(arm, wrist, collector);
 
-        rightFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        //this.robot = new Robot(hardwareMap, logger);
 
+        //logger.info("Button to level mapping:");
+        logger.info("<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Y]</tt>");
+        logger.info("<tt>&nbsp;&nbsp;&nbsp;&nbsp;\\___|X|___/</tt>");
+        logger.info("<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;|</tt>");
+        logger.info("<tt>&nbsp;&nbsp;&nbsp;\\____|B|____/</tt>");
+        logger.info("<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;|</tt>");
+        logger.info("<tt>&nbsp;&nbsp;\\_____|A|_____/</tt>");
+        logger.info("Special positions:");
+        logger.info("Collect: &uarr;");
+        logger.info("Starting position: &#10096; + &darr;");
+        logger.warning("Test");
+        telemetry.addData("Test", "test");
+        telemetry.update();
 
         waitForStart();
 
@@ -92,116 +95,33 @@ public class CompetitionTeleOp extends LinearOpMode {
                 frontLeftPowerFactor = -1;
             }
 
-           // leftFrontDrive.setPower((frontLeftPowerFactor * magLeft)*(frontLeftPowerFactor * magLeft));
-           // rightFrontDrive.setPower(-(frontRightPowerFactor * magRight)*(frontRightPowerFactor * magRight));
-            //leftBackDrive.setPower((backLeftPowerFactor * magLeft)*(backLeftPowerFactor * magLeft));
-            //rightBackDrive.setPower(-(backRightPowerFactor * magRight)*(backRightPowerFactor * magRight));
+            robot.Drives.get(Robot.DrivePos.FRONT_LEFT).setPower((frontLeftPowerFactor * magLeft));
+            robot.Drives.get(Robot.DrivePos.FRONT_RIGHT).setPower(-(frontRightPowerFactor * magRight));
+            robot.Drives.get(Robot.DrivePos.BACK_LEFT).setPower((backLeftPowerFactor * magLeft));
+            robot.Drives.get(Robot.DrivePos.BACK_RIGHT).setPower(-(backRightPowerFactor * magRight));
 
-            leftFrontDrive.setPower((frontLeftPowerFactor * magLeft));
-            rightFrontDrive.setPower(-(frontRightPowerFactor * magRight));
-            leftBackDrive.setPower((backLeftPowerFactor * magLeft));
-            rightBackDrive.setPower(-(backRightPowerFactor * magRight));
-
-            if (gamepad2.back) {
-                if(gamepad2.dpad_down){
-                Arm.setTargetPosition(0);
-                Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Arm.setPower(0.5);
-                Wrist.setPosition(0.53);
-            } else if (gamepad2.dpad_up){
-                    Arm.setTargetPosition(-340);
-                    Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    Arm.setPower(0.5);
-                    Wrist.setPosition(0.5);
-                }}
-                else if (gamepad2.y) {
-                GoToHubLevel(1);
+            if (gamepad2.back && gamepad2.dpad_down) {
+                this.arm.toLevel(Arm.HubLevel.Ground);
+            } else if (gamepad2.back && gamepad2.dpad_up) {
+                this.arm.toLevel(Arm.HubLevel.Ground, true);
+            } else if (gamepad2.y) {
+                this.arm.toLevel(Arm.HubLevel.Cap);
             } else if (gamepad2.x) {
-                GoToHubLevel(2);
+                this.arm.toLevel(Arm.HubLevel.Top);
             } else if (gamepad2.b) {
-                GoToHubLevel(3);
+                this.arm.toLevel(Arm.HubLevel.Middle);
             } else if (gamepad2.a) {
-                GoToHubLevel(4);
+                this.arm.toLevel(Arm.HubLevel.Bottom);
+            } else if (gamepad2.dpad_up) {
+                this.arm.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                this.arm.arm.setPower((gamepad2.right_trigger - gamepad2.left_trigger) / 2);
             } else if (gamepad2.dpad_right) {
-                Wrist.setPosition(-gamepad2.right_stick_y * pivotCollectorFactor + pivotCollectorDifference);
-            } else if (gamepad2.dpad_up) {
-                Arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                Arm.setPower((gamepad2.right_trigger + (-gamepad2.left_trigger)) / 2);
+                double pivotCollectorFactor = 0.17 / 2;
+                double pivotCollectorDifference = (0.17 / 2) + 0.36;
+                this.arm.wrist.setPosition(-gamepad2.right_stick_y * pivotCollectorFactor + pivotCollectorDifference);
             }
 
-            Collector.setPower(-gamepad2.left_stick_y / 2);
-
-            telemetry.addData("Ticks", Arm.getCurrentPosition());
-            telemetry.addData("WristPos", Wrist.getPosition());
-            telemetry.addData("Power", Collector.getPower());
-            telemetry.addData("ArmPower", gamepad2.right_trigger + (-gamepad2.left_trigger));
-            telemetry.addData("front right power ", ((float) Math.round(rightFrontDrive.getPower() * 100)) / 100);
-            telemetry.addData("front left power ", ((float) Math.round(leftFrontDrive.getPower() * 100)) / 100);
-            telemetry.addData("back right power ", ((float) Math.round(rightBackDrive.getPower() * 100)) / 100);
-            telemetry.addData("back left power ", ((float) Math.round(leftBackDrive.getPower() * 100)) / 100);
-            telemetry.addData("left joystick x", ((float) Math.round(gamepad1.left_stick_x * 100)) / 100);
-            telemetry.addData("left joystick y", ((float) Math.round(-gamepad1.left_stick_y * 100)) / 100);
-            telemetry.addData("magnitude left", ((float) Math.round(magLeft * 100)) / 100);
-            telemetry.addData("thetaLeft", ((float) Math.round(thetaLeft / pi * 100)) / 100);
-
-            telemetry.update();
-
-
-        }
-
-        // Only do this in simulator; real robot needs time to stop.
-        //drive.ceaseMotion();
-    }
-
-    private void GoToHubLevel(int hubLevel) {
-
-        if (hubLevel == 1) {
-            Arm.setTargetPosition(-3720);
-            Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            Arm.setPower(1);
-            Wrist.setPosition(0.38);
-        }
-
-        if (hubLevel == 2) {
-            if (gamepad2.dpad_down) {
-                Arm.setTargetPosition(-4100);
-                Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Wrist.setPosition(0.36);
-                Arm.setPower(1);
-            } else if (gamepad2.dpad_up) {
-                Arm.setTargetPosition(-2200);
-                Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Wrist.setPosition(0.53);
-                Arm.setPower(1);
-            }
-        }
-        if (hubLevel == 3) {
-            if (gamepad2.dpad_down) {
-                Arm.setTargetPosition(-5238);
-                Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Wrist.setPosition(0.44);
-                Arm.setPower(1);
-            } else if (gamepad2.dpad_up) {
-                Arm.setTargetPosition(-1450);
-                Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Wrist.setPosition(0.48);
-                Arm.setPower(1);
-            }
-        }
-
-        if (hubLevel == 4) {
-            if (gamepad2.dpad_down) {
-                Arm.setTargetPosition(-6300);
-                Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Wrist.setPosition(0.49);
-                Arm.setPower(1);
-            } else if (gamepad2.dpad_up) {
-                Arm.setTargetPosition(-430);
-                Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Wrist.setPosition(0.43);
-                Arm.setPower(1);
-            }
-
+            this.arm.collector.setPower(-gamepad2.left_stick_y / 2);
         }
     }
 }
