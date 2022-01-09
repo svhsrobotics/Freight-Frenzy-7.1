@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.util;
 
 
-import android.annotation.SuppressLint;
-import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -21,6 +19,6 @@ public class BroadcastHandler extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        this.lambda.execute(intent);
+        this.lambda.run(intent);
     }
 }
