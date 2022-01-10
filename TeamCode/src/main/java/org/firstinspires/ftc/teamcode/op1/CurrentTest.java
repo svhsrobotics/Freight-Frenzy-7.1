@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.teamcode.op1;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Shared.Drive2;
 import org.firstinspires.ftc.teamcode.robot.Robot;
-
+@Disabled
 @TeleOp
 public class CurrentTest extends LinearOpMode {
 
@@ -19,7 +20,7 @@ public class CurrentTest extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()) {
             if (gamepad1.a) {
-                drive.navigationMonitorTicks(1 / 4, 0, 5, 10);
+                drive.navigationMonitorTicks(1 / 4, 0, 0, 10);
             }
         }
 

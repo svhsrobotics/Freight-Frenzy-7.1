@@ -2,10 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.robot.hardware.Arm;
@@ -19,6 +16,7 @@ public class CompetitionTeleOp extends LinearOpMode {
     @Override
     public void runOpMode() {
         this.robot = new Robot(hardwareMap, logger);
+        robot.initHardware();
 
         logger.info("Button to level mapping:");
         logger.info("<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Y]</tt>");
@@ -88,9 +86,9 @@ public class CompetitionTeleOp extends LinearOpMode {
             }
 
             robot.Drives.get(Robot.DrivePos.FRONT_LEFT).setPower((frontLeftPowerFactor * magLeft));
-            robot.Drives.get(Robot.DrivePos.FRONT_RIGHT).setPower(-(frontRightPowerFactor * magRight));
+            robot.Drives.get(Robot.DrivePos.FRONT_RIGHT).setPower((frontRightPowerFactor * magRight));
             robot.Drives.get(Robot.DrivePos.BACK_LEFT).setPower((backLeftPowerFactor * magLeft));
-            robot.Drives.get(Robot.DrivePos.BACK_RIGHT).setPower(-(backRightPowerFactor * magRight));
+            robot.Drives.get(Robot.DrivePos.BACK_RIGHT).setPower((backRightPowerFactor * magRight));
 
             if (gamepad2.back && gamepad2.dpad_down) {
                 this.robot.arm.toLevel(Arm.HubLevel.Ground);

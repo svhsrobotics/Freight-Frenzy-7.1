@@ -26,10 +26,10 @@ public class Robot {
         static final double gearReduction = 40;
         static final double wheelDiameter = 3;
 
-        static final String frontLeftMotorName = "FL";
-        static final String frontRightMotorName = "FR";
-        static final String backLeftMotorName = "BL";
-        static final String backRightMotorName = "BR";
+        static final String frontLeftMotorName = "FL"; // CHM2
+        static final String frontRightMotorName = "FR"; // CHM3
+        static final String backLeftMotorName = "BL"; // CHM0
+        static final String backRightMotorName = "BR"; // CHM1
         static final String imuName = "imu";
     }
 
@@ -97,9 +97,9 @@ public class Robot {
 
     public void initArm() {
         this.arm = new Arm(
-                this.hardwareMap.get(DcMotor.class, "Arm"),
-                this.hardwareMap.get(Servo.class, "pivotCollector"),
-                this.hardwareMap.get(CRServo.class, "spinCollector")
+                this.hardwareMap.get(DcMotor.class, "Arm"), // EXM0
+                this.hardwareMap.get(Servo.class, "pivotCollector"), // CHS3
+                this.hardwareMap.get(CRServo.class, "spinCollector") // CHS2
         );
     }
 

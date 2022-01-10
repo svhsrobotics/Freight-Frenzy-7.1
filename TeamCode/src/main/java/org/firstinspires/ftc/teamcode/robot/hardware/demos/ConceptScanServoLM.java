@@ -70,8 +70,8 @@ public class ConceptScanServoLM extends LinearOpMode {
 
         // Connect to servo (Assume PushBot Left Hand)
         // Change the text in quotes to match any servo name on your robot.
-        rightCarousel = hardwareMap.get(CRServo.class, "rightCarousel");
-        leftCarousel = hardwareMap.get(CRServo.class, "leftCarousel");
+        rightCarousel = hardwareMap.get(CRServo.class, "rightCarousel"); // CHS1
+        leftCarousel = hardwareMap.get(CRServo.class, "leftCarousel"); // CHS0
         //gamepad = hardwareMap.get(Gamepad.class, "gamepad1");
 
         // Wait for the start button
