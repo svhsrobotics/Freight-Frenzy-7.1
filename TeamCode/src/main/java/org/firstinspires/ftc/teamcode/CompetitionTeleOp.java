@@ -14,18 +14,10 @@ import org.firstinspires.ftc.teamcode.util.Logger;
 @TeleOp(name = "Competition", group = "Competition")
 public class CompetitionTeleOp extends LinearOpMode {
     Logger logger = new Logger(telemetry);
-    Arm arm;
     Robot robot;
 
     @Override
     public void runOpMode() {
-
-        DcMotor arm = hardwareMap.get(DcMotor.class, "Arm");
-        Servo wrist = hardwareMap.get(Servo.class, "pivotCollector");
-        CRServo collector = hardwareMap.get(CRServo.class, "spinCollector");
-
-        this.arm = new Arm(arm, wrist, collector);
-
         this.robot = new Robot(hardwareMap, logger);
 
         logger.info("Button to level mapping:");
@@ -101,27 +93,27 @@ public class CompetitionTeleOp extends LinearOpMode {
             robot.Drives.get(Robot.DrivePos.BACK_RIGHT).setPower(-(backRightPowerFactor * magRight));
 
             if (gamepad2.back && gamepad2.dpad_down) {
-                this.arm.toLevel(Arm.HubLevel.Ground);
+                this.robot.arm.toLevel(Arm.HubLevel.Ground);
             } else if (gamepad2.back && gamepad2.dpad_up) {
-                this.arm.toLevel(Arm.HubLevel.Ground, true);
+                this.robot.arm.toLevel(Arm.HubLevel.Ground, true);
             } else if (gamepad2.y) {
-                this.arm.toLevel(Arm.HubLevel.Cap);
+                this.robot.arm.toLevel(Arm.HubLevel.Cap);
             } else if (gamepad2.x) {
-                this.arm.toLevel(Arm.HubLevel.Top);
+                this.robot.arm.toLevel(Arm.HubLevel.Top);
             } else if (gamepad2.b) {
-                this.arm.toLevel(Arm.HubLevel.Middle);
+                this.robot.arm.toLevel(Arm.HubLevel.Middle);
             } else if (gamepad2.a) {
-                this.arm.toLevel(Arm.HubLevel.Bottom);
+                this.robot.arm.toLevel(Arm.HubLevel.Bottom);
             } else if (gamepad2.dpad_up) {
-                this.arm.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                this.arm.arm.setPower((gamepad2.right_trigger - gamepad2.left_trigger) / 2);
+                this.robot.arm.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                this.robot.arm.arm.setPower((gamepad2.right_trigger - gamepad2.left_trigger) / 2);
             } else if (gamepad2.dpad_right) {
                 double pivotCollectorFactor = 0.17 / 2;
                 double pivotCollectorDifference = (0.17 / 2) + 0.36;
-                this.arm.wrist.setPosition(-gamepad2.right_stick_y * pivotCollectorFactor + pivotCollectorDifference);
+                this.robot.arm.wrist.setPosition(-gamepad2.right_stick_y * pivotCollectorFactor + pivotCollectorDifference);
             }
 
-            this.arm.collector.setPower(-gamepad2.left_stick_y / 2);
+            this.robot.arm.collector.setPower(-gamepad2.left_stick_y / 2);
         }
     }
 }
