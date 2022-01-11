@@ -100,19 +100,19 @@ public class CompetitionTeleOp extends LinearOpMode {
             leftBackDrive.setPower(-(backLeftPowerFactor * magLeft));
             rightBackDrive.setPower((backRightPowerFactor * magRight));
 
-            if (gamepad2.back) {
+            if (gamepad2.y) {
                 if(gamepad2.dpad_down){
                 Arm.setTargetPosition(0);
                 Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Arm.setPower(0.5);
                 Wrist.setPosition(0.53);
             } else if (gamepad2.dpad_up){
-                    Arm.setTargetPosition(-340);
+                    Arm.setTargetPosition(-340);//-300
                     Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     Arm.setPower(0.5);
                     Wrist.setPosition(0.5);
                 }}
-                else if (gamepad2.y) {
+                else if (gamepad2.back) {
                 GoToHubLevel(1);
             } else if (gamepad2.x) {
                 GoToHubLevel(2);
@@ -125,8 +125,21 @@ public class CompetitionTeleOp extends LinearOpMode {
             } else if (gamepad2.dpad_up) {
                 Arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 Arm.setPower((gamepad2.right_trigger + (-gamepad2.left_trigger)) / 2);
+            }else if (gamepad2.right_stick_y==1){
+                    //manual driver control of arm
+                Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    Arm.setTargetPosition(Arm.getCurrentPosition()+100);
+            }else if (gamepad2.right_stick_y==-1) {
+                Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    Arm.setTargetPosition(Arm.getCurrentPosition()-100);
+            }else if (gamepad2.right_stick_x==1){
+                    //manual driver control of wrist
+                    Wrist.setPosition(Wrist.getPosition()-.01);
+                    sleep(100);
+            }else if (gamepad2.right_stick_x==-1){
+                Wrist.setPosition(Wrist.getPosition()+.01);
+                sleep(100);
             }
-
             Collector.setPower(-gamepad2.left_stick_y / 2);
 
             telemetry.addData("Ticks", Arm.getCurrentPosition());
@@ -167,7 +180,7 @@ public class CompetitionTeleOp extends LinearOpMode {
                 Wrist.setPosition(0.36);
                 Arm.setPower(1);
             } else if (gamepad2.dpad_up) {
-                Arm.setTargetPosition(-2200-350);
+                Arm.setTargetPosition(-2200);//-350
                 Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Wrist.setPosition(0.53);
                 Arm.setPower(1);
@@ -180,7 +193,7 @@ public class CompetitionTeleOp extends LinearOpMode {
                 Wrist.setPosition(0.44);
                 Arm.setPower(1);
             } else if (gamepad2.dpad_up) {
-                Arm.setTargetPosition(-1450-250);
+                Arm.setTargetPosition(-1450);//-250
                 Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Wrist.setPosition(0.48);
                 Arm.setPower(1);
@@ -194,7 +207,7 @@ public class CompetitionTeleOp extends LinearOpMode {
                 Wrist.setPosition(0.49);
                 Arm.setPower(1);
             } else if (gamepad2.dpad_up) {
-                Arm.setTargetPosition(-430-250);
+                Arm.setTargetPosition(-430);//-250
                 Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Wrist.setPosition(0.43);
                 Arm.setPower(1);
