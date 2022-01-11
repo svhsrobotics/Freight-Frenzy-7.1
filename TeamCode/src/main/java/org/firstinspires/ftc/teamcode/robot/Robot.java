@@ -23,8 +23,8 @@ public class Robot {
     // Hardware definitions
     static final private class Hardware {
         static final double revCounts = 28;
-        static final double gearReduction = 40;
-        static final double wheelDiameter = 3;
+        static final double gearReduction = 40;//40 before
+        static final double wheelDiameter = 6;//3 for test robot
 
         static final String frontLeftMotorName = "FL";
         static final String frontRightMotorName = "FR";

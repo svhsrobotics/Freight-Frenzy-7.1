@@ -6,23 +6,16 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Shared.Drive2;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.robot.hardware.Arm;
+import org.firstinspires.ftc.teamcode.robot.hardware.Webcam;
 import org.firstinspires.ftc.teamcode.util.Configuration;
 import org.firstinspires.ftc.teamcode.vision.HSVColor;
 import org.firstinspires.ftc.teamcode.vision.TeamElementDetector;
-import org.firstinspires.ftc.teamcode.robot.hardware.Webcam;
 import org.opencv.core.Scalar;
 
 @Autonomous
-public class CompetitionAuto extends LinearOpMode {
+public class CompetitionNoVision extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        // Get the webcam from the hardware map
-        Webcam webcam = new Webcam("Webcam 1", hardwareMap);
-
-        Scalar target = getTargetColor();
-
-        TeamElementDetector detector = new TeamElementDetector(target);
-        webcam.setPipeline(detector);
 
         Robot robot = new Robot(hardwareMap);
         robot.initHardware();
@@ -32,38 +25,11 @@ public class CompetitionAuto extends LinearOpMode {
 
         Arm arm = robot.arm;
 
-        // Open the camera
-        webcam.open();
 
         // Wait for the OpMode to start
         waitForStart();
-
- TeamElementDetector.TeamElementPosition position = detector.getAnalysis();
-    telemetry.addData("Position of the Team Element:", position);
         //Drive away from wall
         drive.navigationMonitorTicks(1/4, 0, -5, 10);
-
-        //
-        // Position to level mapping:
-        //        []
-        //    \___||___/  <-- RIGHT
-        //        ||
-        //   \____||____/  <-- CENTER
-        //        ||
-        //  \_____||_____/  <-- LEFT
-        //
-        switch (position) {
-            case LEFT:
-                arm.toLevel(Arm.HubLevel.Bottom);
-                break;
-            case CENTER:
-                arm.toLevel(Arm.HubLevel.Middle);
-                break;
-            case RIGHT:
-                arm.toLevel(Arm.HubLevel.Top);
-                break;
-        }
-
 
         //To Hub
         drive.navigationMonitorTicks(1/2, -5, -5, 10);

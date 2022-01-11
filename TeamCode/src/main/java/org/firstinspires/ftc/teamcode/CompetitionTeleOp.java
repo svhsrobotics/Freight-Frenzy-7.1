@@ -16,6 +16,8 @@ public class CompetitionTeleOp extends LinearOpMode {
     double pivotCollectorFactor = 0.17 / 2;
     double pivotCollectorDifference = (0.17 / 2) + 0.36;
     DcMotor leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive = null;
+    CRServo rightCarousel, leftCarousel=null;
+    double carouselTrim = 0;
 
 
     @Override
@@ -34,6 +36,9 @@ public class CompetitionTeleOp extends LinearOpMode {
         rightFrontDrive = hardwareMap.get(DcMotor.class, "FR");
         leftBackDrive = hardwareMap.get(DcMotor.class, "BL");
         rightBackDrive = hardwareMap.get(DcMotor.class, "BR");
+        rightCarousel = hardwareMap.get(CRServo.class, "rightCarousel");
+        leftCarousel = hardwareMap.get(CRServo.class, "leftCarousel");
+
 
 
 
@@ -107,8 +112,8 @@ public class CompetitionTeleOp extends LinearOpMode {
                 Arm.setPower(0.5);
                 Wrist.setPosition(0.53);
             } else if (gamepad2.dpad_up){
-                    Arm.setTargetPosition(-340);//-300
                     Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    Arm.setTargetPosition(-340);//-300
                     Arm.setPower(0.5);
                     Wrist.setPosition(0.5);
                 }}
@@ -120,11 +125,11 @@ public class CompetitionTeleOp extends LinearOpMode {
                 GoToHubLevel(3);
             } else if (gamepad2.a) {
                 GoToHubLevel(4);
-            } else if (gamepad2.dpad_right) {
-                Wrist.setPosition(-gamepad2.right_stick_y * pivotCollectorFactor + pivotCollectorDifference);
-            } else if (gamepad2.dpad_up) {
-                Arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                Arm.setPower((gamepad2.right_trigger + (-gamepad2.left_trigger)) / 2);
+          //  } else if (gamepad2.dpad_right) {
+          //      Wrist.setPosition(-gamepad2.right_stick_y * pivotCollectorFactor + pivotCollectorDifference);
+          //  } else if (gamepad2.dpad_up) {
+          //  Arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+         //       Arm.setPower((gamepad2.right_trigger + (-gamepad2.left_trigger)) / 2);
             }else if (gamepad2.right_stick_y==1){
                     //manual driver control of arm
                 Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -139,7 +144,26 @@ public class CompetitionTeleOp extends LinearOpMode {
             }else if (gamepad2.right_stick_x==-1){
                 Wrist.setPosition(Wrist.getPosition()+.01);
                 sleep(100);
+                //TODO: Make fail safe so that it doesn't go too far
+            } else if (gamepad1.right_bumper){
+                    //right carousel
+                    rightCarousel.setPower(-80-carouselTrim);
+                    sleep(1000);
+                    rightCarousel.setPower(0);
             }
+            else if (gamepad1.left_bumper){
+                    //left carousel
+                    leftCarousel.setPower(-80-carouselTrim);
+                    sleep(1000);
+                    leftCarousel.setPower(0);
+            }else if (gamepad1.dpad_down){
+                carouselTrim = carouselTrim -5;
+                sleep(100);
+            }else if (gamepad1.dpad_up){
+                carouselTrim = carouselTrim +5;
+                sleep(100);
+            }
+
             Collector.setPower(-gamepad2.left_stick_y / 2);
 
             telemetry.addData("Ticks", Arm.getCurrentPosition());
@@ -154,6 +178,7 @@ public class CompetitionTeleOp extends LinearOpMode {
             telemetry.addData("left joystick y", ((float) Math.round(-gamepad1.left_stick_y * 100)) / 100);
             telemetry.addData("magnitude left", ((float) Math.round(magLeft * 100)) / 100);
             telemetry.addData("thetaLeft", ((float) Math.round(thetaLeft / pi * 100)) / 100);
+            telemetry.addData("Trim", carouselTrim);
 
             telemetry.update();
 
