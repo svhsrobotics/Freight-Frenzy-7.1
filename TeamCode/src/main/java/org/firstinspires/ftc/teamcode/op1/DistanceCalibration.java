@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.op1;
 import android.nfc.Tag;
 import android.util.Log;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -10,7 +11,7 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.util.Configuration;
 import org.firstinspires.ftc.teamcode.util.Configurator;
-
+@Disabled
 @TeleOp(name= "Distance Calibration", group= "Teleop")
 public class DistanceCalibration extends LinearOpMode {
     @Override
@@ -25,9 +26,30 @@ public class DistanceCalibration extends LinearOpMode {
   //      double DistanceRF = 0;
         double DistanceRS =0;
 
-        Configuration config = Configurator.load();
+
 
         waitForStart();
+
+
+        Configuration config = Configurator.load();
+
+        if (config == null) {
+            config = new Configuration();
+        }
+        if(config.rfdistance == null){
+            config.rfdistance = new Double(0.0);
+        }
+        if(config.lfdistance == null){
+            config.lfdistance = new Double(0.0);
+        }
+        if(config.rsdistance == null){
+            config.rsdistance = new Double(0.0);
+        }
+        if(config.lsdistance == null) {
+            config.lsdistance = new Double(0.0);
+        }
+        Configurator.save(config);
+
         boolean currentA = false;
         boolean currentB = false;
         double totalRF = 0;
@@ -63,10 +85,11 @@ public class DistanceCalibration extends LinearOpMode {
                 telemetry.addData("Right Front Distance:", averageRF);
                 telemetry.addData("Left Side Distance:", averageLS);
                 telemetry.update();
-                config.rfdistance = averageRF;
-                config.lsdistance = averageLS;
+                config.rfdistance = new Double(averageRF);
+                config.lsdistance = new Double(averageLS);
                 Configurator.save(config);
                 currentA=false;
+                break:
             }
      */       if (currentB==true){
                 //create an array with the data of the left front sensor
@@ -92,26 +115,31 @@ public class DistanceCalibration extends LinearOpMode {
                 telemetry.addData("Left Front Distance:", averageLF);
                 telemetry.addData("Right Side Distance:", averageRS);
                 telemetry.update();
-                config.lfdistance = averageLF;
-                config.rsdistance = averageRS;
+                config.lfdistance = new Double(averageLF);
+                config.rsdistance = new Double(averageRS);
                 Configurator.save(config);
                 currentB=false;
 
                 //put averages in the json file
+                break;
             }
             if (config.lfdistance != null) {
                 Log.i ("Double","left front saved as: "+ config.lfdistance);
+             //   break;
             }
             if (config.lsdistance != null) {
                 Log.i ("Double","left side saved as: "+ config.lsdistance);
+             //   break;
             }
-            if(config.rfdistance != null) {
-                Log.i ("Double","right front saved as: "+ config.rfdistance);
+ //           if(config.rfdistance != null) {
+ //               Log.i ("Double","right front saved as: "+ config.rfdistance);
+ //               break;
             }
             if(config.rsdistance != null) {
                 Log.i ("Double","right side saved as: "+ config.rsdistance);
+               // break;
             }
             telemetry.update();
         }
     }
-}
+
