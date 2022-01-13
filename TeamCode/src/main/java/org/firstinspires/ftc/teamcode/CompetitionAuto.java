@@ -73,7 +73,7 @@ public class CompetitionAuto extends LinearOpMode {
 
 
         //To Hub
-        drive.navigationMonitorTicks(1/2, -5, -5, 10);
+        drive.navigationMonitorTicks(1/2, -5, 0, 10);
         robot.arm.setCollectorMode(Arm.CollectorMode.Eject);
         //Sleeping so the collector has time to eject before stopping the servo
         sleep(2000);
