@@ -25,14 +25,12 @@ public class RedTeamNav extends LinearOpMode {
 
         HSVColor hsv = null;
 
-        if (config.target != null) {
-            hsv = config.target;
-        } else {
+        if (config.target == null) {
             telemetry.log().add("WARNING WARNING WARNING:");
             telemetry.log().add("TARGET COLOR WAS NOT CALIBRATED!!!");
             telemetry.log().add("Please run the Calibrate Target Color OpMode!");
             android.util.Log.w("TeamElementDemo", "Target Color was NOT CALIBRATED! Falling back to default");
-            hsv = new HSVColor(0.0,0.0,0.0);
+            config.target = new HSVColor(0.0,0.0,0.0);
         }
         // Wait for the OpMode to start
         waitForStart();
@@ -55,7 +53,7 @@ public class RedTeamNav extends LinearOpMode {
         double DistanceRF = 0;
         double DistanceRS =0;
 
-        TeamElementDetector detector = new TeamElementDetector(hsv.toScalar());
+        TeamElementDetector detector = new TeamElementDetector(config);
 /* wait to include information for json file
 ask james in meeting today about team element detector and its proficiency
  */

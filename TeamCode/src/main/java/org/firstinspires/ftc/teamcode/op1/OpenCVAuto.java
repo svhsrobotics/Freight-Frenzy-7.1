@@ -20,18 +20,16 @@ public class OpenCVAuto extends LinearOpMode {
 
         HSVColor hsv = null;
 
-        if (config.target != null) {
-            hsv = config.target;
-        } else {
+        if (config.target == null) {
             telemetry.log().add("WARNING WARNING WARNING:");
             telemetry.log().add("TARGET COLOR WAS NOT CALIBRATED!!!");
             telemetry.log().add("Please run the Calibrate Target Color OpMode!");
             android.util.Log.w("TeamElementDemo", "Target Color was NOT CALIBRATED! Falling back to default");
-            hsv = new HSVColor(0.0,0.0,0.0);
+            config.target = new HSVColor(0.0,0.0,0.0);
         }
 
         // Setup the detector pipeline
-        TeamElementDetector detector = new TeamElementDetector(hsv.toScalar());
+        TeamElementDetector detector = new TeamElementDetector(config);
         webcam.setPipeline(detector);
 
         // Open the camera
