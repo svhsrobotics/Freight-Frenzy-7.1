@@ -15,7 +15,7 @@ public class CurrentTest extends LinearOpMode {
         robot1.initHardware();
 
         Drive2 drive = new Drive2(robot1, this);
-        drive.init();
+        //drive.init();
 
         waitForStart();
         while (opModeIsActive()) {

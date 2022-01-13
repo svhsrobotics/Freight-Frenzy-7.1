@@ -28,7 +28,6 @@ public class CompetitionAuto extends LinearOpMode {
         robot.initHardware();
 
         Drive2 drive = new Drive2(robot,this);
-        drive.init();
 
         Arm arm = robot.arm;
 
@@ -38,8 +37,8 @@ public class CompetitionAuto extends LinearOpMode {
         // Wait for the OpMode to start
         waitForStart();
 
- TeamElementDetector.TeamElementPosition position = detector.getAnalysis();
-    telemetry.addData("Position of the Team Element:", position);
+        TeamElementDetector.TeamElementPosition position = detector.getAnalysis();
+        telemetry.addData("Position of the Team Element:", position);
         //Drive away from wall
         drive.navigationMonitorTicks(1/4, 0, -5, 10);
 

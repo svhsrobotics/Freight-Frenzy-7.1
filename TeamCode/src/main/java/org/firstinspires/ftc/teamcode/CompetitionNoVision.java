@@ -21,7 +21,7 @@ public class CompetitionNoVision extends LinearOpMode {
         robot.initHardware();
 
         Drive2 drive = new Drive2(robot,this);
-        drive.init();
+        //drive.init();
 
         Arm arm = robot.arm;
 

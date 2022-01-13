@@ -21,8 +21,9 @@ import java.util.HashMap;
 
 public class Drive2 {
     String TAG = "Drive";
-    public Drive leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive = null;
-    private DcMotor Sweep;
+    public final Drive leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive;
+    final BNO055IMU imu;
+
     LinearOpMode opMode;
     Telemetry telemetry;
     public HardwareMap hardwareMap; // will be set in OpModeManager.runActiveOpMode
@@ -40,7 +41,6 @@ public class Drive2 {
     HashMap <Drive, Integer> motorInitialPositions, motorTargetPositions;
     HashMap <Drive, Double> motorPowerFactors;
 
-    static BNO055IMU        imu = null;
     static double imuSecondOpModeAdjustment = 0;
     Orientation lastAngles = new Orientation();
 
@@ -53,19 +53,16 @@ public class Drive2 {
         this.robot = robot;
         this.opMode = opMode;
         this.telemetry = opMode.telemetry;
+        this.imu = robot.imu;
 
-        motorPowerFactors = new HashMap<>();
-    }
-
-    public void init() {
-        //robot.initHardware();
         this.leftFrontDrive = robot.Drives.get(Robot.DrivePos.FRONT_LEFT);
         this.rightFrontDrive = robot.Drives.get(Robot.DrivePos.FRONT_RIGHT);
         this.leftBackDrive = robot.Drives.get(Robot.DrivePos.BACK_LEFT);
         this.rightBackDrive = robot.Drives.get(Robot.DrivePos.BACK_RIGHT);
+
+        motorPowerFactors = new HashMap<>();
         setTargetAngle(0);
     }
-
 
     public void check_and_set_drive(double magRight, double thetaRight, double magLeft, double thetaLeft) {
         double rightFrontPowerFactor, leftFrontPowerFactor, rightBackPowerFactor, leftBackPowerFactor;
