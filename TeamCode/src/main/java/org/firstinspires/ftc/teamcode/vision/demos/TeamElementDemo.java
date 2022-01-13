@@ -33,7 +33,7 @@ public class TeamElementDemo extends LinearOpMode {
         }
 
         // Setup the detector pipeline
-        TeamElementDetector detector = new TeamElementDetector(target.toScalar());
+        TeamElementDetector detector = new TeamElementDetector(config);
         webcam.setPipeline(detector);
 
         // Open the camera

@@ -17,7 +17,7 @@ public class WebcamDemo extends LinearOpMode {
         Webcam webcam = new Webcam("Webcam 1", hardwareMap);
 
         // Initialize your pipeline, see TeamElementDetectorDemo for a better example
-        TeamElementDetector detector = new TeamElementDetector(new HSVColor(0.0, 0.0, 0.0).toScalar());
+        TeamElementDetector detector = new TeamElementDetector(null);
 
         // Tell the camera to use that pipeline
         webcam.setPipeline(detector);

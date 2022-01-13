@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.vision
 
+import org.firstinspires.ftc.teamcode.util.Configuration
 import org.opencv.core.Core
 import org.opencv.core.Mat
 import org.opencv.core.Point
@@ -9,20 +10,23 @@ import org.openftc.easyopencv.OpenCvPipeline
 import kotlin.math.abs
 import kotlin.math.round
 
-class TeamElementDetector(private val target: Scalar) : OpenCvPipeline() {
+class TeamElementDetector(config: Configuration) : OpenCvPipeline() {
+    private val target: Scalar = config.target.toScalar();
     enum class TeamElementPosition {
         LEFT, CENTER, RIGHT
     }
 
-    private val region1: Region = Region(Point(320 / 3 * 0.0, 0.0), 320 / 3.0, 240.0)
+    /*private val region1: Region = Region(Point(320 / 3 * 0.0, 0.0), 320 / 3.0, 240.0)
     private val region2: Region = Region(Point(320 / 3 * 1.0, 0.0), 320 / 3.0, 240.0)
-    private val region3: Region = Region(Point(320 / 3 * 2.0, 0.0), 320 / 3.0, 240.0)
+    private val region3: Region = Region(Point(320 / 3 * 2.0, 0.0), 320 / 3.0, 240.0)*/
 
-    private val regions: HashMap<TeamElementPosition, Region> = hashMapOf(
+    /*private val regions: HashMap<TeamElementPosition, Region> = hashMapOf(
         //TeamElementPosition.LEFT to region1,
         TeamElementPosition.CENTER to region2,
         TeamElementPosition.RIGHT to region3,
-    )
+    )*/
+
+    private val regions = config.regions;
 
     // Because regions are internally linked to their parent mat, it must be initialized here.
     private var parent: Mat = Mat()
@@ -49,8 +53,7 @@ class TeamElementDetector(private val target: Scalar) : OpenCvPipeline() {
     //private val target: Scalar = Scalar(27.0,222.0,172.0)
 
     // Threshold: if it is higher than this value, assume the element is off-screen (on the left dot)
-    // TODO: Calibrate this value
-    private val threshold = 35.0
+    private val threshold = config.threshold;
 
     // Score the value based on the target
     private fun score(weights: Array<Double>, value: Scalar, target: Scalar): Double {
@@ -92,9 +95,11 @@ class TeamElementDetector(private val target: Scalar) : OpenCvPipeline() {
 
         regions.forEach {
             // TODO: Calibrate this value
-            val score = score(weights, it.value.getMean(), target)
-            scores[it.key] = round(score)
-            println("DEBUG: ${it.key} is ${it.value.getMean()} giving it a score of $score")
+            if (it.key != TeamElementPosition.LEFT) {
+                val score = score(weights, it.value.getMean(), target)
+                scores[it.key] = round(score)
+                println("DEBUG: ${it.key} is ${it.value.getMean()} giving it a score of $score")
+            }
         }
 
         // TODO: This may throw a Null pointer exception if it cannot find a minimum.
@@ -102,15 +107,15 @@ class TeamElementDetector(private val target: Scalar) : OpenCvPipeline() {
         println("DEBUG: ${min.key} has the lowest score of ${min.value}")
 
         // Check if it is on the left dot
-        if (min.value >= threshold) {
+        position = if (min.value >= threshold) {
             // If it's not one of these 2, it must be the leftmost one which is offscreen
-            position = TeamElementPosition.LEFT
-            region1.highlight(input)
+            TeamElementPosition.LEFT
         } else {
-            position = min.key
-            // Highlight the winning position on the camera stream
-            regions[position]?.highlight(input)
+            min.key
         }
+
+        // Highlight the winning position on the camera stream
+        regions[position]?.highlight(input)
 
         // Render input to the viewport, with annotations.
         return input

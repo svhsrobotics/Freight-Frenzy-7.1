@@ -50,6 +50,7 @@ public class CalibrateTargetColor extends LinearOpMode {
                 break; // Break the loop so we stop calibrating
             }
         }
+        Configurator.save(config);
 
     }
 }
