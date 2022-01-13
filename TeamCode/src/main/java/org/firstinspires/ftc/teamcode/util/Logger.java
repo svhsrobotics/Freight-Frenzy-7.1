@@ -31,7 +31,7 @@ public class Logger {
     public void info(String msg) {
         android.util.Log.i(getCallerTag(getCallerClassName()), msg);
         if (telemetry != null) {
-            telemetry.log().add(formatColor(prefix(msg, "INFO"), "#4CAF50"));
+            telemetry.log().add(formatColor(prefix(escape(msg), "INFO"), "#4CAF50"));
             telemetry.update();
         }
     }
@@ -39,7 +39,7 @@ public class Logger {
     public void warning(String msg) {
         android.util.Log.w(getCallerTag(getCallerClassName()), msg);
         if (telemetry != null) {
-            telemetry.log().add(formatColor(prefix(msg, "WARNING"), "#FFC107"));
+            telemetry.log().add(formatColor(prefix(escape(msg), "WARNING"), "#FFC107"));
             telemetry.update();
         }
     }
@@ -47,7 +47,7 @@ public class Logger {
     public void error(String msg) {
         android.util.Log.e(getCallerTag(getCallerClassName()), msg);
         if (telemetry != null) {
-            telemetry.log().add(formatColor(prefix(msg, "ERROR"), "#F44336"));
+            telemetry.log().add(formatColor(prefix(escape(msg), "ERROR"), "#F44336"));
             telemetry.update();
         }
     }
@@ -55,12 +55,21 @@ public class Logger {
     public void debug(String msg) {
         android.util.Log.d(getCallerTag(getCallerClassName()), msg);
         if (debug && telemetry != null) {
-            telemetry.log().add(formatColor(prefix(msg, "DEBUG"), "#2196F3"));
+            telemetry.log().add(formatColor(prefix(escape(msg), "DEBUG"), "#2196F3"));
             telemetry.update();
         }
     }
 
     // HELPER FUNCTIONS
+
+    private static String escape(String msg) {
+        /*msg = msg.replaceAll("<","&lt")
+                .replaceAll(">", "&gt;")
+                .replaceAll(" ", "&nbsp;")
+                .replaceAll("\"", "&quot")
+                .replaceAll("'", "&apos;");*/
+        return msg;
+    }
 
     private static String prefix(String msg, String prefix) {
         return String.format("<b>[%s]</b> %s", prefix, msg);
