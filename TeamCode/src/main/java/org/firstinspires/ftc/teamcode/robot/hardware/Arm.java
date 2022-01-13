@@ -14,40 +14,74 @@ public class Arm {
     public final Servo wrist;
     public final CRServo collector;
 
-    /**
-     * Constructs a new arm from the main lift motor, the wrist servo, and the collector servo.
-     * @param arm main lift motor
-     * @param wrist wrist servo
-     * @param collector collector servo (continuous)
-     */
+    private static final int MAX_ARM = 1000;
+
     public Arm(DcMotor arm, Servo wrist, CRServo collector) {
         this.arm = arm;
         this.wrist = wrist;
         this.collector = collector;
     }
 
-    /**
-     * Levels that the arm can reach. The Cap level is used for capping, whereas the
-     * Top, Middle, and Bottom levels are the 3 levels on the hub. The Ground level is used for
-     * picking up objects.
-     *
-     * @see #toLevel(HubLevel, boolean)
-     */
-    public enum HubLevel {
-        Cap,
-        Top,
-        Middle,
-        Bottom,
-        Ground,
+    public enum HubPosition {
+        // TODO: Implement capping
+        FRONTTOP,
+        FRONTMID,
+        FRONTBOT,
+        FRONTLOAD,
+
+        BACKTOP,
+        BACKMID,
+        BACKBOT,
+        BACKLOAD,
+
+        START
     }
 
-    /**
-     * Collector modes. The Eject and Collect modes are self-explanatory, i.e. they
-     * eject and collect blocks in the collector. The Stop state is used to stop the collector from
-     * spinning.
-     *
-     * @see #setCollectorMode(CollectorMode)
-     */
+    // Reset the encoder when the arm is in the initial position
+    public void reset() {
+        this.arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+
+    // Go to the position, check done for status
+    public void goToPosition(HubPosition position) {
+        switch (position) {
+            case START:
+                setPositions(0, -1.0);
+
+            case FRONTLOAD:
+                setPositions(0, -0.8);
+        }
+    }
+
+    // Are we done moving to the position yet? (Only arm, not wrist)
+    public boolean done() {
+        return this.arm.getCurrentPosition() == this.arm.getTargetPosition(); // should we allow for some difference??
+    }
+
+    // Helper for goToPosition
+    private void setPositions(double arm, double wrist) {
+        setPosition(this.arm, arm, MAX_ARM);
+        this.wrist.setPosition(wrist);
+    }
+
+    // DcMotor as Servo helpers
+
+    private void setPosition(DcMotor motor, double position, int max) {
+        setPosition(motor, position, 1.0, max);
+    }
+
+    private void setPosition(DcMotor motor, double position, double power, int max) {
+        motor.setTargetPosition((int) (position * max));
+        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motor.setPower(power);
+        motor.getCurrentPosition();
+    }
+
+
+
+
+    // COLLECTOR
+
     public enum CollectorMode {
         Eject,
         Collect,
@@ -71,70 +105,5 @@ public class Arm {
                 collector.setPower(0);
                 break;
         }
-    }
-
-    /**
-     * Sets the raw positions of the arm and wrist. Note that these positions might not be achieved immediately.
-     * This is a private helper function, for internal use only.
-     * @param arm position of the arm motor
-     * @param wrist position of the wrist servo
-     */
-    private void setArmPosition(int arm, double wrist) {
-        this.arm.setTargetPosition(arm); // Set the target position we are going to run to
-        this.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Tell the motor we want it to run to a position
-        this.wrist.setPosition(wrist); // Get the wrist in the correct place
-        this.arm.setPower(1); // Set the power and begin running to that position
-    }
-
-    /**
-     * Begins moving towards the specified level.
-     * Note that this function is asynchronous and will complete before the arm achieves
-     * the desired position.
-     * @param level level to move towards
-     * @param front front load or back load (<code>false</code> is back load)
-     */
-    public void toLevel(@NonNull HubLevel level, boolean front) {
-        switch (level) {
-            case Cap:
-                setArmPosition(-3720, 0.38);
-                break;
-            case Top:
-                if (front) {
-                    setArmPosition(-2200, 0.53);
-
-                } else {
-                    setArmPosition(-4100, 0.36);
-                }
-                break;
-            case Middle:
-                if (front) {
-                    setArmPosition(-1450, 0.48);
-                } else {
-                    setArmPosition(-5238, 0.44);
-                }
-                break;
-            case Bottom:
-                if (front) {
-                    setArmPosition(-430, 0.43);
-                } else {
-                    setArmPosition(-6300, 0.49);
-                }
-                break;
-            case Ground:
-                if (front) {
-                    setArmPosition(-340, 0.5);
-                } else {
-                    setArmPosition(0, 0.53);
-                }
-                break;
-        }
-    }
-
-    /**
-     * @param level level to move towards
-     * @see #toLevel(HubLevel, boolean)
-     */
-    public void toLevel(@NonNull HubLevel level) {
-        toLevel(level, false);
     }
 }
