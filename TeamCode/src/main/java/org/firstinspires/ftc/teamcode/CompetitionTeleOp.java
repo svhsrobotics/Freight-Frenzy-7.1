@@ -142,11 +142,11 @@ public class CompetitionTeleOp extends LinearOpMode {
          //       Arm.setPower((gamepad2.right_trigger + (-gamepad2.left_trigger)) / 2);
             }else if (gamepad2.right_stick_y==1){
                     //manual driver control of arm
+                Arm.setTargetPosition(Arm.getCurrentPosition()+100);
                 Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    Arm.setTargetPosition(Arm.getCurrentPosition()+100);
             }else if (gamepad2.right_stick_y==-1) {
+                Arm.setTargetPosition(Arm.getCurrentPosition()-100);
                 Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    Arm.setTargetPosition(Arm.getCurrentPosition()-100);
             }else if (gamepad2.right_stick_x==1){
                     //manual driver control of wrist
                     Wrist.setPosition(Wrist.getPosition()-.01);
