@@ -65,10 +65,10 @@ public class Drive3 {
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        leftFrontDrive  = opMode.hardwareMap.get(DcMotor.class, "left_front_drive");  //For test robot
-        rightFrontDrive = opMode.hardwareMap.get(DcMotor.class, "right_front_drive");
-        leftBackDrive = opMode.hardwareMap.get(DcMotor.class, "left_back_drive");
-        rightBackDrive = opMode.hardwareMap.get(DcMotor.class, "right_back_drive");
+        leftFrontDrive  = opMode.hardwareMap.get(DcMotor.class, "FL");  //For test robot
+        rightFrontDrive = opMode.hardwareMap.get(DcMotor.class, "FR");
+        leftBackDrive = opMode.hardwareMap.get(DcMotor.class, "BL");
+        rightBackDrive = opMode.hardwareMap.get(DcMotor.class, "BR");
 //        leftFrontDrive  = opMode.hardwareMap.get(DcMotor.class, "LM DT");  //For Competition robot
 //        rightFrontDrive = opMode.hardwareMap.get(DcMotor.class, "RM DT");
 //        leftBackDrive = opMode.hardwareMap.get(DcMotor.class, "LR DT");
