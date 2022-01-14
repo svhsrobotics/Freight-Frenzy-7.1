@@ -46,6 +46,11 @@ public class CompetitionTeleOp extends LinearOpMode {
 
         waitForStart();
 
+        long carouselRStart = 0;
+        long carouselLStart = 0;
+        long carouselTimout = 2000 * 1000 * 1000;
+
+
 
         while (opModeIsActive()) {
 
@@ -157,17 +162,40 @@ public class CompetitionTeleOp extends LinearOpMode {
                 Wrist.setPosition(Wrist.getPosition()+.01);
                 sleep(100);
                 //TODO: Make fail safe so that it doesn't go too far
-            } else if (gamepad1.right_bumper){
-                    //right carousel
+            } else if (gamepad1.right_bumper){/*
+                if (carouselRRunning) {
+                    if ((System.nanoTime() - carouselRStart) > 100000) {
+                        carouselRRunning = false;
+                        rightCarousel.setPower(0);
+                    }
+                } else {
+                    carouselRRunning = true;
                     rightCarousel.setPower(-80-carouselTrim);
+                    carouselRStart = System.nanoTime();
+                }*/
+                carouselRStart = System.nanoTime();
+                    //right carousel
+                    /*rightCarousel.setPower(-80-carouselTrim);
                     sleep(2000);
-                    rightCarousel.setPower(0);
+                    rightCarousel.setPower(0);*/
             }
             else if (gamepad1.left_bumper){
-                    //left carousel
+                /*
+                if (carouselLRunning) {
+                    if ((System.nanoTime() - carouselLStart) > 100000) {
+                        carouselLRunning = false;
+                        leftCarousel.setPower(0);
+                    }
+                } else {
+                    carouselLRunning = true;
                     leftCarousel.setPower(-80-carouselTrim);
+                    carouselLStart = System.nanoTime();
+                }*/
+                carouselLStart = System.nanoTime();
+                    //left carousel
+                    /*leftCarousel.setPower(-80-carouselTrim);
                     sleep(2000);
-                    leftCarousel.setPower(0);
+                    leftCarousel.setPower(0);*/
             }else if (gamepad1.dpad_down){
                 carouselTrim = carouselTrim -5;
                 sleep(100);
@@ -178,6 +206,24 @@ public class CompetitionTeleOp extends LinearOpMode {
                 Arm.setTargetPosition(-3000);
                 Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Wrist.setPosition(0.3);
+            }
+
+            if (carouselRStart != 0) {
+                if ((System.nanoTime() - carouselRStart) > carouselTimout) {
+                    carouselRStart = 0;
+                    rightCarousel.setPower(0);
+                } else {
+                    rightCarousel.setPower(-80-carouselTrim);
+                }
+            }
+
+            if (carouselLStart != 0) {
+                if ((System.nanoTime() - carouselLStart) > carouselTimout) {
+                    carouselLStart = 0;
+                    leftCarousel.setPower(0);
+                } else {
+                    leftCarousel.setPower(-80-carouselTrim);
+                }
             }
 
             Collector.setPower(-gamepad2.left_stick_y / 2);
