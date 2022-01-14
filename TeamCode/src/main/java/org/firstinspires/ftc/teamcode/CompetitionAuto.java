@@ -42,6 +42,8 @@ public class CompetitionAuto extends LinearOpMode {
         robot.arm.reset();
         // Create a drive. Note that passing the entire OpMode is not ideal, should be fixed later
         Drive2 drive = new Drive2(robot,this);
+        //Drive3 drive = new Drive3(this);
+        //drive.init();
 
         // Open the camera; also begins streaming the pipeline
         webcam.open();
@@ -50,18 +52,36 @@ public class CompetitionAuto extends LinearOpMode {
         // Make sure to do this after the camera is opened; otherwise "View Camera Stream" won't work
         waitForStart();
 
+        while (!detector.isReady()) {
+            sleep(50);
+        }
+
         // As soon as we start, get the position
         TeamElementDetector.TeamElementPosition position = detector.getAnalysis();
         // Print it to the telemetry
         telemetry.log().add("Position of the Team Element: " + position); telemetry.update();
 
         // Drive away from wall so the arm doesn't hit it.
-        drive.navigationMonitorTicks(1.0/4, 0, -10, 10);
+        drive.navigationMonitorTicks(1.0/4, 0, -5, 10);
+        drive.ceaseMotion();
+
         // Raise the arm so it doesn't drag.
         robot.arm.setPositions(-1300, .75);
 
-        // Set the target angle (rotate to that angle). Note that this is in radians
-        drive.setTargetAngle(0);
+        if (position == TeamElementDetector.TeamElementPosition.RIGHT) {
+            // Do an extra 8 inches to the left to get around the block- otherwise we plow it into the way
+            drive.navigationMonitorTicks(1.0/4, 8, 0, 10);
+        }
+
+        drive.navigationMonitorTicks(1.0/4, 0, -55, 10);
+        drive.ceaseMotion();
+        sleep(1000);
+        if (position == TeamElementDetector.TeamElementPosition.RIGHT) {
+            drive.navigationMonitorTicks(1.0/4, -30, 0, 10);
+        } else {
+            drive.navigationMonitorTicks(1.0/4, -22, 0, 10);
+        }
+        drive.ceaseMotion();
 
         // Position to level mapping:
         //        []
@@ -72,40 +92,71 @@ public class CompetitionAuto extends LinearOpMode {
         //  \_____||_____/  <-- LEFT
         //
 
-        /*
+
         // Position the arm to the correct level
+        // Also need to get a few inches closer
         switch (position) {
             case LEFT:
-                robot.arm.goToPosition(Arm.HubPosition.BACKBOT);
+                //robot.arm.goToPosition(Arm.HubPosition.BACKBOT);
+                robot.arm.setPositions(-480, 0.38);
+                drive.navigationMonitorTicks(1.0/4, 0, 5, 10);
+                drive.ceaseMotion();
+                robot.arm.setCollectorMode(Arm.CollectorMode.Eject);
                 break; // Break is *very* important
             case CENTER:
-                robot.arm.goToPosition(Arm.HubPosition.BACKMID);
+                //robot.arm.goToPosition(Arm.HubPosition.BACKMID);
+                robot.arm.setPositions(-1300, 0.75);
+                drive.navigationMonitorTicks(1.0/4, 0, 5, 10);
+                drive.ceaseMotion();
+                robot.arm.setCollectorMode(Arm.CollectorMode.Eject);
                 break;
             case RIGHT:
-                robot.arm.goToPosition(Arm.HubPosition.BACKTOP);
+                //robot.arm.goToPosition(Arm.HubPosition.BACKTOP);
+                robot.arm.setPositions(-2075, 1.0);
+                drive.navigationMonitorTicks(1.0/4, 0, 7, 10);
+                drive.ceaseMotion();
+                robot.arm.setCollectorMode(Arm.CollectorMode.Eject);
                 break;
         }
-        */
 
+        sleep(2000);
+        robot.arm.setCollectorMode(Arm.CollectorMode.Stop);
+        drive.navigationMonitorTicks(1.0/4, 0, -13, 10); // Move back
+        drive.ceaseMotion();
+
+        //robot.arm.setPositions(0, 1.0);
+
+        drive.navigationMonitorTicks(1.0/8, -60, 0,10);
+        drive.ceaseMotion();
+
+        drive.navigationMonitorTicks(1.0/2, 0, 60, 10);
+        drive.ceaseMotion();
+
+        robot.arm.setPositions(0, 1.0);
 
         // Drive to the alliance hub
-        drive.navigationMonitorTicks(1.0/2, -5, 0, 10);
+        //drive.navigationMonitorTicks(1.0/2, -5, 0, 10);
         // Start ejecting the block
-        robot.arm.setCollectorMode(Arm.CollectorMode.Eject);
+        //robot.arm.setCollectorMode(Arm.CollectorMode.Eject);
         // Wait for it to eject (should tune this amount...)
-        sleep(2000);
+        //sleep(2000);
         // Ok stop ejecting now
-        robot.arm.setCollectorMode(Arm.CollectorMode.Stop);
+        //robot.arm.setCollectorMode(Arm.CollectorMode.Stop);
 
         // Drive to the carousel
-        drive.navigationMonitorTicks(1.0, 10, 0,10);
+        //drive.navigationMonitorTicks(1.0, 10, 0,10);
 
         // IDK what else needs to happen. Something about positioning for the carousel
 
         // Now we need to park, right?
 
         // Just wait for the OpMode to end... Very important so that things continue running lol.
-        while (opModeIsActive()) {}
+        while (opModeIsActive()) {
+            //Thread.sleep(2000);
+            //telemetry.addData("Angle", robot.imu.getAngularOrientation());
+            //telemetry.update();
+            sleep(50);
+        }
     }
 
 }

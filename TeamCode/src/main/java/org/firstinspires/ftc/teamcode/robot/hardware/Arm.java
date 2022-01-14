@@ -59,19 +59,19 @@ public class Arm {
     }
 
     // Helper for goToPosition
-    public void setPositions(double arm, double wrist) {
+    public void setPositions(int arm, double wrist) {
         setPosition(this.arm, arm, MAX_ARM);
         this.wrist.setPosition(wrist);
     }
 
     // DcMotor as Servo helpers
 
-    private void setPosition(DcMotor motor, double position, int max) {
+    private void setPosition(DcMotor motor, int position, int max) {
         setPosition(motor, position, 1.0, max);
     }
 
-    private void setPosition(DcMotor motor, double position, double power, int max) {
-        motor.setTargetPosition((int) (position * max));
+    private void setPosition(DcMotor motor, int position, double power, int max) {
+        motor.setTargetPosition(position);
         motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motor.setPower(power);
         motor.getCurrentPosition();

@@ -35,6 +35,9 @@ class TeamElementDetector(config: Configuration) : OpenCvPipeline() {
     @Volatile
     private var position = TeamElementPosition.LEFT
 
+    @Volatile
+    private var ready = false
+
     // Converts frame to YCrCb and extracts Cb channel
     private fun toCb(input: Mat, output: Mat) {
         Imgproc.cvtColor(input, output, Imgproc.COLOR_RGB2YCrCb)
@@ -117,6 +120,8 @@ class TeamElementDetector(config: Configuration) : OpenCvPipeline() {
         // Highlight the winning position on the camera stream
         regions[position]?.highlight(input)
 
+        ready = true;
+
         // Render input to the viewport, with annotations.
         return input
     }
@@ -124,5 +129,9 @@ class TeamElementDetector(config: Configuration) : OpenCvPipeline() {
     // Call this from the OpMode thread to obtain the latest analysis
     fun getAnalysis(): TeamElementPosition {
         return position
+    }
+
+    fun isReady(): Boolean {
+        return ready;
     }
 }
