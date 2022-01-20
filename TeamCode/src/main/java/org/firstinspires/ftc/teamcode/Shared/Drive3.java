@@ -45,6 +45,8 @@ public class Drive3 {
     static double imuSecondOpModeAdjustment = 0;
     Orientation lastAngles = new Orientation();
 
+    boolean mIsStopped = false;
+
     public Drive3(LinearOpMode _opMode){
         opMode = _opMode;
         hardwareMap = opMode.hardwareMap;
@@ -65,10 +67,16 @@ public class Drive3 {
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        leftFrontDrive  = opMode.hardwareMap.get(DcMotor.class, "FL");  //For test robot
-        rightFrontDrive = opMode.hardwareMap.get(DcMotor.class, "FR");
-        leftBackDrive = opMode.hardwareMap.get(DcMotor.class, "BL");
-        rightBackDrive = opMode.hardwareMap.get(DcMotor.class, "BR");
+        leftFrontDrive  = opMode.hardwareMap.get(DcMotor.class, "left_front_drive");  //For test robot
+        rightFrontDrive = opMode.hardwareMap.get(DcMotor.class, "right_front_drive");
+        leftBackDrive = opMode.hardwareMap.get(DcMotor.class, "left_back_drive");
+        rightBackDrive = opMode.hardwareMap.get(DcMotor.class, "right_back_drive");
+
+//        leftFrontDrive  = opMode.hardwareMap.get(DcMotor.class, "FL");  //For test robot
+//        rightFrontDrive = opMode.hardwareMap.get(DcMotor.class, "FR");
+//        leftBackDrive = opMode.hardwareMap.get(DcMotor.class, "BL");
+//        rightBackDrive = opMode.hardwareMap.get(DcMotor.class, "BR");
+
 //        leftFrontDrive  = opMode.hardwareMap.get(DcMotor.class, "LM DT");  //For Competition robot
 //        rightFrontDrive = opMode.hardwareMap.get(DcMotor.class, "RM DT");
 //        leftBackDrive = opMode.hardwareMap.get(DcMotor.class, "LR DT");
@@ -105,16 +113,16 @@ public class Drive3 {
             telemetry.log().add("Drive: init: Gyro calibrated");
             telemetry.update();
 
-            // make sure the imu gyro is calibrated before continuing.
-            long startMillis = System.currentTimeMillis();
-            while (!opMode.isStopRequested() && !imu.isAccelerometerCalibrated() && System.currentTimeMillis() - startMillis < 5000) {
-                opMode.sleep(50);
-                opMode.idle();
-            }
-            if(System.currentTimeMillis() - startMillis > 5000)
-                telemetry.log().add("Drive: init: Accel calibration timed out");
-            else
-                telemetry.log().add("Drive: init: Accel calibrated");
+//            // make sure the imu gyro is calibrated before continuing.
+//            long startMillis = System.currentTimeMillis();
+//            while (!opMode.isStopRequested() && !imu.isAccelerometerCalibrated() && System.currentTimeMillis() - startMillis < 5000) {
+//                opMode.sleep(50);
+//                opMode.idle();
+//            }
+//            if(System.currentTimeMillis() - startMillis > 5000)
+//                telemetry.log().add("Drive: init: Accel calibration timed out");
+//            else
+//                telemetry.log().add("Drive: init: Accel calibrated");
             telemetry.update();
             imuSecondOpModeAdjustment = 0;
         } else {
@@ -280,11 +288,13 @@ public class Drive3 {
         double inchesTraveledX = 0, inchesTraveledY = 0, inchesTraveledTotal = 0, rotationInchesTotal = 0;
         double cycleMillisNow = 0, cycleMillisPrior = System.currentTimeMillis(), cycleMillisDelta, startMillis = System.currentTimeMillis();
         //vroom_vroom(speed, theta, speed, theta);
+        mIsStopped = false;
+        mTargetAngleErrorSum = 0;
         getImuAngle();
         vroom_vroom_phi(speed, theta);
         adjustThetaInit();
         //setTargetAngle(mImuCalibrationAngle);
-        while (opMode.opModeIsActive() && runtime.seconds() < timeout && inchesTraveledTotal <= magnitude){
+        while (opMode.opModeIsActive() && runtime.seconds() < timeout && inchesTraveledTotal <= magnitude && !mIsStopped){
             int tickCountNowLeftFront = leftFrontDrive.getCurrentPosition();
             int tickCountNowLeftBack = leftBackDrive.getCurrentPosition();
             int tickCountNowRightFront = rightFrontDrive.getCurrentPosition();
@@ -367,6 +377,8 @@ public class Drive3 {
         rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        mIsStopped = true;
+        opMode.sleep(30);
         leftFrontDrive.setPower(0);
         leftBackDrive.setPower(0);
         rightFrontDrive.setPower(0);
@@ -415,10 +427,11 @@ public class Drive3 {
                 targetTheta/Math.PI*180, nowTheta/Math.PI*180, adjustedTargetTheta/Math.PI*180, thetaErrorSum/Math.PI*180));
     }
 
-    double mCurrentImuAngle, mPriorImuAngle, mTargetAngle, mAdjustedAngle, mPriorAdjustedAngle, mImuCalibrationAngle;
+    double mCurrentImuAngle, mPriorImuAngle, mTargetAngle, mAdjustedAngle, mPriorAdjustedAngle, mTargetAngleErrorSum, mImuCalibrationAngle;
 
     public void setTargetAngle(double targetAngle){
-        mPriorImuAngle = mTargetAngle = targetAngle + imuSecondOpModeAdjustment;
+        double adjustedTargetAngle = getEulerAngleDegrees(targetAngle);
+        mPriorImuAngle = mTargetAngle = adjustedTargetAngle + imuSecondOpModeAdjustment;
     }
 
     public double getImuAngle(){
@@ -431,7 +444,7 @@ public class Drive3 {
         double adjustedHeading = angles.firstAngle + imuSecondOpModeAdjustment;
         telemetry.addData("IMU Angles (X/Y/Z)", "%.1f / %.1f / %.1f", angles.secondAngle, angles.thirdAngle, angles.firstAngle);
         telemetry.update();
-        Log.i(TAG, String.format("getImuAngle: IMU Angles (X/Y/Z): %.1f / %.1f / %.1f", angles.secondAngle, angles.thirdAngle, angles.firstAngle));
+        Log.i(TAG, String.format("getImuAngle: IMU Angles (X/Y/Z): %.1f / %.1f / %.1f; IMU Status: %s", angles.secondAngle, angles.thirdAngle, angles.firstAngle, imu.getCalibrationStatus().toString()));
         return mCurrentImuAngle = angles.firstAngle;
     }
 
@@ -468,18 +481,20 @@ public class Drive3 {
      * Convert an angle such that -pi <= angle <= pi
      */
     private double getEulerAngle(double angle){
-        if(angle < -Math.PI) return angle%(2*Math.PI) + 2 * Math.PI;
-        else if (angle > Math.PI) return angle%(2*Math.PI) - 2 * Math.PI;
-        else return angle;
+        double modAngle = angle%(2*Math.PI);
+        if(modAngle < -Math.PI) return modAngle + 2 * Math.PI;
+        else if (modAngle > Math.PI) return modAngle - 2 * Math.PI;
+        else return modAngle;
     }
 
     /**
-     * Convert an angle such that -pi <= angle <= pi
+     * Convert an angle such that -180 <= angle <= 180
      */
     private double getEulerAngleDegrees(double angle){
-        if(angle < -180) return angle%360 + 360;
-        else if (angle > 180) return angle%360 - 180;
-        else return angle;
+        double modAngle = angle%360;
+        if(modAngle < -180) return modAngle + 360;
+        else if (modAngle > 180) return modAngle - 360;
+        else return modAngle;
     }
 
     /**
@@ -491,14 +506,24 @@ public class Drive3 {
         // The gain value determines how sensitive the correction is to direction changes.
         // You will have to experiment with your robot to get small smooth direction changes
         // to stay on a straight line.
-        double angleError, powerCorrection, angle, gain;
+        double angleError, powerCorrection, angle, pGain, iGain;
 
         angle = getAdjustedAngle();  //IMU angle converted to Euler angle (IMU may already deliver Euler angles)
 
-        angleError = mTargetAngle - angle;        // reverse sign of angle for correction.
+        angleError = getEulerAngleDegrees(mTargetAngle - angle);        // reverse sign of angle for correction.
+        mTargetAngleErrorSum += angleError;
+        int MAX_ERROR_ANGLE_SUM = 3;
+        if(mTargetAngleErrorSum > MAX_ERROR_ANGLE_SUM)
+            mTargetAngleErrorSum = MAX_ERROR_ANGLE_SUM;
+        else if(mTargetAngleErrorSum < -MAX_ERROR_ANGLE_SUM)
+            mTargetAngleErrorSum = -MAX_ERROR_ANGLE_SUM;
+        Log.i(TAG, String.format("getPowerCorrection: targetAngle: %.2f, imuAngle: %.2f, diffAngle: %.2f, diffAngleSum: %.2f", mTargetAngle, angle, angleError, mTargetAngleErrorSum));
 
-        gain = Math.max(-0.05*Math.abs(angleError) + 0.1, .05);  //Varies from .2 around zero to .05 for errors above 10 degrees
-        powerCorrection = angleError * gain;
+        //gain = Math.max(-0.05*Math.abs(angleError) + 0.1, .05);  //Varies from .2 around zero to .05 for errors above 10 degrees
+        pGain = Math.max(-0.05*Math.abs(angleError) + 0.1, .05)/3;  //Varies from .2 around zero to .05 for errors above 10 degrees
+        pGain = 0.06;
+        iGain = 0.04;
+        powerCorrection = angleError * pGain + mTargetAngleErrorSum * iGain;
 
         return powerCorrection;
     }
