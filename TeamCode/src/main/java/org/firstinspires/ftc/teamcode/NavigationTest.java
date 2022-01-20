@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import android.util.Log;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -65,7 +66,7 @@ import org.firstinspires.ftc.teamcode.Shared.DriveOBJ;
  */
 
 @TeleOp(name="NavigationTest")
-//@Disabled
+@Disabled
 public class NavigationTest extends LinearOpMode {
 
 
