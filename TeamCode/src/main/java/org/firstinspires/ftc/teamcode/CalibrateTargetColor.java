@@ -14,7 +14,7 @@ import org.opencv.core.Point;
 
 import java.util.HashMap;
 
-@TeleOp(name = "Calibrate Target Color", group = "Calibration")
+@TeleOp(name = "Calibrate Target Color", group = "Z Calibration")
 public class CalibrateTargetColor extends LinearOpMode {
 
     @Override

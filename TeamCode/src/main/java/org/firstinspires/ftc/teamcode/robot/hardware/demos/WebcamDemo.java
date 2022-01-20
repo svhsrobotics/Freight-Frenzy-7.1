@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot.hardware.demos;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -8,6 +9,7 @@ import org.firstinspires.ftc.teamcode.vision.HSVColor;
 import org.firstinspires.ftc.teamcode.vision.TeamElementDetector;
 
 @TeleOp(name = "Webcam Demo", group = "Hardware Demos")
+@Disabled
 public class WebcamDemo extends LinearOpMode {
 
     @Override

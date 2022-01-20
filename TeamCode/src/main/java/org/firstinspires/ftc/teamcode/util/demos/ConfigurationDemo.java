@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.util.demos;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -7,6 +8,7 @@ import org.firstinspires.ftc.teamcode.util.Configuration;
 import org.firstinspires.ftc.teamcode.util.Configurator;
 
 @TeleOp(name = "Configuration Demo", group = "Software Demos")
+@Disabled
 public class ConfigurationDemo extends LinearOpMode {
 
     @Override

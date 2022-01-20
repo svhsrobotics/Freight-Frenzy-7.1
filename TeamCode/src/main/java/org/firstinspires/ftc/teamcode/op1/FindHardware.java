@@ -3,11 +3,13 @@ package org.firstinspires.ftc.teamcode.op1;
 import com.qualcomm.hardware.lynx.LynxDcMotorController;
 import com.qualcomm.hardware.lynx.LynxServoController;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import java.util.List;
 
 @Autonomous
+@Disabled
 public class FindHardware extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

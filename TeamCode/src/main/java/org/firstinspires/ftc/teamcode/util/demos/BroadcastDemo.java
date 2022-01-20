@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.util.demos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.util.BroadcastHandler;
@@ -9,6 +10,7 @@ import org.firstinspires.ftc.teamcode.util.Logger;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Autonomous
+@Disabled
 public class BroadcastDemo extends LinearOpMode {
     @Override
     public void runOpMode() {

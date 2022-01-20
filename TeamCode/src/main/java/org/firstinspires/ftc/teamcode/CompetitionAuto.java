@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.vision.HSVColor;
 import org.firstinspires.ftc.teamcode.vision.TeamElementDetector;
 import org.firstinspires.ftc.teamcode.robot.hardware.Webcam;
 
-@Autonomous
+@Autonomous(name = "Competition Auto", group = "Competition")
 public class CompetitionAuto extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

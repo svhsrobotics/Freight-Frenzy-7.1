@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.util.demos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.util.Logger;
 
 @Autonomous
+@Disabled
 public class LoggerDemo extends LinearOpMode {
 
     @Override

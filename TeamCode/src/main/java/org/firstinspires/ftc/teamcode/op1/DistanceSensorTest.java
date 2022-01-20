@@ -9,9 +9,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-@Disabled
-@TeleOp
 
+@TeleOp
+@Disabled
 public class DistanceSensorTest extends LinearOpMode {
     @Override
     public void runOpMode(){

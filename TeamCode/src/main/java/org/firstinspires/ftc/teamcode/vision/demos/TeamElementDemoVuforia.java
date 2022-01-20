@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.vision.demos;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -28,6 +29,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
  * gain, ISO, or frame rate.
  */
 @TeleOp
+@Disabled
 public class TeamElementDemoVuforia extends LinearOpMode
 {
     VuforiaLocalizer vuforia = null;

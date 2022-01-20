@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.vision.demos;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -23,6 +24,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
  * the sample regions over the first 3 stones.
  */
 @TeleOp
+@Disabled
 public class DuckDetectionDemo extends LinearOpMode
 {
     OpenCvWebcam webcam;
