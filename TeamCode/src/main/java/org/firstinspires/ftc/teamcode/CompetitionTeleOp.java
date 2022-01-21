@@ -127,10 +127,10 @@ public class CompetitionTeleOp extends LinearOpMode {
                 Arm.setPower(0.5);
                 Wrist.setPosition(.25);
             } else if (gamepad2.dpad_up){
-                    Arm.setTargetPosition(-295);//-300
+                    Arm.setTargetPosition(-400);//-300
                     Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     Arm.setPower(0.5);
-                    Wrist.setPosition(.55);
+                    Wrist.setPosition(.52);
                 }}
                 else if (gamepad2.back) {
                 GoToHubLevel(1);
