@@ -66,7 +66,7 @@ public class CompetitionAuto extends LinearOpMode {
         drive.ceaseMotion();
 
         // Raise the arm so it doesn't drag.
-        robot.arm.setPositions(-1300, .75);
+        robot.arm.setPositions(-1435, .52);
 
         if (position == TeamElementDetector.TeamElementPosition.RIGHT) {
             // Do an extra 8 inches to the left to get around the block- otherwise we plow it into the way
@@ -98,21 +98,21 @@ public class CompetitionAuto extends LinearOpMode {
         switch (position) {
             case LEFT:
                 //robot.arm.goToPosition(Arm.HubPosition.BACKBOT);
-                robot.arm.setPositions(-480, 0.38);
+                robot.arm.setPositions(-593, .42);
                 drive.navigationMonitorTicks(1.0/4, 0, 5, 10);
                 drive.ceaseMotion();
                 robot.arm.setCollectorMode(Arm.CollectorMode.Eject);
                 break; // Break is *very* important
             case CENTER:
                 //robot.arm.goToPosition(Arm.HubPosition.BACKMID);
-                robot.arm.setPositions(-1300, 0.75);
+                robot.arm.setPositions(-1435, .52);
                 drive.navigationMonitorTicks(1.0/4, 0, 5, 10);
                 drive.ceaseMotion();
                 robot.arm.setCollectorMode(Arm.CollectorMode.Eject);
                 break;
             case RIGHT:
                 //robot.arm.goToPosition(Arm.HubPosition.BACKTOP);
-                robot.arm.setPositions(-2075, 1.0);
+                robot.arm.setPositions(-2237, .57);
                 drive.navigationMonitorTicks(1.0/4, 0, 7, 10);
                 drive.ceaseMotion();
                 robot.arm.setCollectorMode(Arm.CollectorMode.Eject);
@@ -132,7 +132,7 @@ public class CompetitionAuto extends LinearOpMode {
         drive.navigationMonitorTicks(1.0/2, 0, 60, 10);
         drive.ceaseMotion();
 
-        robot.arm.setPositions(0, 1.0);
+        robot.arm.setPositions(0, .58);
 
         // Drive to the alliance hub
         //drive.navigationMonitorTicks(1.0/2, -5, 0, 10);
