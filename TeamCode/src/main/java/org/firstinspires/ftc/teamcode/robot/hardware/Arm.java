@@ -64,6 +64,14 @@ public class Arm {
         this.wrist.setPosition(wrist);
     }
 
+    public void setArmPosition(int arm) {
+        setPosition(this.arm, arm, MAX_ARM);
+    }
+
+    public void setWristPosition(double wrist) {
+        this.wrist.setPosition(wrist);
+    }
+
     // DcMotor as Servo helpers
 
     private void setPosition(DcMotor motor, int position, int max) {
@@ -96,10 +104,10 @@ public class Arm {
         switch (mode) {
             case Eject:
                 // TODO: Figure out which one of these should be negative
-                collector.setPower(-0.5);
+                collector.setPower(-0.15);
                 break;
             case Collect:
-                collector.setPower(0.5);
+                collector.setPower(0.15);
                 break;
             case Stop:
                 collector.setPower(0);

@@ -62,7 +62,7 @@ public class CompetitionAuto extends LinearOpMode {
         telemetry.log().add("Position of the Team Element: " + position); telemetry.update();
 
         // Drive away from wall so the arm doesn't hit it.
-        drive.navigationMonitorTicks(1.0/4, 0, -5, 10);
+        drive.navigationMonitorTicks(.125, 0, -10, 10);
         drive.ceaseMotion();
 
         // Raise the arm so it doesn't drag.
@@ -70,10 +70,10 @@ public class CompetitionAuto extends LinearOpMode {
 
         if (position == TeamElementDetector.TeamElementPosition.RIGHT) {
             // Do an extra 8 inches to the left to get around the block- otherwise we plow it into the way
-            drive.navigationMonitorTicks(1.0/4, 8, 0, 10);
+            drive.navigationMonitorTicks(.25, 8, 0, 10);
         }
 
-        drive.navigationMonitorTicks(1.0/4, 0, -55, 10);
+        drive.navigationMonitorTicks(.25, 0, -53, 10);
         drive.ceaseMotion();
         sleep(1000);
         if (position == TeamElementDetector.TeamElementPosition.RIGHT) {
@@ -98,41 +98,47 @@ public class CompetitionAuto extends LinearOpMode {
         switch (position) {
             case LEFT:
                 //robot.arm.goToPosition(Arm.HubPosition.BACKBOT);
-                robot.arm.setPositions(-593, .42);
+                robot.arm.setPositions(-603, .42);
                 drive.navigationMonitorTicks(1.0/4, 0, 5, 10);
                 drive.ceaseMotion();
                 robot.arm.setCollectorMode(Arm.CollectorMode.Eject);
+                sleep(2000);
+                drive.navigationMonitorTicks(1.0/4, 0, -11, 10); // Move back
+                drive.ceaseMotion();
                 break; // Break is *very* important
             case CENTER:
                 //robot.arm.goToPosition(Arm.HubPosition.BACKMID);
-                robot.arm.setPositions(-1435, .52);
+                robot.arm.setPositions(-1445, .47);
                 drive.navigationMonitorTicks(1.0/4, 0, 5, 10);
                 drive.ceaseMotion();
                 robot.arm.setCollectorMode(Arm.CollectorMode.Eject);
+                sleep(2000);
+                drive.navigationMonitorTicks(1.0/4, 0, -11, 10); // Move back
+                drive.ceaseMotion();
                 break;
             case RIGHT:
                 //robot.arm.goToPosition(Arm.HubPosition.BACKTOP);
                 robot.arm.setPositions(-2237, .57);
-                drive.navigationMonitorTicks(1.0/4, 0, 7, 10);
+                drive.navigationMonitorTicks(1.0/4, 0, 9, 10);
                 drive.ceaseMotion();
                 robot.arm.setCollectorMode(Arm.CollectorMode.Eject);
+                sleep(2000);
+                drive.navigationMonitorTicks(1.0/4, 0, -15, 10); // Move back
+                drive.ceaseMotion();
                 break;
         }
 
-        sleep(2000);
         robot.arm.setCollectorMode(Arm.CollectorMode.Stop);
-        drive.navigationMonitorTicks(1.0/4, 0, -13, 10); // Move back
-        drive.ceaseMotion();
 
         //robot.arm.setPositions(0, 1.0);
 
-        drive.navigationMonitorTicks(1.0/8, -60, 0,10);
+        drive.navigationMonitorTicks(1.0/4, -60, 0,10);
         drive.ceaseMotion();
 
         drive.navigationMonitorTicks(1.0/2, 0, 60, 10);
         drive.ceaseMotion();
 
-        robot.arm.setPositions(0, .58);
+        robot.arm.setPositions(0, 0.25);
 
         // Drive to the alliance hub
         //drive.navigationMonitorTicks(1.0/2, -5, 0, 10);
