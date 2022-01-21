@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "Competition", group = "Competition")
+@TeleOp(name = "Competition TeleOp", group = "Competition")
 public class CompetitionTeleOp extends LinearOpMode {
     //private final String TAG = getClass().getName();
     DcMotor Arm = null;
@@ -253,50 +253,50 @@ public class CompetitionTeleOp extends LinearOpMode {
 
     private void GoToHubLevel(int hubLevel) {
 
-        if (hubLevel == 1) {
+        if (hubLevel == 1) { // Cap
             Arm.setTargetPosition(-3720);
             Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             Arm.setPower(1);
             Wrist.setPosition(0.38);
         }
 
-        if (hubLevel == 2) {
+        if (hubLevel == 2) { // Top
             if (gamepad2.dpad_down) {
-                Arm.setTargetPosition(-2075);
+                Arm.setTargetPosition(-2237); //TODO: Need backload later
                 Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Wrist.setPosition(1.0);
+                Wrist.setPosition(.57);
                 Arm.setPower(1);
             } else if (gamepad2.dpad_up) {
-                Arm.setTargetPosition(-2075);//-350
+                Arm.setTargetPosition(-2237);//-350
                 Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Wrist.setPosition(1.0);
+                Wrist.setPosition(.57);
                 Arm.setPower(1);
             }
         }
-        if (hubLevel == 3) {
+        if (hubLevel == 3) { // Mid
             if (gamepad2.dpad_down) {
-                Arm.setTargetPosition(-1300);
+                Arm.setTargetPosition(-1435);
                 Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Wrist.setPosition(0.75);
+                Wrist.setPosition(.52);
                 Arm.setPower(1);
             } else if (gamepad2.dpad_up) {
-                Arm.setTargetPosition(-1300);//-250
+                Arm.setTargetPosition(-1435);//-250
                 Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Wrist.setPosition(0.75);
+                Wrist.setPosition(.52);
                 Arm.setPower(1);
             }
         }
 
         if (hubLevel == 4) {
             if (gamepad2.dpad_down) {
-                Arm.setTargetPosition(-473);
+                Arm.setTargetPosition(-593);
                 Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Wrist.setPosition(0.38);
+                Wrist.setPosition(0.42);
                 Arm.setPower(1);
             } else if (gamepad2.dpad_up) {
-                Arm.setTargetPosition(-473);//-430-250
+                Arm.setTargetPosition(-593);//-430-250
                 Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Wrist.setPosition(0.38);
+                Wrist.setPosition(0.42);
                 Arm.setPower(1);
             }
 
