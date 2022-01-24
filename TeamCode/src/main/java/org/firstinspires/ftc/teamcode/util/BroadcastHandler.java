@@ -10,9 +10,9 @@ import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
 
 public class BroadcastHandler extends BroadcastReceiver {
-    private final Lambda<Intent> lambda;
+    private final VoidLambda<Intent> lambda;
 
-    public BroadcastHandler(String name, Lambda<Intent> lambda) {
+    public BroadcastHandler(String name, VoidLambda<Intent> lambda) {
         this.lambda = lambda;
         AppUtil.getDefContext().getApplicationContext().registerReceiver(this, new IntentFilter(name));
     }
