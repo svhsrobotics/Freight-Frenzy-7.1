@@ -1,13 +1,16 @@
 package org.firstinspires.ftc.teamcode.robot.hardware;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 /**
  * Wrapper around DcMotor providing enhanced and commonly used functionality such as resetting the encoder and calculating the total number of inches traveled.
  */
 public class Drive {
-    private final DcMotor motor;
+    private final DcMotorEx motor;
     private final double inchCounts;
 
     /**
@@ -17,7 +20,7 @@ public class Drive {
      * @param gearReduction the reduction ratio of the drive's gearing
      * @param wheelDiameter the diameter of the wheel, in inches
      */
-    public Drive(DcMotor motor, double revCounts, double gearReduction, double wheelDiameter) {
+    public Drive(DcMotorEx motor, double revCounts, double gearReduction, double wheelDiameter) {
         this.motor = motor;
         this.inchCounts = (revCounts * gearReduction) / (wheelDiameter * Math.PI);
     }
@@ -34,7 +37,7 @@ public class Drive {
      * Sets the drives mode
      * @param mode mode to set the motor to
      */
-    public void setMode(DcMotor.RunMode mode) {
+    public void setMode(DcMotorEx.RunMode mode) {
         this.motor.setMode(mode);
     }
 
@@ -50,7 +53,7 @@ public class Drive {
      * Sets the zero power behavior
      * @param zeroPowerBehavior
      */
-    public void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior zeroPowerBehavior) {
+    public void setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior zeroPowerBehavior) {
         this.motor.setZeroPowerBehavior(zeroPowerBehavior);
     }
 
@@ -102,4 +105,9 @@ public class Drive {
         this.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.setPower(0);
     }
+
+    public double getCurrent(){
+        return motor.getCurrent(CurrentUnit.AMPS);
+    }
 }
+
