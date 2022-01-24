@@ -53,14 +53,16 @@ public class ConceptScanServoLM extends LinearOpMode {
 
     static final double INCREMENT   = 0.01;     // amount to slew servo each CYCLE_MS cycle
     static final int    CYCLE_MS    =   50;     // period of each cycle
-    static final double MAX_V =  1.0;     // Maximum rotational position
-    static final double MIN_V =  0.0;     // Minimum rotational position
+    double MAX_V =  1.0;     // Maximum rotational position
+    double MIN_V =  -1.0;     // Minimum rotational position
+
 
     // Define class members
     CRServo rightCarousel;
     CRServo leftCarousel;
     double velocity = (MAX_V - MIN_V) / 2; // Start at halfway position
     boolean rampUp = true;
+
 
 
 
@@ -102,17 +104,30 @@ public class ConceptScanServoLM extends LinearOpMode {
                 }
             }*/
             if (gamepad1.right_bumper) {
-                velocity = 1;
+                velocity = MAX_V;
             }
             if (gamepad1.left_bumper) {
-                velocity = -1;
+                velocity = MIN_V;
             }
-            if (gamepad1.dpad_up && velocity < 1 && System.currentTimeMillis() - time >= 150) {
-                velocity = velocity + .05;
+            if (gamepad1.dpad_up && MAX_V < 1 && System.currentTimeMillis() - time >= 150) {
+                MAX_V = MAX_V + .05;
+                MIN_V = MIN_V - .05;
+                if( velocity == MAX_V -.05) {
+                    velocity = MAX_V;
+                }else {
+                    velocity = MIN_V;
+                    }
+
                 time = System.currentTimeMillis();
             }
-            if (gamepad1.dpad_down && velocity > -1 && System.currentTimeMillis() - time >= 150) {
-                velocity = velocity - .05;
+            if (gamepad1.dpad_down && MAX_V > 0 && System.currentTimeMillis() - time >= 150) {
+                MAX_V = MAX_V - .05;
+                MIN_V = MIN_V + .05;
+                if( velocity == MAX_V +.05) {
+                    velocity = MAX_V;
+                }else {
+                        velocity = MIN_V;
+                }
                 time = System.currentTimeMillis();
             }
             if(gamepad1.b) {
@@ -121,6 +136,8 @@ public class ConceptScanServoLM extends LinearOpMode {
 
             // Display the current value
             telemetry.addData("Servo Position", "%5.2f", velocity);
+            telemetry.addData("Max clockwise", "%5.2f", MAX_V);
+            telemetry.addData("Max counterclockwise", "%5.2f", MIN_V);
             telemetry.addData(">", "Press Stop to end test." );
             telemetry.update();
 
