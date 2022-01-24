@@ -15,6 +15,7 @@ public class Arm {
     public final CRServo collector;
 
     private static final int MAX_ARM = 1000;
+    public static final int ARM_OFFSET = 0;
 
     public Arm(DcMotor arm, Servo wrist, CRServo collector) {
         this.arm = arm;
@@ -60,7 +61,7 @@ public class Arm {
 
     // Helper for goToPosition
     public void setPositions(int arm, double wrist) {
-        setPosition(this.arm, arm, MAX_ARM);
+        setPosition(this.arm, arm + ARM_OFFSET, MAX_ARM);
         this.wrist.setPosition(wrist);
     }
 

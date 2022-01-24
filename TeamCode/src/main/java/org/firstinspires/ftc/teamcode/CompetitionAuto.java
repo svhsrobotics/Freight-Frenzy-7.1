@@ -17,7 +17,6 @@ import org.firstinspires.ftc.teamcode.robot.hardware.Webcam;
 public class CompetitionAuto extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-
         // Get the webcam from the hardware map
         Webcam webcam = new Webcam("Webcam 1", hardwareMap);
 
@@ -98,31 +97,34 @@ public class CompetitionAuto extends LinearOpMode {
         switch (position) {
             case LEFT:
                 //robot.arm.goToPosition(Arm.HubPosition.BACKBOT);
-                robot.arm.setPositions(-603, .42);
+                //robot.arm.setPositions(-398, .42);
+                robot.arm.setPositions(-650, .42);
                 drive.navigationMonitorTicks(1.0/4, 0, 5, 10);
                 drive.ceaseMotion();
                 robot.arm.setCollectorMode(Arm.CollectorMode.Eject);
-                sleep(2000);
+                sleep(4000);
                 drive.navigationMonitorTicks(1.0/4, 0, -11, 10); // Move back
                 drive.ceaseMotion();
                 break; // Break is *very* important
             case CENTER:
-                //robot.arm.goToPosition(Arm.HubPosition.BACKMID);
-                robot.arm.setPositions(-1445, .47);
+                //robot.arm.goToPosition(Arm.HubPosition.BACKMID);//FRONTLOAD
+                //robot.arm.setPositions(-1157, .47);
+                robot.arm.setPositions(-1374, .47);
                 drive.navigationMonitorTicks(1.0/4, 0, 5, 10);
                 drive.ceaseMotion();
                 robot.arm.setCollectorMode(Arm.CollectorMode.Eject);
-                sleep(2000);
+                sleep(4000);
                 drive.navigationMonitorTicks(1.0/4, 0, -11, 10); // Move back
                 drive.ceaseMotion();
                 break;
             case RIGHT:
                 //robot.arm.goToPosition(Arm.HubPosition.BACKTOP);
-                robot.arm.setPositions(-2237, .57);
+                //robot.arm.setPositions(-2180, .57);
+                robot.arm.setPositions(-2288, .57);
                 drive.navigationMonitorTicks(1.0/4, 0, 9, 10);
                 drive.ceaseMotion();
                 robot.arm.setCollectorMode(Arm.CollectorMode.Eject);
-                sleep(2000);
+                sleep(4000);
                 drive.navigationMonitorTicks(1.0/4, 0, -15, 10); // Move back
                 drive.ceaseMotion();
                 break;
@@ -138,7 +140,7 @@ public class CompetitionAuto extends LinearOpMode {
         drive.navigationMonitorTicks(1.0/2, 0, 60, 10);
         drive.ceaseMotion();
 
-        robot.arm.setPositions(0, 0.25);
+        robot.arm.setPositions(-Arm.ARM_OFFSET, 0.25);
 
         // Drive to the alliance hub
         //drive.navigationMonitorTicks(1.0/2, -5, 0, 10);
