@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import org.firstinspires.ftc.teamcode.robot.hardware.Arm;
 
 @TeleOp(name = "Competition TeleOp", group = "Competition")
 public class CompetitionTeleOp extends LinearOpMode {
@@ -21,7 +22,7 @@ public class CompetitionTeleOp extends LinearOpMode {
     int rightSign;
     int leftSign;
 
-
+    public int offset = org.firstinspires.ftc.teamcode.robot.hardware.Arm.ARM_OFFSET;
     @Override
     public void runOpMode() {
         //final Drive2 drive = new Drive2(this);
@@ -127,7 +128,8 @@ public class CompetitionTeleOp extends LinearOpMode {
                 Arm.setPower(0.5);
                 Wrist.setPosition(.25);
             } else if (gamepad2.dpad_up){
-                    Arm.setTargetPosition(-400);//-300
+                    //Arm.setTargetPosition(-400+offset);//-300
+                    Arm.setTargetPosition(-512+offset);//-300
                     Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     Arm.setPower(0.5);
                     Wrist.setPosition(.52);
@@ -203,7 +205,7 @@ public class CompetitionTeleOp extends LinearOpMode {
                 carouselTrim = carouselTrim +5;
                 sleep(100);
             }else if (gamepad1.y){
-                Arm.setTargetPosition(-3000);
+                Arm.setTargetPosition(-3000+offset);
                 Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Wrist.setPosition(0.3);
             }
@@ -225,9 +227,9 @@ public class CompetitionTeleOp extends LinearOpMode {
                     leftCarousel.setPower(-80-carouselTrim);
                 }
             }
-            //TODO:BOOST SPIT CLICK BUTTON
+
             if (gamepad2.left_stick_y < -0.1) {
-                Collector.setPower(-0.15);
+                Collector.setPower(-0.2);
             } else if (gamepad2.left_stick_y > 0.1) {
                 Collector.setPower(1);
             } else if (gamepad2.left_stick_button) {
@@ -262,7 +264,7 @@ public class CompetitionTeleOp extends LinearOpMode {
     private void GoToHubLevel(int hubLevel) {
 
         if (hubLevel == 1) { // Cap
-            Arm.setTargetPosition(-3720);
+            Arm.setTargetPosition(-3720+offset);
             Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             Arm.setPower(1);
             Wrist.setPosition(0.38);
@@ -270,12 +272,13 @@ public class CompetitionTeleOp extends LinearOpMode {
 
         if (hubLevel == 2) { // Top
             if (gamepad2.dpad_down) {
-                Arm.setTargetPosition(-4085); //TODO: Need backload later
+                Arm.setTargetPosition(-4085+offset); //TODO: Need backload later
                 Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Wrist.setPosition(.27);
                 Arm.setPower(1);
             } else if (gamepad2.dpad_up) {
-                Arm.setTargetPosition(-2237);//-350
+                //Arm.setTargetPosition(-2180+offset);//-350
+                Arm.setTargetPosition(-2288+offset);//-350
                 Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Wrist.setPosition(.57);
                 Arm.setPower(1);
@@ -283,12 +286,13 @@ public class CompetitionTeleOp extends LinearOpMode {
         }
         if (hubLevel == 3) { // Mid
             if (gamepad2.dpad_down) {
-                Arm.setTargetPosition(-5120);
+                Arm.setTargetPosition(-5120+offset);
                 Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Wrist.setPosition(.36);
                 Arm.setPower(1);
             } else if (gamepad2.dpad_up) {
-                Arm.setTargetPosition(-1445);//-250
+                //Arm.setTargetPosition(-1157+offset);//-250
+                Arm.setTargetPosition(-1374+offset);//-250
                 Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Wrist.setPosition(.47);
                 Arm.setPower(1);
@@ -297,12 +301,13 @@ public class CompetitionTeleOp extends LinearOpMode {
 
         if (hubLevel == 4) {
             if (gamepad2.dpad_down) {
-                Arm.setTargetPosition(-6410);
+                Arm.setTargetPosition(-6410+offset);
                 Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Wrist.setPosition(0.5);
                 Arm.setPower(1);
             } else if (gamepad2.dpad_up) {
-                Arm.setTargetPosition(-603);//-430-250
+                //Arm.setTargetPosition(-398+offset);//-430-250
+                Arm.setTargetPosition(-650+offset);//-430-250
                 Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Wrist.setPosition(0.42);
                 Arm.setPower(1);
