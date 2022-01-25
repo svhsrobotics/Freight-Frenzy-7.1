@@ -26,10 +26,17 @@ public class Robot {
         static final double gearReduction = 40;//40 before
         static final double wheelDiameter = 6;//3 for test robot
 
-        static final String frontLeftMotorName = "FL"; // CHM2
-        static final String frontRightMotorName = "FR"; // CHM3
-        static final String backLeftMotorName = "BL"; // CHM0
-        static final String backRightMotorName = "BR"; // CHM1
+        //Competition Robot
+//        static final String frontLeftMotorName = "FL"; // CHM2
+//        static final String frontRightMotorName = "FR"; // CHM3
+//        static final String backLeftMotorName = "BL"; // CHM0
+//        static final String backRightMotorName = "BR"; // CHM1
+//        static final String imuName = "imu";
+
+        static final String frontLeftMotorName = "left_front_drive"; // CHM2
+        static final String frontRightMotorName = "right_front_drive"; // CHM3
+        static final String backLeftMotorName = "left_back_drive"; // CHM0
+        static final String backRightMotorName = "right_back_drive"; // CHM1
         static final String imuName = "imu";
     }
 

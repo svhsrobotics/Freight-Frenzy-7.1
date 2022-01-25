@@ -238,6 +238,8 @@ public class Drive2 {
         adjustThetaInit();
         //setTargetAngle(mImuCalibrationAngle);
         while (opMode.opModeIsActive() && runtime.seconds() < timeout && inchesTraveledTotal <= magnitude){
+//For Speed Changing
+            double initialTime= opMode.getRuntime();
 
             TotalMotorCurrent = leftFrontDrive.getCurrent();
             TotalMotorCurrent += leftBackDrive.getCurrent();
@@ -276,8 +278,26 @@ public class Drive2 {
             inchesTraveledY += deltaInchesRobotY * FUDGE_FACTOR;
             inchesTraveledTotal += Math.hypot(deltaInchesRobotX * FUDGE_FACTOR, deltaInchesRobotY * FUDGE_FACTOR);
 
+/*
+Working on Changing Speed to be consistent
+ */
+            double timePassed = opMode.getRuntime()-initialTime;//Length of time of the loop
+            double actualSpeedX = deltaInchesRobotX/timePassed;//gets the actual speed in inches/second in x direction
+            double actualSpeedY = deltaInchesRobotY/timePassed;//gets the actual speed in inches/second in y direction
+            double speedScale=24;//Speed in inches/second at speed=1
+            double speedScaled= speed*speedScale;//Speed in terms of inches/second instead of 0 to 1
+
+            double actualSpeed = Math.sqrt((actualSpeedX*actualSpeedX)+(actualSpeedY*actualSpeedY));//Take hypotenuse of speed in x and y
+            Log.i("Speed", String.format("Actual Speed in/s:, %.2f", actualSpeed));//log actual speed
+            double speedFactor= (actualSpeed-speedScaled)/speedScaled;//percent error of speed
+            speedScaled = speedScaled*(1+speedFactor);//corrects adjusted speed wiht percent error
+            Log.i("Speed", String.format("New Speed in/s:, %.2f", speedScaled));//log actual speed
+            speed=speedScaled/speedScale;//converts adjusted speed to 0 to 1 scale
+            Log.i("Speed", String.format("New Speed from 0 to 1:, %.2f", speed));//log actual speed
+
             //Provide feedback to keep robot moving in right direction based on encoder ticks
             adjustTheta(xInches, yInches, speed, inchesTraveledX, inchesTraveledY);  //Must call adjustThetaInit() before a loop with adjustTheta()
+
 
             cycleMillisNow = System.currentTimeMillis();
             cycleMillisDelta = cycleMillisNow - cycleMillisPrior;
@@ -288,14 +308,16 @@ public class Drive2 {
             telemetry.addData("In Traveled (Tot, Rot)", "%.1f, %.1f", inchesTraveledTotal,rotationInchesTotal);
             telemetry.addData("Cycle Millis:", "%4f", cycleMillisDelta);
             telemetry.update();
-            Log.i("Drive", String.format("Ticks Traveled (lf, lb): %7d, %7d", ticksTraveledLeftFront, ticksTraveledLeftBack));
-            Log.i("Drive", String.format("Ticks Traveled (rf, rb): %7d, %7d", ticksTraveledRightFront, ticksTraveledRightBack));
-            Log.i("Drive", String.format("Ticks Delta (lf, lb): %7d, %7d", deltaTicksLeftFront, deltaTicksLeftBack));
-            Log.i("Drive", String.format("Ticks Delta (rf, rb): %7d, %7d", deltaTicksRightFront, deltaTicksRightBack));
-            Log.i("Drive", String.format("In Traveled (X, Y): X: %.2f, Y: %.2f", inchesTraveledX, inchesTraveledY));
-            Log.i("Drive", String.format("In Traveled (Tot, Rot): %.2f, %.2f", inchesTraveledTotal,rotationInchesTotal));
-            Log.i("Drive", String.format("Incremental Speed (in/sec): %.2f", deltaInchesRobot/cycleMillisDelta * 1000));
-            Log.i("Drive", String.format("Cycle Millis: %.3f, Total Seconds: %.3f", cycleMillisDelta, (System.currentTimeMillis() - startMillis)/1000));
+//            Log.i("Drive", String.format("Ticks Traveled (lf, lb): %7d, %7d", ticksTraveledLeftFront, ticksTraveledLeftBack));
+//            Log.i("Drive", String.format("Ticks Traveled (rf, rb): %7d, %7d", ticksTraveledRightFront, ticksTraveledRightBack));
+//            Log.i("Drive", String.format("Ticks Delta (lf, lb): %7d, %7d", deltaTicksLeftFront, deltaTicksLeftBack));
+//            Log.i("Drive", String.format("Ticks Delta (rf, rb): %7d, %7d", deltaTicksRightFront, deltaTicksRightBack));
+//            Log.i("Drive", String.format("In Traveled (X, Y): X: %.2f, Y: %.2f", inchesTraveledX, inchesTraveledY));
+//            Log.i("Drive", String.format("In Traveled (Tot, Rot): %.2f, %.2f", inchesTraveledTotal,rotationInchesTotal));
+//            Log.i("Drive", String.format("Incremental Speed (in/sec): %.2f", deltaInchesRobot/cycleMillisDelta * 1000));
+//            Log.i("Drive", String.format("Cycle Millis: %.3f, Total Seconds: %.3f", cycleMillisDelta, (System.currentTimeMillis() - startMillis)/1000));
+
+
 
             tickCountPriorLeftFront = tickCountNowLeftFront;
             tickCountPriorLeftBack = tickCountNowLeftBack;
