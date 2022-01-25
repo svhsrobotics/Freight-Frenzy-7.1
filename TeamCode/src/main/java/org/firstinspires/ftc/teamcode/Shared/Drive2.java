@@ -8,13 +8,19 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import java.util.Map.Entry;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.navigation.DoubleDriveSet;
+import org.firstinspires.ftc.teamcode.navigation.DriveSet;
 import org.firstinspires.ftc.teamcode.navigation.External;
+import org.firstinspires.ftc.teamcode.navigation.Mechanum;
+import org.firstinspires.ftc.teamcode.navigation.Vector;
 import org.firstinspires.ftc.teamcode.robot.Robot;
+import org.firstinspires.ftc.teamcode.robot.Robot.DrivePos;
 import org.firstinspires.ftc.teamcode.robot.hardware.Drive;
 import org.firstinspires.ftc.teamcode.robot.testRobot;
 
@@ -137,11 +143,6 @@ public class Drive2 {
      * Utilizes orientation away from the desired location(phi) in order to alter power power facotrs on the motors.
      */
     public void navigationByPhi(double targetSpeed, double targetTheta) {
-        double rightFrontPowerFactor, leftFrontPowerFactor, rightBackPowerFactor, leftBackPowerFactor;
-        double pi = Math.PI;
-        double thetaRight = targetTheta;
-        double thetaLeft = targetTheta;
-
         // Send telemetry message to indicate successful Encoder reset
         telemetry.addData("Path",  "Starting at %7d : %7d",
                 leftFrontDrive.getCurrentPosition(),
@@ -151,50 +152,10 @@ public class Drive2 {
         // reset the timeout time and start motion.
         runtime.reset();
 
-        if(thetaRight > 0 && thetaRight < pi/2){
-            rightFrontPowerFactor = -Math.cos(2 * thetaRight);
-        }else if(thetaRight >= -pi && thetaRight < -pi/2){
-            rightFrontPowerFactor = Math.cos(2 * thetaRight);
-        }else if(thetaRight >= pi/2 && thetaRight <= pi){
-            rightFrontPowerFactor = 1;
-        }else{
-            rightFrontPowerFactor = -1;
-        }
-
-        if(thetaLeft > 0 && thetaLeft < pi/2) {
-            leftBackPowerFactor = -Math.cos(2 * thetaLeft);
-        }else if(thetaLeft >= -pi && thetaLeft < -pi/2){
-            leftBackPowerFactor = Math.cos(2 * thetaLeft);
-        }else if(thetaLeft >= pi/2 && thetaLeft <= pi){
-            leftBackPowerFactor = 1;
-        }else{
-            leftBackPowerFactor = -1;
-        }
-
-        if(thetaRight > -pi/2 && thetaRight < 0) {
-            rightBackPowerFactor = Math.cos(2 * thetaRight);
-        }else if(thetaRight > pi/2 && thetaRight < pi){
-            rightBackPowerFactor = -Math.cos(2 * thetaRight);
-        }else if(thetaRight >= 0 && thetaRight <= pi/2){
-            rightBackPowerFactor = 1;
-        }else{
-            rightBackPowerFactor = -1;
-        }
-
-        if(thetaLeft > -pi/2 && thetaLeft < 0) {
-            leftFrontPowerFactor = Math.cos(2 * thetaLeft);
-        }else if(thetaLeft > pi/2 && thetaLeft < pi){
-            leftFrontPowerFactor = -Math.cos(2 * thetaLeft);
-        }else if(thetaLeft >= 0 && thetaLeft <= pi/2){
-            leftFrontPowerFactor = 1;
-        }else{
-            leftFrontPowerFactor = -1;
-        }
-
-        motorPowerFactors.put(leftFrontDrive, leftFrontPowerFactor);
-        motorPowerFactors.put(leftBackDrive, leftBackPowerFactor);
-        motorPowerFactors.put(rightFrontDrive, rightFrontPowerFactor);
-        motorPowerFactors.put(rightBackDrive, rightBackPowerFactor);
+        motorPowerFactors.put(leftFrontDrive, Mechanum.leftPowerFactor(targetTheta));
+        motorPowerFactors.put(leftBackDrive, Mechanum.rightPowerFactor(targetTheta));
+        motorPowerFactors.put(rightFrontDrive, Mechanum.rightPowerFactor(targetTheta));
+        motorPowerFactors.put(rightBackDrive, Mechanum.leftPowerFactor(targetTheta));
 
         SpeedsPhi speedsPhi = getPhiSpeeds(targetSpeed, motorPowerFactors);
         setMotorPowersPhi(speedsPhi);
@@ -216,19 +177,20 @@ public class Drive2 {
     /** navigationMonitorTicks
      *
      * @param speed
-     * @param xInches
-     * @param yInches
+     * @param vector
      * @param timeout
      *
      * Utilizes wheel encoders in order to track the location of the robot.
      * Imu heading tracks the direction the robot is pointing.
      * Tracking the location with the wheel encoders allows for a direct input for location and time in order to direect the robot's movement.
      */
-    public void navigationMonitorTicks(double speed, double xInches, double yInches, double timeout) {
-        //Borrowed Holonomic robot navigation ideas from https://www.bridgefusion.com/blog/2019/4/10/robot-localization-dead-reckoning-in-f  irst-tech-challenge-ftc
-        //    Robot Localization -- Dead Reckoning in First Tech Challenge (FTC)
-        double theta = Math.atan2(yInches, xInches);
-        double magnitude = Math.hypot(xInches, yInches);
+    /*
+     * Borrowed ideas from https://www.bridgefusion.com/blog/2019/4/10/robot-localization-dead-reckoning-in-first-tech-challenge-ftc
+     */
+    public void navigationMonitorTicks(double speed, Vector vector, double timeout) {
+        double theta = vector.theta;
+        double magnitude = vector.magnitude;
+
         int tickCountPriorLeftFront = leftFrontDrive.getCurrentPosition(), tickCountPriorLeftBack = leftBackDrive.getCurrentPosition();
         int tickCountPriorRightFront = rightFrontDrive.getCurrentPosition(), tickCountPriorRightBack = rightBackDrive.getCurrentPosition();
         int ticksTraveledLeftFront = 0, ticksTraveledLeftBack = 0, ticksTraveledRightFront = 0, ticksTraveledRightBack = 0;
@@ -238,38 +200,27 @@ public class Drive2 {
         getImuAngle();
         navigationByPhi(speed, theta);
         adjustThetaInit();
+
+        DoubleDriveSet prior = new DoubleDriveSet(0.0, 0.0, 0.0, 0.0);
+        // Set the priors to 0
+        //double priorLeftFront = 0.0; double priorLeftBack = 0.0; double priorRightFront = 0.0; double priorRightBack = 0.0;
+
         //setTargetAngle(mImuCalibrationAngle);
-        while (opMode.opModeIsActive() && runtime.seconds() < timeout && inchesTraveledTotal <= magnitude){
+        while (opMode.opModeIsActive() && runtime.seconds() < timeout && inchesTraveledTotal <= magnitude) {
+            DoubleDriveSet current = new DoubleDriveSet(
+                rightFrontDrive.getCurrentInches(), rightBackDrive.getCurrentInches(),
+                leftFrontDrive.getCurrentInches(), leftBackDrive.getCurrentInches());
 
-            TotalMotorCurrent = leftFrontDrive.getCurrent();
-            TotalMotorCurrent += leftBackDrive.getCurrent();
-            TotalMotorCurrent += rightFrontDrive.getCurrent();
-            TotalMotorCurrent += rightBackDrive.getCurrent();
-            Log.i(TAG,"navigationMonitorTicks: Total Motor Current= "+ TotalMotorCurrent);
+            DoubleDriveSet delta = new DoubleDriveSet(
+                current.rightFront - prior.rightFront, current.rightBack - prior.rightBack,
+                current.leftFront - prior.leftFront, current.leftBack - prior.leftBack);
 
+            prior = current;
 
-            int tickCountNowLeftFront = leftFrontDrive.getCurrentPosition();
-            int tickCountNowLeftBack = leftBackDrive.getCurrentPosition();
-            int tickCountNowRightFront = rightFrontDrive.getCurrentPosition();
-            int tickCountNowRightBack = rightBackDrive.getCurrentPosition();
-            int deltaTicksLeftFront = tickCountNowLeftFront - tickCountPriorLeftFront;
-            int deltaTicksLeftBack = tickCountNowLeftBack - tickCountPriorLeftBack;
-            int deltaTicksRightFront = tickCountNowRightFront - tickCountPriorRightFront;
-            int deltaTicksRightBack = tickCountNowRightBack - tickCountPriorRightBack;
-            ticksTraveledLeftFront += deltaTicksLeftFront;
-            ticksTraveledLeftBack += deltaTicksLeftBack;
-            ticksTraveledRightFront += deltaTicksRightFront;
-            ticksTraveledRightBack += deltaTicksRightBack;
-            double leftFrontInchesDelta = deltaTicksLeftFront / COUNTS_PER_INCH;
-            double rightFrontInchesDelta = -deltaTicksRightFront / COUNTS_PER_INCH;  //Minus sign converts to holonomic drive perspective
-            double rightBackInchesDelta = -deltaTicksRightBack / COUNTS_PER_INCH;  //Minus sign converts to holonomic drive perspective
-            double leftBackInchesDelta = deltaTicksLeftBack / COUNTS_PER_INCH;
-            double rotationAvgInchesDelta = (leftFrontInchesDelta + rightFrontInchesDelta + rightBackInchesDelta + leftBackInchesDelta)/4;
-            rotationInchesTotal += rotationAvgInchesDelta;
-            double leftFrontRobotInchesDelta = leftFrontInchesDelta - rotationAvgInchesDelta;
-            double rightFrontRobotInchesDelta = rightFrontInchesDelta - rotationAvgInchesDelta;
-            double rightBackRobotInchesDelta = rightBackInchesDelta - rotationAvgInchesDelta;
-            double leftBackRobotInchesDelta = leftBackInchesDelta - rotationAvgInchesDelta;
+            double rotationAvgInchesDelta = (delta.leftFront + delta.rightFront + delta.rightBack + delta.leftBack) / 4.0;
+            delta.addAll(rotationAvgInchesDelta);
+
+            double deltaX =
             double deltaInchesRobotX = (leftFrontRobotInchesDelta + rightFrontRobotInchesDelta - rightBackRobotInchesDelta - leftBackRobotInchesDelta) / (2 * Math.sqrt(2));
             double deltaInchesRobotY = (leftFrontRobotInchesDelta - rightFrontRobotInchesDelta - rightBackRobotInchesDelta + leftBackRobotInchesDelta) / (2 * Math.sqrt(2));
             double deltaInchesRobot = Math.hypot(deltaInchesRobotX, deltaInchesRobotY);

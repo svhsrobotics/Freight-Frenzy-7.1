@@ -1,5 +1,5 @@
 package org.firstinspires.ftc.teamcode.util;
 
-public interface Lambda<T> {
-    void run(T parameter);
+public interface Lambda<R,T> {
+    R run(T parameter);
 }
