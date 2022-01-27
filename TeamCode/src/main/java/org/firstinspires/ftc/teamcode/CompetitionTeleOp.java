@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -50,7 +51,6 @@ public class CompetitionTeleOp extends LinearOpMode {
         long carouselRStart = 0;
         long carouselLStart = 0;
         long carouselTimout = 2000 * 1000 * 1000;
-
 
 
         while (opModeIsActive()) {
@@ -129,7 +129,7 @@ public class CompetitionTeleOp extends LinearOpMode {
                 Wrist.setPosition(.38);
             } else if (gamepad2.dpad_up){
                     //Arm.setTargetPosition(-400+offset);//-300
-                    Arm.setTargetPosition(-205+offset);//-300
+                    Arm.setTargetPosition(-432);//-300
                     Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     Arm.setPower(0.5);
                     Wrist.setPosition(.68);
