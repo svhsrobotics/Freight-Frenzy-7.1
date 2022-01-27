@@ -54,10 +54,11 @@ public class CompetitionTeleOpNick extends LinearOpMode {
         while (opModeIsActive()) {
 
             // Run wheels in tank mode (note: The joystick goes negative when pushed forwards, so negate it)
-            leftBackDrive.setPower(-(gamepad1.right_trigger-gamepad1.left_trigger-gamepad1.left_stick_y - gamepad1.left_stick_x)); //
-            leftFrontDrive.setPower(-(gamepad1.right_trigger-gamepad1.left_trigger-gamepad1.left_stick_y + gamepad1.left_stick_x)); //
-            rightFrontDrive.setPower(-gamepad1.right_trigger+gamepad1.left_trigger-gamepad1.left_stick_y - gamepad1.left_stick_x); //
-            rightBackDrive.setPower(-gamepad1.right_trigger+gamepad1.left_trigger-gamepad1.left_stick_y + gamepad1.left_stick_x); //
+
+            leftBackDrive.setPower(-(gamepad1.right_trigger-(0.75*gamepad1.left_trigger)-gamepad1.left_stick_y - (0.75*gamepad1.left_stick_x))); //
+            leftFrontDrive.setPower(-((0.75*gamepad1.right_trigger)-(0.75*gamepad1.left_trigger)-gamepad1.left_stick_y + gamepad1.left_stick_x)); //
+            rightFrontDrive.setPower((0.75*-gamepad1.right_trigger)+(0.75*gamepad1.left_trigger)-gamepad1.left_stick_y - gamepad1.left_stick_x); //
+            rightBackDrive.setPower((0.75*-gamepad1.right_trigger)+(0.75*gamepad1.left_trigger)-gamepad1.left_stick_y + gamepad1.left_stick_x);
 
             if (gamepad2.y) {
                 if(gamepad2.dpad_down){
@@ -67,7 +68,7 @@ public class CompetitionTeleOpNick extends LinearOpMode {
                 Wrist.setPosition(.38);
             } else if (gamepad2.dpad_up){
                     //Arm.setTargetPosition(-400+offset);//-300
-                    Arm.setTargetPosition(-205+offset);//-300
+                    Arm.setTargetPosition(-363+offset);//-300
                     Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     Arm.setPower(0.5);
                     Wrist.setPosition(.68);
