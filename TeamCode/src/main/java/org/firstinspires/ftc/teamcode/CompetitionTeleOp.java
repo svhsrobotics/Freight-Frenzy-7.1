@@ -227,6 +227,10 @@ public class CompetitionTeleOp extends LinearOpMode {
                     leftCarousel.setPower(-80-carouselTrim);
                 }
             }
+            if (gamepad1.b){
+                carouselRStart = -carouselTimout;
+                carouselLStart = -carouselTimout;
+            }
 
             if (gamepad2.left_stick_y < -0.1) {
                 Collector.setPower(-0.2);
