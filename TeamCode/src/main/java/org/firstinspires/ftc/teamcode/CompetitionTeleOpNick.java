@@ -6,20 +6,21 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "Competition TeleOp 7", group = "Competition")
-public class CompetitionTeleOp7 extends LinearOpMode {
+@TeleOp(name = "Nick's Competition TeleOp", group = "Competition")
+public class CompetitionTeleOpNick extends LinearOpMode {
     //private final String TAG = getClass().getName();
     DcMotor Arm = null;
     Servo Wrist = null;
     CRServo Collector = null;
-    //double pivotCollectorFactor = 0.17 / 2;
-    //double pivotCollectorDifference = (0.17 / 2) + 0.36;
+    double pivotCollectorFactor = 0.17 / 2;
+    double pivotCollectorDifference = (0.17 / 2) + 0.36;
     DcMotor leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive = null;
     CRServo rightCarousel, leftCarousel=null;
     double carouselTrim = 0;
+    int rightSign;
+    int leftSign;
 
-
-
+    public int offset = org.firstinspires.ftc.teamcode.robot.hardware.Arm.ARM_OFFSET;
     @Override
     public void runOpMode() {
         //final Drive2 drive = new Drive2(this);
@@ -53,8 +54,8 @@ public class CompetitionTeleOp7 extends LinearOpMode {
         while (opModeIsActive()) {
 
             // Run wheels in tank mode (note: The joystick goes negative when pushed forwards, so negate it)
-            leftBackDrive.setPower(gamepad1.right_trigger-gamepad1.left_trigger-gamepad1.left_stick_y - gamepad1.left_stick_x); //
-            leftFrontDrive.setPower(gamepad1.right_trigger-gamepad1.left_trigger-gamepad1.left_stick_y + gamepad1.left_stick_x); //
+            leftBackDrive.setPower(-(gamepad1.right_trigger-gamepad1.left_trigger-gamepad1.left_stick_y - gamepad1.left_stick_x)); //
+            leftFrontDrive.setPower(-(gamepad1.right_trigger-gamepad1.left_trigger-gamepad1.left_stick_y + gamepad1.left_stick_x)); //
             rightFrontDrive.setPower(-gamepad1.right_trigger+gamepad1.left_trigger-gamepad1.left_stick_y - gamepad1.left_stick_x); //
             rightBackDrive.setPower(-gamepad1.right_trigger+gamepad1.left_trigger-gamepad1.left_stick_y + gamepad1.left_stick_x); //
 
@@ -63,12 +64,13 @@ public class CompetitionTeleOp7 extends LinearOpMode {
                 Arm.setTargetPosition(0);
                 Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Arm.setPower(0.5);
-                Wrist.setPosition(.25);
+                Wrist.setPosition(.38);
             } else if (gamepad2.dpad_up){
-                    Arm.setTargetPosition(-400);//-300
+                    //Arm.setTargetPosition(-400+offset);//-300
+                    Arm.setTargetPosition(-205+offset);//-300
                     Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     Arm.setPower(0.5);
-                    Wrist.setPosition(.52);
+                    Wrist.setPosition(.68);
                 }}
                 else if (gamepad2.back) {
                 GoToHubLevel(1);
@@ -141,9 +143,9 @@ public class CompetitionTeleOp7 extends LinearOpMode {
                 carouselTrim = carouselTrim +5;
                 sleep(100);
             }else if (gamepad1.y){
-                Arm.setTargetPosition(-3000);
+                Arm.setTargetPosition(-3204+offset);
                 Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Wrist.setPosition(0.3);
+                Wrist.setPosition(.59);
             }
 
             if (carouselRStart != 0) {
@@ -163,9 +165,13 @@ public class CompetitionTeleOp7 extends LinearOpMode {
                     leftCarousel.setPower(-80-carouselTrim);
                 }
             }
-            //TODO:BOOST SPIT CLICK BUTTON
+            if (gamepad1.b){
+                carouselRStart = -carouselTimout;
+                carouselLStart = -carouselTimout;
+            }
+
             if (gamepad2.left_stick_y < -0.1) {
-                Collector.setPower(-0.15);
+                Collector.setPower(-0.2);
             } else if (gamepad2.left_stick_y > 0.1) {
                 Collector.setPower(1);
             } else if (gamepad2.left_stick_button) {
@@ -200,7 +206,7 @@ public class CompetitionTeleOp7 extends LinearOpMode {
     private void GoToHubLevel(int hubLevel) {
 
         if (hubLevel == 1) { // Cap
-            Arm.setTargetPosition(-3720);
+            Arm.setTargetPosition(-3720+offset);
             Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             Arm.setPower(1);
             Wrist.setPosition(0.38);
@@ -208,41 +214,44 @@ public class CompetitionTeleOp7 extends LinearOpMode {
 
         if (hubLevel == 2) { // Top
             if (gamepad2.dpad_down) {
-                Arm.setTargetPosition(-4085); //TODO: Need backload later
+                Arm.setTargetPosition(-2019+offset); //TODO: Need backload later
                 Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Wrist.setPosition(.27);
+                Wrist.setPosition(.71);
                 Arm.setPower(1);
             } else if (gamepad2.dpad_up) {
-                Arm.setTargetPosition(-2237);//-350
+                //Arm.setTargetPosition(-2180+offset);//-350
+                Arm.setTargetPosition(-2019+offset);//-350
                 Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Wrist.setPosition(.57);
+                Wrist.setPosition(.71);
                 Arm.setPower(1);
             }
         }
         if (hubLevel == 3) { // Mid
             if (gamepad2.dpad_down) {
-                Arm.setTargetPosition(-5120);
+                Arm.setTargetPosition(-1270+offset);
                 Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Wrist.setPosition(.36);
+                Wrist.setPosition(.67);
                 Arm.setPower(1);
             } else if (gamepad2.dpad_up) {
-                Arm.setTargetPosition(-1445);//-250
+                //Arm.setTargetPosition(-1157+offset);//-250
+                Arm.setTargetPosition(-1270+offset);//-250
                 Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Wrist.setPosition(.47);
+                Wrist.setPosition(.67);
                 Arm.setPower(1);
             }
         }
 
         if (hubLevel == 4) {
             if (gamepad2.dpad_down) {
-                Arm.setTargetPosition(-6410);
+                Arm.setTargetPosition(-6353+offset);
                 Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Wrist.setPosition(0.5);
+                Wrist.setPosition(.61);
                 Arm.setPower(1);
             } else if (gamepad2.dpad_up) {
-                Arm.setTargetPosition(-603);//-430-250
+                //Arm.setTargetPosition(-398+offset);//-430-250
+                Arm.setTargetPosition(-369+offset);//-430-250
                 Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Wrist.setPosition(0.42);
+                Wrist.setPosition(.57);
                 Arm.setPower(1);
             }
 
