@@ -228,7 +228,8 @@ public class CompetitionTeleOp extends LinearOpMode {
                 }
             }
             if (gamepad1.b){
-
+                carouselRStart = -carouselTimout;
+                carouselLStart = -carouselTimout;
             }
 
             if (gamepad2.left_stick_y < -0.1) {
