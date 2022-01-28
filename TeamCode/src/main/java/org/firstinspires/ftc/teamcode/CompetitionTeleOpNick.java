@@ -215,13 +215,13 @@ public class CompetitionTeleOpNick extends LinearOpMode {
 
         if (hubLevel == 2) { // Top
             if (gamepad2.dpad_down) {
-                Arm.setTargetPosition(-2019+offset); //TODO: Need backload later
+                Arm.setTargetPosition(-2030+offset); //TODO: Need backload later
                 Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Wrist.setPosition(.71);
                 Arm.setPower(1);
             } else if (gamepad2.dpad_up) {
                 //Arm.setTargetPosition(-2180+offset);//-350
-                Arm.setTargetPosition(-2019+offset);//-350
+                Arm.setTargetPosition(-2030+offset);//-350
                 Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Wrist.setPosition(.71);
                 Arm.setPower(1);

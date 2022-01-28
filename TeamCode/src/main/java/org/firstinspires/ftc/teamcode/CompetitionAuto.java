@@ -125,7 +125,7 @@ public class CompetitionAuto extends LinearOpMode {
                 drive.ceaseMotion();
                 robot.arm.setCollectorMode(Arm.CollectorMode.Eject);
                 sleep(4000);
-                drive.navigationMonitorTicks(1.0/4, 0, -15, 10); // Move back
+                drive.navigationMonitorTicks(1.0/4, 0, -17, 10); // Move back
                 drive.ceaseMotion();
                 break;
         }
