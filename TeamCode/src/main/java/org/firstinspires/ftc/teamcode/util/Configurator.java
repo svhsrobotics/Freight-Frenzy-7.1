@@ -37,6 +37,27 @@ public class Configurator {
      * Note that if no configuration file exists, a new one will be created automatically.
      */
     public static Configuration load(String filename) {
+        Configuration config = loadUnsafe(filename);
+        // Loop a maximum of 10 times to make sure config is not null
+        for (int i = 0; i < 10; i++) {
+            if (config != null) {
+                return config;
+            }
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                // sleep failed
+            }
+            config = loadUnsafe(filename);
+        }
+        if (config != null) {
+            return config;
+        }
+        // If it's still null, create a new one...
+        return new Configuration();
+    }
+
+    private static Configuration loadUnsafe(String filename) {
         Gson gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .create();

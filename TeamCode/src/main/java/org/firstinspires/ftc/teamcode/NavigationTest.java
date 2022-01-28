@@ -35,8 +35,10 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.Shared.Drive2;
 import org.firstinspires.ftc.teamcode.Shared.Drive3;
 import org.firstinspires.ftc.teamcode.Shared.DriveOBJ;
+import org.firstinspires.ftc.teamcode.robot.Robot;
 
 /**
  * This file illustrates the concept of driving a path based on encoder counts.
@@ -66,7 +68,6 @@ import org.firstinspires.ftc.teamcode.Shared.DriveOBJ;
  */
 
 @TeleOp(name="NavigationTest")
-@Disabled
 public class NavigationTest extends LinearOpMode {
 
 
@@ -81,8 +82,9 @@ public class NavigationTest extends LinearOpMode {
         //Drive2 drive = new Drive2(this);
         //drive.init();
 
-        final Drive3 drive = new Drive3(this);
-        drive.init();
+        final Robot robot = new Robot(hardwareMap);
+        robot.initHardware();
+        final Drive2 drive = new Drive2(robot, this);
         //drive.setTargetAngle(0);
 
         //Vuforia vuforia = new Vuforia(this);
@@ -117,7 +119,7 @@ public class NavigationTest extends LinearOpMode {
                 @Override
                 public void run() {
                     Log.i("DriveByEncoderOpMode", "************************ xyzabc *****************************");
-                    drive.vroomVroomMonitorTicks(0, 10, 10, 30);
+                    drive.navigationMonitorTicks(0, 10, 10, 30);
                 }
             });
 

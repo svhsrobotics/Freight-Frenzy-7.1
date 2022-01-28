@@ -22,25 +22,24 @@ public class CompetitionAuto extends LinearOpMode {
 
         // Load the configuration
         Configuration config = Configurator.load();
+
+        // If config.target is null, set it to a default value
         if (config.target == null) {
-            // This is an extra warning to make debugging errors a little easier
-            telemetry.log().add("WARNING: WAS NOT CALIBRATED");
-            // So we don't get a NullPointerException later on...
             config.target = new HSVColor(0.0, 0.0, 0.0);
         }
 
         // Create a detector pipeline from the config
         TeamElementDetector detector = new TeamElementDetector(config);
-        // Tell the camera to start using the pipeline
+        // Tell the webcam to use the pipeline
         webcam.setPipeline(detector);
         // Create the robot from the hardware map
         Robot robot = new Robot(hardwareMap);
-        // Initialize the hardware
+        // Initialize the robot hardware
         robot.initHardware();
-        // Reset the arm encoder to 0 to prevent some issues...
+        // Reset the arm encoder to 0
         robot.arm.reset();
         // Create a drive. Note that passing the entire OpMode is not ideal, should be fixed later
-        Drive2 drive = new Drive2(robot,this);
+        Drive2 drive = new Drive2(robot, this);
         //Drive3 drive = new Drive3(this);
         //drive.init();
 
@@ -48,16 +47,16 @@ public class CompetitionAuto extends LinearOpMode {
         webcam.open();
 
         // Wait for the OpMode to start
-        // Make sure to do this after the camera is opened; otherwise "View Camera Stream" won't work
         waitForStart();
 
+        // Wait for the detector to be ready
         while (!detector.isReady()) {
             sleep(50);
         }
 
-        // As soon as we start, get the position
+        // Get the position of the team element
         TeamElementDetector.TeamElementPosition position = detector.getAnalysis();
-        // Print it to the telemetry
+        // Print a debug message about the position of the team element
         telemetry.log().add("Position of the Team Element: " + position); telemetry.update();
 
         // Drive away from wall so the arm doesn't hit it.
@@ -90,7 +89,6 @@ public class CompetitionAuto extends LinearOpMode {
         //        ||
         //  \_____||_____/  <-- LEFT
         //
-
 
         // Position the arm to the correct level
         // Also need to get a few inches closer
