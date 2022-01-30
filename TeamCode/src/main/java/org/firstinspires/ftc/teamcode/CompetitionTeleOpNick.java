@@ -19,6 +19,8 @@ public class CompetitionTeleOpNick extends LinearOpMode {
     double carouselTrim = 0;
     int rightSign;
     int leftSign;
+    double ydrive;
+    double xdrive;
 
     public int offset = org.firstinspires.ftc.teamcode.robot.hardware.Arm.ARM_OFFSET;
     @Override
@@ -39,7 +41,7 @@ public class CompetitionTeleOpNick extends LinearOpMode {
         rightBackDrive = hardwareMap.get(DcMotor.class, "BR");
         rightCarousel = hardwareMap.get(CRServo.class, "rightCarousel");
         leftCarousel = hardwareMap.get(CRServo.class, "leftCarousel");
-
+        //Hardware map the imu
 
 
 
@@ -55,10 +57,32 @@ public class CompetitionTeleOpNick extends LinearOpMode {
 
             // Run wheels in tank mode (note: The joystick goes negative when pushed forwards, so negate it)
 
-            leftBackDrive.setPower(-(gamepad1.right_trigger-(0.75*gamepad1.left_trigger)-gamepad1.left_stick_y - (0.75*gamepad1.left_stick_x))); //
-            leftFrontDrive.setPower(-((0.75*gamepad1.right_trigger)-(0.75*gamepad1.left_trigger)-gamepad1.left_stick_y + gamepad1.left_stick_x)); //
-            rightFrontDrive.setPower((0.75*-gamepad1.right_trigger)+(0.75*gamepad1.left_trigger)-gamepad1.left_stick_y - gamepad1.left_stick_x); //
-            rightBackDrive.setPower((0.75*-gamepad1.right_trigger)+(0.75*gamepad1.left_trigger)-gamepad1.left_stick_y + gamepad1.left_stick_x);
+            //Bot Centric
+            //leftBackDrive.setPower(-(gamepad1.right_trigger-(0.75*gamepad1.left_trigger)-gamepad1.left_stick_y - (0.75*gamepad1.left_stick_x))); //
+            //leftFrontDrive.setPower(-((0.75*gamepad1.right_trigger)-(0.75*gamepad1.left_trigger)-gamepad1.left_stick_y + gamepad1.left_stick_x)); //
+            //rightFrontDrive.setPower((0.75*-gamepad1.right_trigger)+(0.75*gamepad1.left_trigger)-gamepad1.left_stick_y - gamepad1.left_stick_x); //
+            //rightBackDrive.setPower((0.75*-gamepad1.right_trigger)+(0.75*gamepad1.left_trigger)-gamepad1.left_stick_y + gamepad1.left_stick_x);
+
+            //Rought Field Centric
+            /*if (java.lang.Math.abs(imu.getAngularOrientation().firstAngle) < 45){
+                ydrive = gamepad1.left_stick_y;
+                xdrive = gamepad1.left_stick_x;
+            } else if (java.lang.Math.abs(imu.getAngularOrientation().firstAngle) > 135){
+                xdrive = -gamepad1.left_stick_x;
+                ydrive = -gamepad1.left_stick_y;
+            } else if (imu.getAngularOrientation().firstAngle < 135 && imu.getAngularOrientation().firstAngle > 45) {
+                ydrive = gamepad1.left_stick_x;
+                xdrive = -gamepad1.left_stick_y;
+            } else {
+                ydrive = -gamepad1.left_stick_x;
+                xdrive = gamepad1.left_stick_y;
+            }
+            m1.setPower(-(gamepad1.right_trigger - gamepad1.left_trigger - ydrive - xdrive));
+            m2.setPower(-(gamepad1.right_trigger - gamepad1.left_trigger - ydrive + xdrive));
+            m3.setPower((-gamepad1.right_trigger + gamepad1.left_trigger - ydrive - xdrive));
+            m4.setPower((-gamepad1.right_trigger + gamepad1.left_trigger - ydrive + xdrive));
+             */
+
 
             if (gamepad2.y) {
                 if(gamepad2.dpad_down){
