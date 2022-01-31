@@ -49,6 +49,13 @@ public class Drive2 {
     double TotalMotorCurrent;
 
 
+    //For Speed Conservation
+    double timePassed = 0;
+    double actualSpeedX = 0;
+    double actualSpeedY = 0;
+    final double SPEEDSCALE = 24.0;//Speed in inches/second at speed=1
+    double speedScaled = 0;
+
     public Drive2(Robot robot, LinearOpMode opMode){
         this.robot = robot;
         this.opMode = opMode;
@@ -239,7 +246,8 @@ public class Drive2 {
         //setTargetAngle(mImuCalibrationAngle);
         while (opMode.opModeIsActive() && runtime.seconds() < timeout && inchesTraveledTotal <= magnitude){
 //For Speed Changing
-            double initialTime= opMode.getRuntime();
+            double initialTime = opMode.getRuntime();
+
 
             TotalMotorCurrent = leftFrontDrive.getCurrent();
             TotalMotorCurrent += leftBackDrive.getCurrent();
@@ -281,22 +289,31 @@ public class Drive2 {
 /*
 Working on Changing Speed to be consistent
  */
-            double timePassed = opMode.getRuntime()-initialTime;//Length of time of the loop
-            double actualSpeedX = deltaInchesRobotX/timePassed;//gets the actual speed in inches/second in x direction
-            double actualSpeedY = deltaInchesRobotY/timePassed;//gets the actual speed in inches/second in y direction
-            double speedScale=24;//Speed in inches/second at speed=1
-            double speedScaled= speed*speedScale;//Speed in terms of inches/second instead of 0 to 1
+            if(runtime.seconds()>.05 && inchesTraveledTotal <= magnitude){
+                timePassed = opMode.getRuntime() - initialTime;//Length of time of the loop
+                actualSpeedX = deltaInchesRobotX / timePassed;//gets the actual speed in inches/second in x direction
+                actualSpeedY = deltaInchesRobotY / timePassed;//gets the actual speed in inches/second in y direction
+                //SPEEDSCALE = 24.0;//Speed in inches/second at speed=1
+                speedScaled = speed * SPEEDSCALE;//Speed in terms of inches/second instead of 0 to 1
 
-            double actualSpeed = Math.sqrt((actualSpeedX*actualSpeedX)+(actualSpeedY*actualSpeedY));//Take hypotenuse of speed in x and y
-            Log.i("Speed", String.format("Actual Speed in/s:, %.2f", actualSpeed));//log actual speed
-            double speedFactor= (actualSpeed-speedScaled)/speedScaled;//percent error of speed
-            speedScaled = speedScaled*(1+speedFactor);//corrects adjusted speed wiht percent error
-            Log.i("Speed", String.format("New Speed in/s:, %.2f", speedScaled));//log actual speed
-            speed=speedScaled/speedScale;//converts adjusted speed to 0 to 1 scale
-            Log.i("Speed", String.format("New Speed from 0 to 1:, %.2f", speed));//log actual speed
+                double actualSpeed = Math.sqrt((actualSpeedX * actualSpeedX) + (actualSpeedY * actualSpeedY));//Take hypotenuse of speed in x and y
+                Log.i("Speed", String.format("........................................................................................."));
+                Log.i("Speed", String.format("Actual Speed in/s:, %.2f", actualSpeed));//log actual speed
+                Log.i("Speed", String.format("SpeedScale:, %.1f", SPEEDSCALE));
+                Log.i("Speed", String.format("SpeedScaled in/s:, %.2f", speedScaled));//log desired speed scaled should be input speed*12
 
-            //Provide feedback to keep robot moving in right direction based on encoder ticks
-            adjustTheta(xInches, yInches, speed, inchesTraveledX, inchesTraveledY);  //Must call adjustThetaInit() before a loop with adjustTheta()
+                double speedFactor = ((speedScaled - actualSpeed) / actualSpeed);//percent error of speed
+                Log.i("Speed", String.format("speedFactor in/s:, %.2f", speedFactor));
+                speedScaled *= (1 + speedFactor);//corrects adjusted speed with percent error
+
+                Log.i("Speed", String.format("New Speed in/s:, %.2f", speedScaled));//log actual speed
+                speed = speedScaled / SPEEDSCALE;//converts adjusted speed to 0 to 1 scale
+                Log.i("Speed", String.format("New Speed from 0 to 1:, %.2f", speed));//log actual speed
+                Log.i("Speed", String.format("........................................................................................."));
+                //Provide feedback to keep robot moving in right direction based on encoder ticks
+                adjustTheta(xInches, yInches, speed, inchesTraveledX, inchesTraveledY);
+            }
+  //Must call adjustThetaInit() before a loop with adjustTheta()
 
 
             cycleMillisNow = System.currentTimeMillis();
