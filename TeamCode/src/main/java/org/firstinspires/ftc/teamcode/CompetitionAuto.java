@@ -98,7 +98,7 @@ public class CompetitionAuto extends LinearOpMode {
             case LEFT:
                 //robot.arm.goToPosition(Arm.HubPosition.BACKBOT);
                 //robot.arm.setPositions(-398, .42);
-                robot.arm.setPositions(-650, .42);
+                robot.arm.setPositions(-369, .57);
                 drive.navigationMonitorTicks(1.0/4, 0, 5, 10);
                 drive.ceaseMotion();
                 robot.arm.setCollectorMode(Arm.CollectorMode.Eject);
@@ -109,7 +109,7 @@ public class CompetitionAuto extends LinearOpMode {
             case CENTER:
                 //robot.arm.goToPosition(Arm.HubPosition.BACKMID);//FRONTLOAD
                 //robot.arm.setPositions(-1157, .47);
-                robot.arm.setPositions(-1374, .47);
+                robot.arm.setPositions(-1270, .67);
                 drive.navigationMonitorTicks(1.0/4, 0, 5, 10);
                 drive.ceaseMotion();
                 robot.arm.setCollectorMode(Arm.CollectorMode.Eject);
@@ -120,12 +120,12 @@ public class CompetitionAuto extends LinearOpMode {
             case RIGHT:
                 //robot.arm.goToPosition(Arm.HubPosition.BACKTOP);
                 //robot.arm.setPositions(-2180, .57);
-                robot.arm.setPositions(-2288, .57);
+                robot.arm.setPositions(-2019, .71);
                 drive.navigationMonitorTicks(1.0/4, 0, 9, 10);
                 drive.ceaseMotion();
                 robot.arm.setCollectorMode(Arm.CollectorMode.Eject);
                 sleep(4000);
-                drive.navigationMonitorTicks(1.0/4, 0, -15, 10); // Move back
+                drive.navigationMonitorTicks(1.0/4, 0, -17, 10); // Move back
                 drive.ceaseMotion();
                 break;
         }

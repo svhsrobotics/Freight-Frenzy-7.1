@@ -1,16 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-import org.firstinspires.ftc.teamcode.robot.hardware.Arm;
 
-@TeleOp(name = "Competition TeleOp", group = "Competition")
-public class CompetitionTeleOp extends LinearOpMode {
+@TeleOp(name = "Nick's Competition TeleOp", group = "Competition")
+public class CompetitionTeleOpNick extends LinearOpMode {
     //private final String TAG = getClass().getName();
     DcMotor Arm = null;
     Servo Wrist = null;
@@ -22,6 +19,8 @@ public class CompetitionTeleOp extends LinearOpMode {
     double carouselTrim = 0;
     int rightSign;
     int leftSign;
+    double ydrive;
+    double xdrive;
 
     public int offset = org.firstinspires.ftc.teamcode.robot.hardware.Arm.ARM_OFFSET;
     @Override
@@ -42,7 +41,7 @@ public class CompetitionTeleOp extends LinearOpMode {
         rightBackDrive = hardwareMap.get(DcMotor.class, "BR");
         rightCarousel = hardwareMap.get(CRServo.class, "rightCarousel");
         leftCarousel = hardwareMap.get(CRServo.class, "leftCarousel");
-
+        //Hardware map the imu
 
 
 
@@ -53,73 +52,37 @@ public class CompetitionTeleOp extends LinearOpMode {
         long carouselTimout = 2000 * 1000 * 1000;
 
 
+
         while (opModeIsActive()) {
 
             // Run wheels in tank mode (note: The joystick goes negative when pushed forwards, so negate it)
-            double frontRightPowerFactor, frontLeftPowerFactor, backRightPowerFactor, backLeftPowerFactor;
-            double magRight = Math.hypot(gamepad1.right_stick_x, gamepad1.right_stick_y);
-            double thetaRight = Math.atan2(-gamepad1.right_stick_y, gamepad1.right_stick_x);
-            double magLeft = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
-            double thetaLeft = Math.atan2(-gamepad1.left_stick_y, gamepad1.left_stick_x);
-            double pi = Math.PI;
 
-            if (thetaRight > 0 && thetaRight < pi / 2) {
-                frontRightPowerFactor = -Math.cos(2 * thetaRight);
-            } else if (thetaRight >= -pi && thetaRight < -pi / 2) {
-                frontRightPowerFactor = Math.cos(2 * thetaRight);
-            } else if (thetaRight >= pi / 2 && thetaRight <= pi) {
-                frontRightPowerFactor = 1;
+            //Bot Centric
+            //leftBackDrive.setPower(-(gamepad1.right_trigger-(0.75*gamepad1.left_trigger)-gamepad1.left_stick_y - (0.75*gamepad1.left_stick_x))); //
+            //leftFrontDrive.setPower(-((0.75*gamepad1.right_trigger)-(0.75*gamepad1.left_trigger)-gamepad1.left_stick_y + gamepad1.left_stick_x)); //
+            //rightFrontDrive.setPower((0.75*-gamepad1.right_trigger)+(0.75*gamepad1.left_trigger)-gamepad1.left_stick_y - gamepad1.left_stick_x); //
+            //rightBackDrive.setPower((0.75*-gamepad1.right_trigger)+(0.75*gamepad1.left_trigger)-gamepad1.left_stick_y + gamepad1.left_stick_x);
+
+            //Rought Field Centric
+            /*if (java.lang.Math.abs(imu.getAngularOrientation().firstAngle) < 45){
+                ydrive = gamepad1.left_stick_y;
+                xdrive = gamepad1.left_stick_x;
+            } else if (java.lang.Math.abs(imu.getAngularOrientation().firstAngle) > 135){
+                xdrive = -gamepad1.left_stick_x;
+                ydrive = -gamepad1.left_stick_y;
+            } else if (imu.getAngularOrientation().firstAngle < 135 && imu.getAngularOrientation().firstAngle > 45) {
+                ydrive = gamepad1.left_stick_x;
+                xdrive = -gamepad1.left_stick_y;
             } else {
-                frontRightPowerFactor = -1;
+                ydrive = -gamepad1.left_stick_x;
+                xdrive = gamepad1.left_stick_y;
             }
+            m1.setPower(-(gamepad1.right_trigger - gamepad1.left_trigger - ydrive - xdrive));
+            m2.setPower(-(gamepad1.right_trigger - gamepad1.left_trigger - ydrive + xdrive));
+            m3.setPower((-gamepad1.right_trigger + gamepad1.left_trigger - ydrive - xdrive));
+            m4.setPower((-gamepad1.right_trigger + gamepad1.left_trigger - ydrive + xdrive));
+             */
 
-            if (thetaLeft > 0 && thetaLeft < pi / 2) {
-                backLeftPowerFactor = -Math.cos(2 * thetaLeft);
-            } else if (thetaLeft >= -pi && thetaLeft < -pi / 2) {
-                backLeftPowerFactor = Math.cos(2 * thetaLeft);
-            } else if (thetaLeft >= pi / 2 && thetaLeft <= pi) {
-                backLeftPowerFactor = 1;
-            } else {
-                backLeftPowerFactor = -1;
-            }
-
-            if (thetaRight > -pi / 2 && thetaRight < 0) {
-                backRightPowerFactor = Math.cos(2 * thetaRight);
-            } else if (thetaRight > pi / 2 && thetaRight < pi) {
-                backRightPowerFactor = -Math.cos(2 * thetaRight);
-            } else if (thetaRight >= 0 && thetaRight <= pi / 2) {
-                backRightPowerFactor = 1;
-            } else {
-                backRightPowerFactor = -1;
-            }
-
-            if (thetaLeft > -pi / 2 && thetaLeft < 0) {
-                frontLeftPowerFactor = Math.cos(2 * thetaLeft);
-            } else if (thetaLeft > pi / 2 && thetaLeft < pi) {
-                frontLeftPowerFactor = -Math.cos(2 * thetaLeft);
-            } else if (thetaLeft >= 0 && thetaLeft <= pi / 2) {
-                frontLeftPowerFactor = 1;
-            } else {
-                frontLeftPowerFactor = -1;
-            }
-            if(frontLeftPowerFactor < 0){
-            leftSign=-1;
-            }else if(frontLeftPowerFactor > 0){
-                leftSign=1;
-            }else if(frontRightPowerFactor<0){
-                rightSign=-1;
-            }else if(frontRightPowerFactor>0){
-                rightSign=1;
-            }
-           // leftFrontDrive.setPower((frontLeftPowerFactor * magLeft)*(frontLeftPowerFactor * magLeft));
-           // rightFrontDrive.setPower(-(frontRightPowerFactor * magRight)*(frontRightPowerFactor * magRight));
-            //leftBackDrive.setPower((backLeftPowerFactor * magLeft)*(backLeftPowerFactor * magLeft));
-            //rightBackDrive.setPower(-(backRightPowerFactor * magRight)*(backRightPowerFactor * magRight));
-
-            leftFrontDrive.setPower(-((frontLeftPowerFactor * magLeft)));
-            rightFrontDrive.setPower((frontRightPowerFactor * magRight));
-            leftBackDrive.setPower(-((backLeftPowerFactor * magLeft)));
-            rightBackDrive.setPower((backRightPowerFactor * magRight));
 
             if (gamepad2.y) {
                 if(gamepad2.dpad_down){
@@ -129,7 +92,7 @@ public class CompetitionTeleOp extends LinearOpMode {
                 Wrist.setPosition(.38);
             } else if (gamepad2.dpad_up){
                     //Arm.setTargetPosition(-400+offset);//-300
-                    Arm.setTargetPosition(-432);//-300
+                    Arm.setTargetPosition(-363+offset);//-300
                     Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     Arm.setPower(0.5);
                     Wrist.setPosition(.68);
@@ -252,8 +215,8 @@ public class CompetitionTeleOp extends LinearOpMode {
             telemetry.addData("back left power ", ((float) Math.round(leftBackDrive.getPower() * 100)) / 100);
             telemetry.addData("left joystick x", ((float) Math.round(gamepad1.left_stick_x * 100)) / 100);
             telemetry.addData("left joystick y", ((float) Math.round(-gamepad1.left_stick_y * 100)) / 100);
-            telemetry.addData("magnitude left", ((float) Math.round(magLeft * 100)) / 100);
-            telemetry.addData("thetaLeft", ((float) Math.round(thetaLeft / pi * 100)) / 100);
+            //telemetry.addData("magnitude left", ((float) Math.round(magLeft * 100)) / 100);
+            //telemetry.addData("thetaLeft", ((float) Math.round(thetaLeft / pi * 100)) / 100);
             telemetry.addData("Trim", carouselTrim);
 
             telemetry.update();
@@ -276,13 +239,13 @@ public class CompetitionTeleOp extends LinearOpMode {
 
         if (hubLevel == 2) { // Top
             if (gamepad2.dpad_down) {
-                Arm.setTargetPosition(-2019+offset); //TODO: Need backload later
+                Arm.setTargetPosition(-2030+offset); //TODO: Need backload later
                 Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Wrist.setPosition(.71);
                 Arm.setPower(1);
             } else if (gamepad2.dpad_up) {
                 //Arm.setTargetPosition(-2180+offset);//-350
-                Arm.setTargetPosition(-2019+offset);//-350
+                Arm.setTargetPosition(-2030+offset);//-350
                 Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Wrist.setPosition(.71);
                 Arm.setPower(1);
