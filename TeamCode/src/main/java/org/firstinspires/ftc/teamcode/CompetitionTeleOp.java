@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -7,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.robot.hardware.Arm;
+
 
 @TeleOp(name = "Competition TeleOp", group = "Competition")
 public class CompetitionTeleOp extends LinearOpMode {
@@ -42,8 +44,10 @@ public class CompetitionTeleOp extends LinearOpMode {
         rightCarousel = hardwareMap.get(CRServo.class, "rightCarousel");
         leftCarousel = hardwareMap.get(CRServo.class, "leftCarousel");
 
-
-
+        RevBlinkinLedDriver lights = hardwareMap.get(RevBlinkinLedDriver.class, "LED");
+        lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.LIGHT_CHASE_RED);
+        long time = System.currentTimeMillis();
+        int currentlight = -99;
 
         waitForStart();
 
@@ -241,6 +245,16 @@ public class CompetitionTeleOp extends LinearOpMode {
             } else {
                 Collector.setPower(0);
             }
+            if (gamepad2.right_bumper && currentlight < 0.99 && System.currentTimeMillis() - time >= 150) {
+                lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.values()[(currentlight + 2)]);
+                time = System.currentTimeMillis();
+
+            }
+            if (gamepad2.left_bumper && currentlight > -0.99 && System.currentTimeMillis() - time >= 150) {
+                lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.values()[(currentlight - 2)]);
+                time = System.currentTimeMillis();
+            }
+
 
             telemetry.addData("Ticks", Arm.getCurrentPosition());
             telemetry.addData("WristPos", Wrist.getPosition());
