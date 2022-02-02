@@ -494,8 +494,8 @@ public class Drive2 {
 
         //gain = Math.max(-0.05*Math.abs(angleError) + 0.1, .05);  //Varies from .2 around zero to .05 for errors above 10 degrees
         pGain = Math.max(-0.05*Math.abs(angleError) + 0.1, .05)/3;  //Varies from .2 around zero to .05 for errors above 10 degrees
-        pGain = 0.06 / 6.0;
-        iGain = 0.04 / 6.0;
+        pGain = 0.06 / 8.0;
+        iGain = 0.04 / 8.0;
         powerCorrection = angleError * pGain + mTargetAngleErrorSum * iGain;
 
         return powerCorrection;
