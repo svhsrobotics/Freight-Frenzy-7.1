@@ -475,7 +475,7 @@ public class Drive2 {
         angleError = mTargetAngle - angle;        // reverse sign of angle for correction.
 
         gain = Math.max(-0.05*Math.abs(angleError) + 0.1, .05);  //Varies from .2 around zero to .05 for errors above 10 degrees
-        powerCorrection = angleError * gain;
+        powerCorrection = angleError * gain * 0.67;
 
         return powerCorrection;
     }

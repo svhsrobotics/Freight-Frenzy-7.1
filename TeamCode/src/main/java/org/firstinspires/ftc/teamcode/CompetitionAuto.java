@@ -110,11 +110,11 @@ public class CompetitionAuto extends LinearOpMode {
                 robot.arm.goToPosition(Arm.HubPosition.MID);//FRONTLOAD
                 //robot.arm.setPositions(-1157, .47);
                 //robot.arm.setPositions(-1270, .67);
-                drive.navigationMonitorTicks(1.0/4, 0, 5, 10);
+                drive.navigationMonitorTicks(1.0/4, 0, 5.75, 10);
                 drive.ceaseMotion();
                 robot.arm.setCollectorMode(Arm.CollectorMode.Eject);
                 sleep(4000);
-                drive.navigationMonitorTicks(1.0/4, 0, -11, 10); // Move back
+                drive.navigationMonitorTicks(1.0/4, 0, -11.75, 10); // Move back
                 drive.ceaseMotion();
                 break;
             case RIGHT:
@@ -137,7 +137,7 @@ public class CompetitionAuto extends LinearOpMode {
         drive.navigationMonitorTicks(1.0/4, -60, 0,10);
         drive.ceaseMotion();
 
-        drive.navigationMonitorTicks(1.0/2, 0, 60, 10);
+        drive.navigationMonitorTicks(1.0/2, 0, 64, 10);
         drive.ceaseMotion();
 
         robot.arm.goToPosition(Arm.HubPosition.PARK);
