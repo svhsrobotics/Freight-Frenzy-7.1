@@ -107,14 +107,16 @@ public class NavigationTest extends LinearOpMode {
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         if (opModeIsActive()) {
-
+            drive.rotate(90, 10);
+            //drive.navigationMonitorTicks(1.0/4, -55, -11.75, 10);
+            //drive.ceaseMotion();
             //drive.setNewTargetPosition(48, 48);
             //drive.turnOnRunToPosition();
 
             //drive.setNewTargetPosition(32, 32);
             //drive.vroom_vroom(.75, Math.PI/2, .75, Math.PI/2, 10.0);
 
-
+/*
             Thread rotate = new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -146,7 +148,7 @@ public class NavigationTest extends LinearOpMode {
                 Log.i("DriveByEncoderOpMode", i+"");
                 drive.setTargetAngle(i*3);
             }
-
+*/
 
 //            drive.ceaseMotion();
 //            sleep(2000);
