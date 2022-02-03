@@ -15,7 +15,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.robot.hardware.Drive;
-import org.firstinspires.ftc.teamcode.robot.testRobot;
 
 import java.util.HashMap;
 
@@ -199,6 +198,77 @@ public class Drive2 {
         setMotorPowersPhi(speedsPhi);
     }
 
+    /**navigationByPhi
+     *
+     * @param targetSpeed Desired Speed
+     * @param targetTheta Desired Orientation of Robot
+     *
+     * Utilizes orientation away from the desired location(phi) in order to alter power power facotrs on the motors.
+     */
+    public void navigationByPhiRotSpeed(double targetSpeed, double rotSpeed, double targetTheta) {
+        double rightFrontPowerFactor, leftFrontPowerFactor, rightBackPowerFactor, leftBackPowerFactor;
+        double pi = Math.PI;
+        double thetaRight = targetTheta;
+        double thetaLeft = targetTheta;
+
+        // Send telemetry message to indicate successful Encoder reset
+        telemetry.addData("Path",  "Starting at %7d : %7d",
+            leftFrontDrive.getCurrentPosition(),
+            rightFrontDrive.getCurrentPosition());
+        telemetry.update();
+
+        // reset the timeout time and start motion.
+        runtime.reset();
+
+        if(thetaRight > 0 && thetaRight < pi/2){
+            rightFrontPowerFactor = -Math.cos(2 * thetaRight);
+        }else if(thetaRight >= -pi && thetaRight < -pi/2){
+            rightFrontPowerFactor = Math.cos(2 * thetaRight);
+        }else if(thetaRight >= pi/2 && thetaRight <= pi){
+            rightFrontPowerFactor = 1;
+        }else{
+            rightFrontPowerFactor = -1;
+        }
+
+        if(thetaLeft > 0 && thetaLeft < pi/2) {
+            leftBackPowerFactor = -Math.cos(2 * thetaLeft);
+        }else if(thetaLeft >= -pi && thetaLeft < -pi/2){
+            leftBackPowerFactor = Math.cos(2 * thetaLeft);
+        }else if(thetaLeft >= pi/2 && thetaLeft <= pi){
+            leftBackPowerFactor = 1;
+        }else{
+            leftBackPowerFactor = -1;
+        }
+
+        if(thetaRight > -pi/2 && thetaRight < 0) {
+            rightBackPowerFactor = Math.cos(2 * thetaRight);
+        }else if(thetaRight > pi/2 && thetaRight < pi){
+            rightBackPowerFactor = -Math.cos(2 * thetaRight);
+        }else if(thetaRight >= 0 && thetaRight <= pi/2){
+            rightBackPowerFactor = 1;
+        }else{
+            rightBackPowerFactor = -1;
+        }
+
+        if(thetaLeft > -pi/2 && thetaLeft < 0) {
+            leftFrontPowerFactor = Math.cos(2 * thetaLeft);
+        }else if(thetaLeft > pi/2 && thetaLeft < pi){
+            leftFrontPowerFactor = -Math.cos(2 * thetaLeft);
+        }else if(thetaLeft >= 0 && thetaLeft <= pi/2){
+            leftFrontPowerFactor = 1;
+        }else{
+            leftFrontPowerFactor = -1;
+        }
+
+        motorPowerFactors.put(leftFrontDrive, leftFrontPowerFactor);
+        motorPowerFactors.put(leftBackDrive, leftBackPowerFactor);
+        motorPowerFactors.put(rightFrontDrive, rightFrontPowerFactor);
+        motorPowerFactors.put(rightBackDrive, rightBackPowerFactor);
+
+        SpeedsPhi speedsPhi = getPhiSpeedsWithRotSpeed(targetSpeed, rotSpeed, motorPowerFactors);
+        setMotorPowersPhi(speedsPhi);
+    }
+
 
     //               ^
     //               |  Y axis
@@ -281,6 +351,106 @@ public class Drive2 {
 
             //Provide feedback to keep robot moving in right direction based on encoder ticks
             adjustTheta(xInches, yInches, speed, inchesTraveledX, inchesTraveledY);  //Must call adjustThetaInit() before a loop with adjustTheta()
+
+            cycleMillisNow = System.currentTimeMillis();
+            cycleMillisDelta = cycleMillisNow - cycleMillisPrior;
+            cycleMillisPrior = cycleMillisNow;
+            telemetry.addData("Ticks Traveled (lf, lb)", "%7d, %7d", ticksTraveledLeftFront, ticksTraveledLeftBack);
+            telemetry.addData("Ticks Traveled (rf, rb)", "%7d, %7d", ticksTraveledRightFront, ticksTraveledRightBack);
+            telemetry.addData("In Traveled (X, Y)", "X: %.1f, Y: %.1f", inchesTraveledX, inchesTraveledY);
+            telemetry.addData("In Traveled (Tot, Rot)", "%.1f, %.1f", inchesTraveledTotal,rotationInchesTotal);
+            telemetry.addData("Cycle Millis:", "%4f", cycleMillisDelta);
+            telemetry.update();
+            Log.i("Drive", String.format("Ticks Traveled (lf, lb): %7d, %7d", ticksTraveledLeftFront, ticksTraveledLeftBack));
+            Log.i("Drive", String.format("Ticks Traveled (rf, rb): %7d, %7d", ticksTraveledRightFront, ticksTraveledRightBack));
+            Log.i("Drive", String.format("Ticks Delta (lf, lb): %7d, %7d", deltaTicksLeftFront, deltaTicksLeftBack));
+            Log.i("Drive", String.format("Ticks Delta (rf, rb): %7d, %7d", deltaTicksRightFront, deltaTicksRightBack));
+            Log.i("Drive", String.format("In Traveled (X, Y): X: %.2f, Y: %.2f", inchesTraveledX, inchesTraveledY));
+            Log.i("Drive", String.format("In Traveled (Tot, Rot): %.2f, %.2f", inchesTraveledTotal,rotationInchesTotal));
+            Log.i("Drive", String.format("Incremental Speed (in/sec): %.2f", deltaInchesRobot/cycleMillisDelta * 1000));
+            Log.i("Drive", String.format("Cycle Millis: %.3f, Total Seconds: %.3f", cycleMillisDelta, (System.currentTimeMillis() - startMillis)/1000));
+
+            tickCountPriorLeftFront = tickCountNowLeftFront;
+            tickCountPriorLeftBack = tickCountNowLeftBack;
+            tickCountPriorRightFront = tickCountNowRightFront;
+            tickCountPriorRightBack = tickCountNowRightBack;
+        }
+    }
+
+    public void rotate(double rotation, double timeout) {
+        navigationWithRotation(0.25, 10, 10, timeout, rotation);
+    }
+
+    /** navigationMonitorTicks
+     *
+     * @param speed
+     * @param xInches
+     * @param yInches
+     * @param timeout
+     *
+     * Utilizes wheel encoders in order to track the location of the robot.
+     * Imu heading tracks the direction the robot is pointing.
+     * Tracking the location with the wheel encoders allows for a direct input for location and time in order to direect the robot's movement.
+     */
+    public void navigationWithRotation(double rotSpeed, double xInches, double yInches, double timeout, double rotation) {
+        //Borrowed Holonomic robot navigation ideas from https://www.bridgefusion.com/blog/2019/4/10/robot-localization-dead-reckoning-in-f  irst-tech-challenge-ftc
+        //    Robot Localization -- Dead Reckoning in First Tech Challenge (FTC)
+        setTargetAngle(rotation);
+        double theta = Math.atan2(yInches, xInches);
+        double magnitude = Math.hypot(xInches, yInches);
+        int tickCountPriorLeftFront = leftFrontDrive.getCurrentPosition(), tickCountPriorLeftBack = leftBackDrive.getCurrentPosition();
+        int tickCountPriorRightFront = rightFrontDrive.getCurrentPosition(), tickCountPriorRightBack = rightBackDrive.getCurrentPosition();
+        int ticksTraveledLeftFront = 0, ticksTraveledLeftBack = 0, ticksTraveledRightFront = 0, ticksTraveledRightBack = 0;
+        double inchesTraveledX = 0, inchesTraveledY = 0, inchesTraveledTotal = 0, rotationInchesTotal = 0;
+        double cycleMillisNow = 0, cycleMillisPrior = System.currentTimeMillis(), cycleMillisDelta, startMillis = System.currentTimeMillis();
+        //vroom_vroom(speed, theta, speed, theta);
+        mIsStopped = false;
+        mTargetAngleErrorSum = 0;
+        getImuAngle();
+        navigationByPhiRotSpeed(0, rotSpeed, theta);
+        adjustThetaInit();
+        //setTargetAngle(mImuCalibrationAngle);
+        while (opMode.opModeIsActive() && runtime.seconds() < timeout && inchesTraveledTotal <= magnitude && !mIsStopped) {
+
+            TotalMotorCurrent = leftFrontDrive.getCurrent();
+            TotalMotorCurrent += leftBackDrive.getCurrent();
+            TotalMotorCurrent += rightFrontDrive.getCurrent();
+            TotalMotorCurrent += rightBackDrive.getCurrent();
+            Log.i(TAG,"navigationMonitorTicks: Total Motor Current= "+ TotalMotorCurrent);
+
+
+            int tickCountNowLeftFront = leftFrontDrive.getCurrentPosition();
+            int tickCountNowLeftBack = leftBackDrive.getCurrentPosition();
+            int tickCountNowRightFront = rightFrontDrive.getCurrentPosition();
+            int tickCountNowRightBack = rightBackDrive.getCurrentPosition();
+            int deltaTicksLeftFront = tickCountNowLeftFront - tickCountPriorLeftFront;
+            int deltaTicksLeftBack = tickCountNowLeftBack - tickCountPriorLeftBack;
+            int deltaTicksRightFront = tickCountNowRightFront - tickCountPriorRightFront;
+            int deltaTicksRightBack = tickCountNowRightBack - tickCountPriorRightBack;
+            ticksTraveledLeftFront += deltaTicksLeftFront;
+            ticksTraveledLeftBack += deltaTicksLeftBack;
+            ticksTraveledRightFront += deltaTicksRightFront;
+            ticksTraveledRightBack += deltaTicksRightBack;
+            double leftFrontInchesDelta = deltaTicksLeftFront / COUNTS_PER_INCH;
+            double rightFrontInchesDelta = -deltaTicksRightFront / COUNTS_PER_INCH;  //Minus sign converts to holonomic drive perspective
+            double rightBackInchesDelta = -deltaTicksRightBack / COUNTS_PER_INCH;  //Minus sign converts to holonomic drive perspective
+            double leftBackInchesDelta = deltaTicksLeftBack / COUNTS_PER_INCH;
+            double rotationAvgInchesDelta = (leftFrontInchesDelta + rightFrontInchesDelta + rightBackInchesDelta + leftBackInchesDelta)/4;
+            rotationInchesTotal += rotationAvgInchesDelta;
+            double leftFrontRobotInchesDelta = leftFrontInchesDelta - rotationAvgInchesDelta;
+            double rightFrontRobotInchesDelta = rightFrontInchesDelta - rotationAvgInchesDelta;
+            double rightBackRobotInchesDelta = rightBackInchesDelta - rotationAvgInchesDelta;
+            double leftBackRobotInchesDelta = leftBackInchesDelta - rotationAvgInchesDelta;
+            double deltaInchesRobotX = (leftFrontRobotInchesDelta + rightFrontRobotInchesDelta - rightBackRobotInchesDelta - leftBackRobotInchesDelta) / (2 * Math.sqrt(2));
+            double deltaInchesRobotY = (leftFrontRobotInchesDelta - rightFrontRobotInchesDelta - rightBackRobotInchesDelta + leftBackRobotInchesDelta) / (2 * Math.sqrt(2));
+            double deltaInchesRobot = Math.hypot(deltaInchesRobotX, deltaInchesRobotY);
+            double FUDGE_FACTOR = 36/51.0;
+            inchesTraveledX += deltaInchesRobotX * FUDGE_FACTOR;
+            inchesTraveledY += deltaInchesRobotY * FUDGE_FACTOR;
+            inchesTraveledTotal += Math.hypot(deltaInchesRobotX * FUDGE_FACTOR, deltaInchesRobotY * FUDGE_FACTOR);
+
+            //Provide feedback to keep robot moving in right direction based on encoder ticks
+            adjustTheta(xInches, yInches, 0, inchesTraveledX, inchesTraveledY);  //Must call adjustThetaInit() before a loop with adjustTheta()
 
             cycleMillisNow = System.currentTimeMillis();
             cycleMillisDelta = cycleMillisNow - cycleMillisPrior;
@@ -575,6 +745,58 @@ public class Drive2 {
         Log.i(TAG, String.format("getSpeeds: targetSpeed: %.3f, powerCorrection: %.3f", targetSpeed, powerCorrection));
         Log.i(TAG, String.format("getSpeeds: adjustedLeftSpeed: %.3f, adjustedRightSpeed: %.3f", adjustedLeftSpeed, adjustedRightSpeed));
         return new Speeds(adjustedRightSpeed, adjustedLeftSpeed);
+    }
+
+    /**
+     * WITH AN AJUSTED SPEED FOR ROTATING/CORRECTING
+     * Get the adjusted speeds for each side of the robot to allow it to turn enough to stay on a straight line. Only call once per cycle.
+     * @param targetSpeed
+     * @return
+     */
+    private SpeedsPhi getPhiSpeedsWithRotSpeed(double targetSpeed, double rotSpeed, HashMap<Drive, Double> motorPowerFactors){
+        double powerCorrection = getPowerCorrection() * rotSpeed;
+        double adjustedLeftFrontSpeed, adjustedLeftBackSpeed, adjustedRightFrontSpeed, adjustedRightBackSpeed;
+
+        if(motorPowerFactors.get(leftFrontDrive)*targetSpeed - powerCorrection > 1){
+            adjustedLeftFrontSpeed = 1;
+        }else if(motorPowerFactors.get(leftFrontDrive)*targetSpeed - powerCorrection < -1) {
+            adjustedLeftFrontSpeed = -1;
+        }else{
+            adjustedLeftFrontSpeed = motorPowerFactors.get(leftFrontDrive) * targetSpeed - powerCorrection;
+        }
+
+        if(motorPowerFactors.get(leftBackDrive)*targetSpeed - powerCorrection > 1){
+            adjustedLeftBackSpeed = 1;
+        }else if(motorPowerFactors.get(leftBackDrive)*targetSpeed - powerCorrection < -1) {
+            adjustedLeftBackSpeed = -1;
+        }else{
+            adjustedLeftBackSpeed = motorPowerFactors.get(leftBackDrive) * targetSpeed - powerCorrection;
+        }
+
+        if(motorPowerFactors.get(rightFrontDrive)*targetSpeed + powerCorrection > 1){
+            adjustedRightFrontSpeed = 1;
+        }else if(motorPowerFactors.get(rightFrontDrive)*targetSpeed + powerCorrection < -1) {
+            adjustedRightFrontSpeed = -1;
+        }else{
+            adjustedRightFrontSpeed = motorPowerFactors.get(rightFrontDrive) * targetSpeed + powerCorrection;
+        }
+
+        if(motorPowerFactors.get(rightBackDrive)*targetSpeed + powerCorrection > 1){
+            adjustedRightBackSpeed = 1;
+        }else if(motorPowerFactors.get(rightBackDrive)*targetSpeed + powerCorrection < -1) {
+            adjustedRightBackSpeed = -1;
+        }else{
+            adjustedRightBackSpeed = motorPowerFactors.get(rightBackDrive) * targetSpeed + powerCorrection;
+        }
+
+        mPriorImuAngle = mCurrentImuAngle;
+        mPriorAdjustedAngle = mAdjustedAngle;
+        Log.i(TAG, String.format("getSpeedsPhi: targetSpeed: %.3f, powerCorrection: %.3f", targetSpeed, powerCorrection));
+        Log.i(TAG, String.format("getSpeedsPhi: adjustedLeftFrontSpeed: %.3f, adjustedLeftBackSpeed: %.3f, adjustedRightFrontSpeed: %.3f, adjustedRightBackSpeed: %.3f",
+            adjustedLeftFrontSpeed, adjustedLeftBackSpeed, adjustedRightFrontSpeed, adjustedRightBackSpeed));
+        Log.i(TAG, String.format("getSpeedsPhi: leftFrontMotorPowerFactor: %.3f, leftBackMotorPowerFactor: %.3f, rightFrontMotorPowerFactor: %.3f, rightBackMotorPowerFactor: %.3f",
+            motorPowerFactors.get(leftFrontDrive), motorPowerFactors.get(leftBackDrive), motorPowerFactors.get(rightFrontDrive), motorPowerFactors.get(rightBackDrive)));
+        return new SpeedsPhi(adjustedLeftFrontSpeed, adjustedLeftBackSpeed, adjustedRightFrontSpeed, adjustedRightBackSpeed);
     }
 
     /**
