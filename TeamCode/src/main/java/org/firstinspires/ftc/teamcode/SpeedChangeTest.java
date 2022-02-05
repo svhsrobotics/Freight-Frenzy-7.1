@@ -30,7 +30,7 @@ public class SpeedChangeTest extends LinearOpMode {
         // Wait for the OpMode to start
         waitForStart();
 
-        drive.navigationMonitorTicks(.5, 0, 40, 30);
+        drive.navigationMonitorTicks(20, 0, 40, 30);
         drive.ceaseMotion();
     }
 }

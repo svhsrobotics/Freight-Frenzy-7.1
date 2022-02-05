@@ -31,12 +31,18 @@ package org.firstinspires.ftc.teamcode;
 
 import android.util.Log;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.Shared.Drive2;
 import org.firstinspires.ftc.teamcode.Shared.Drive3;
 import org.firstinspires.ftc.teamcode.Shared.DriveOBJ;
+import org.firstinspires.ftc.teamcode.robot.Robot;
 
 /**
  * This file illustrates the concept of driving a path based on encoder counts.
@@ -65,10 +71,13 @@ import org.firstinspires.ftc.teamcode.Shared.DriveOBJ;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="NavigationTest")
-@Disabled
-public class NavigationTest extends LinearOpMode {
+@Autonomous(name="NavigationTest")
 
+public class NavigationTest extends LinearOpMode {
+    LinearOpMode opMode;
+
+   // public HardwareMap hardwareMap; // will be set in OpModeManager.runActiveOpMode
+private ElapsedTime runtime = new ElapsedTime();
 
     @Override
     public void runOpMode() {
@@ -81,8 +90,13 @@ public class NavigationTest extends LinearOpMode {
         //Drive2 drive = new Drive2(this);
         //drive.init();
 
-        final Drive3 drive = new Drive3(this);
-        drive.init();
+        //final Drive3 drive = new Drive3(this);
+        Robot robot = new Robot(hardwareMap);
+        // Initialize the hardware
+        robot.initDrives();
+        robot.initIMU();
+        // Create a drive. Note that passing the entire OpMode is not ideal, should be fixed later
+        Drive2 drive = new Drive2(robot, this);
         //drive.setTargetAngle(0);
 
         //Vuforia vuforia = new Vuforia(this);
@@ -96,6 +110,21 @@ public class NavigationTest extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
+
+        double cycleMillisNow = System.currentTimeMillis();
+        double cycleMillisPrior = cycleMillisNow;
+
+        drive.navigationMonitorTicks(1, 0, 50, 30);
+
+         cycleMillisNow = System.currentTimeMillis();
+        double cycleMillisDelta = cycleMillisNow - cycleMillisPrior;
+        final double DISTANCE= 50;
+        double speed = DISTANCE/(cycleMillisDelta/1000);
+        Log.i("Speed", "......................................................");
+        Log.i("Speed", "Time Elapsed:" +(cycleMillisDelta/1000));
+        Log.i("Speed", "Speed = "+ speed +" inches/second");
+
+
         /* while(opModeIsActive()){
             drive.getImuAngle();
             sleep(500);
@@ -104,7 +133,7 @@ public class NavigationTest extends LinearOpMode {
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        if (opModeIsActive()) {
+   /*     if (opModeIsActive()) {
 
             //drive.setNewTargetPosition(48, 48);
             //drive.turnOnRunToPosition();
@@ -144,7 +173,7 @@ public class NavigationTest extends LinearOpMode {
                 Log.i("DriveByEncoderOpMode", i+"");
                 drive.setTargetAngle(i*3);
             }
-
+*/
 
 //            drive.ceaseMotion();
 //            sleep(2000);
@@ -235,4 +264,3 @@ public class NavigationTest extends LinearOpMode {
         //telemetry.addData("Path", "Complete");
         //telemetry.update();
     }
-}
