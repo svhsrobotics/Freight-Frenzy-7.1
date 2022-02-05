@@ -40,6 +40,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Shared.Drive2;
+import org.firstinspires.ftc.teamcode.Shared.Drive2;
 import org.firstinspires.ftc.teamcode.Shared.Drive3;
 import org.firstinspires.ftc.teamcode.Shared.DriveOBJ;
 import org.firstinspires.ftc.teamcode.robot.Robot;
@@ -146,7 +147,7 @@ private ElapsedTime runtime = new ElapsedTime();
                 @Override
                 public void run() {
                     Log.i("DriveByEncoderOpMode", "************************ xyzabc *****************************");
-                    drive.vroomVroomMonitorTicks(0, 10, 10, 30);
+                    drive.navigationMonitorTicks(0, 10, 10, 30);
                 }
             });
 

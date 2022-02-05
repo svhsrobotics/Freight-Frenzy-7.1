@@ -96,9 +96,9 @@ public class CompetitionAuto extends LinearOpMode {
         // Also need to get a few inches closer
         switch (position) {
             case LEFT:
-                //robot.arm.goToPosition(Arm.HubPosition.BACKBOT);
+                robot.arm.goToPosition(Arm.HubPosition.BOT);
                 //robot.arm.setPositions(-398, .42);
-                robot.arm.setPositions(-369, .57);
+                //robot.arm.setPositions(-369, .57);
                 drive.navigationMonitorTicks(1.0/4, 0, 5, 10);
                 drive.ceaseMotion();
                 robot.arm.setCollectorMode(Arm.CollectorMode.Eject);
@@ -107,20 +107,20 @@ public class CompetitionAuto extends LinearOpMode {
                 drive.ceaseMotion();
                 break; // Break is *very* important
             case CENTER:
-                //robot.arm.goToPosition(Arm.HubPosition.BACKMID);//FRONTLOAD
+                robot.arm.goToPosition(Arm.HubPosition.MID);//FRONTLOAD
                 //robot.arm.setPositions(-1157, .47);
-                robot.arm.setPositions(-1270, .67);
-                drive.navigationMonitorTicks(1.0/4, 0, 5, 10);
+                //robot.arm.setPositions(-1270, .67);
+                drive.navigationMonitorTicks(1.0/4, 0, 5.75, 10);
                 drive.ceaseMotion();
                 robot.arm.setCollectorMode(Arm.CollectorMode.Eject);
                 sleep(4000);
-                drive.navigationMonitorTicks(1.0/4, 0, -11, 10); // Move back
+                drive.navigationMonitorTicks(1.0/4, 0, -11.75, 10); // Move back
                 drive.ceaseMotion();
                 break;
             case RIGHT:
-                //robot.arm.goToPosition(Arm.HubPosition.BACKTOP);
+                robot.arm.goToPosition(Arm.HubPosition.TOP);
                 //robot.arm.setPositions(-2180, .57);
-                robot.arm.setPositions(-2019, .71);
+                //robot.arm.setPositions(-2019, .71);
                 drive.navigationMonitorTicks(1.0/4, 0, 9, 10);
                 drive.ceaseMotion();
                 robot.arm.setCollectorMode(Arm.CollectorMode.Eject);
@@ -134,13 +134,14 @@ public class CompetitionAuto extends LinearOpMode {
 
         //robot.arm.setPositions(0, 1.0);
 
-        drive.navigationMonitorTicks(1.0/4, -60, 0,10);
+        drive.navigationMonitorTicks(1.0/4, -55, 0,10);
         drive.ceaseMotion();
 
-        drive.navigationMonitorTicks(1.0/2, 0, 60, 10);
+        drive.navigationMonitorTicks(1.0/2, 0, 64, 10);
         drive.ceaseMotion();
 
-        robot.arm.setPositions(-Arm.ARM_OFFSET, 0.25);
+        robot.arm.goToPosition(Arm.HubPosition.PARK);
+        //robot.arm.setPositions(-Arm.ARM_OFFSET, 0.25);
 
         // Drive to the alliance hub
         //drive.navigationMonitorTicks(1.0/2, -5, 0, 10);

@@ -47,6 +47,7 @@ public class Drive2 {
 
     double TotalMotorCurrent;
 
+    boolean mIsStopped = false;
 
     //For Speed Conservation
     double timePassed = 0;
@@ -222,10 +223,10 @@ public class Drive2 {
      * @param xInches
      * @param yInches
      * @param timeout
-*
-* Utilizes wheel encoders in order to track the location of the robot.
-* Imu heading tracks the direction the robot is pointing.
-     * @return
+     *
+     * Utilizes wheel encoders in order to track the location of the robot.
+     * Imu heading tracks the direction the robot is pointing.
+     * Tracking the location with the wheel encoders allows for a direct input for location and time in order to direect the robot's movement.
      */
     public void navigationMonitorTicks(double inchesPerSecond, double xInches, double yInches, double timeout) {
         //Borrowed Holonomic robot navigation ideas from https://www.bridgefusion.com/blog/2019/4/10/robot-localization-dead-reckoning-in-f  irst-tech-challenge-ftc
@@ -239,13 +240,15 @@ public class Drive2 {
         double inchesTraveledX = 0, inchesTraveledY = 0, inchesTraveledTotal = 0, rotationInchesTotal = 0;
         double cycleMillisNow = 0, cycleMillisPrior = System.currentTimeMillis(), cycleMillisDelta, startMillis = System.currentTimeMillis();
         //vroom_vroom(speed, theta, speed, theta);
+        mIsStopped = false;
+        mTargetAngleErrorSum = 0;
         getImuAngle();
         double speed = inchesPerSecond/SPEEDSCALE;
         navigationByPhi(speed, theta);
         adjustThetaInit();
         //setTargetAngle(mImuCalibrationAngle);
         double initialTime = opMode.getRuntime();
-        while (opMode.opModeIsActive() && runtime.seconds() < timeout && inchesTraveledTotal <= magnitude){
+        while (opMode.opModeIsActive() && runtime.seconds() < timeout && inchesTraveledTotal <= magnitude && !mIsStopped){
 //For Speed Changing
 
 
@@ -345,25 +348,20 @@ public class Drive2 {
             telemetry.addData("In Traveled (Tot, Rot)", "%.1f, %.1f", inchesTraveledTotal,rotationInchesTotal);
             telemetry.addData("Cycle Millis:", "%4f", cycleMillisDelta);
             telemetry.update();
-//            Log.i("Drive", String.format("Ticks Traveled (lf, lb): %7d, %7d", ticksTraveledLeftFront, ticksTraveledLeftBack));
-//            Log.i("Drive", String.format("Ticks Traveled (rf, rb): %7d, %7d", ticksTraveledRightFront, ticksTraveledRightBack));
+            Log.i("Drive", String.format("Ticks Traveled (lf, lb): %7d, %7d", ticksTraveledLeftFront, ticksTraveledLeftBack));
+            Log.i("Drive", String.format("Ticks Traveled (rf, rb): %7d, %7d", ticksTraveledRightFront, ticksTraveledRightBack));
             Log.i("Drive", String.format("Ticks Delta (lf, lb): %7d, %7d", deltaTicksLeftFront, deltaTicksLeftBack));
             Log.i("Drive", String.format("Ticks Delta (rf, rb): %7d, %7d", deltaTicksRightFront, deltaTicksRightBack));
-//            Log.i("Drive", String.format("In Traveled (X, Y): X: %.2f, Y: %.2f", inchesTraveledX, inchesTraveledY));
+            Log.i("Drive", String.format("In Traveled (X, Y): X: %.2f, Y: %.2f", inchesTraveledX, inchesTraveledY));
             Log.i("Drive", String.format("In Traveled (Tot, Rot): %.2f, %.2f", inchesTraveledTotal,rotationInchesTotal));
-//            Log.i("Drive", String.format("Incremental Speed (in/sec): %.2f", deltaInchesRobot/cycleMillisDelta * 1000));
-//            Log.i("Drive", String.format("Cycle Millis: %.3f, Total Seconds: %.3f", cycleMillisDelta, (System.currentTimeMillis() - startMillis)/1000));
-
-
+            Log.i("Drive", String.format("Incremental Speed (in/sec): %.2f", deltaInchesRobot/cycleMillisDelta * 1000));
+            Log.i("Drive", String.format("Cycle Millis: %.3f, Total Seconds: %.3f", cycleMillisDelta, (System.currentTimeMillis() - startMillis)/1000));
 
             tickCountPriorLeftFront = tickCountNowLeftFront;
             tickCountPriorLeftBack = tickCountNowLeftBack;
             tickCountPriorRightFront = tickCountNowRightFront;
             tickCountPriorRightBack = tickCountNowRightBack;
-
-
         }
-
     }
 
     /**stopResetEncoder
@@ -399,6 +397,8 @@ public class Drive2 {
         rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        mIsStopped = true;
+        opMode.sleep(30);
         leftFrontDrive.setPower(0);
         leftBackDrive.setPower(0);
         rightFrontDrive.setPower(0);
@@ -451,9 +451,10 @@ public class Drive2 {
                 targetTheta/Math.PI*180, nowTheta/Math.PI*180, adjustedTargetTheta/Math.PI*180, thetaErrorSum/Math.PI*180));
     }
 
-    double mCurrentImuAngle, mPriorImuAngle, mTargetAngle, mAdjustedAngle, mPriorAdjustedAngle, mImuCalibrationAngle;
+    double mCurrentImuAngle, mPriorImuAngle, mTargetAngle, mAdjustedAngle, mPriorAdjustedAngle, mImuCalibrationAngle, mTargetAngleErrorSum;
 
     public void setTargetAngle(double targetAngle){
+        double adjustedTargetAngle = getEulerAngleDegrees(targetAngle);
         mPriorImuAngle = mTargetAngle = targetAngle + imuSecondOpModeAdjustment;
     }
 
@@ -507,18 +508,23 @@ public class Drive2 {
      * Convert an angle such that -pi <= angle <= pi
      */
     private double getEulerAngle(double angle){
-        if(angle < -Math.PI) return angle%(2*Math.PI) + 2 * Math.PI;
-        else if (angle > Math.PI) return angle%(2*Math.PI) - 2 * Math.PI;
-        else return angle;
+        double modAngle = angle%(2*Math.PI);
+        if(modAngle < -Math.PI) return modAngle + 2 * Math.PI;
+        else if (modAngle > Math.PI) return modAngle - 2 * Math.PI;
+        else return modAngle;
+        //if(angle < -Math.PI) return angle%(2*Math.PI) + 2 * Math.PI;
+        //else if (angle > Math.PI) return angle%(2*Math.PI) - 2 * Math.PI;
+        //else return angle;
     }
 
     /**
-     * Convert an angle such that -pi <= angle <= pi
+     * Convert an angle such that -180 <= angle <= 180
      */
     private double getEulerAngleDegrees(double angle){
-        if(angle < -180) return angle%360 + 360;
-        else if (angle > 180) return angle%360 - 180;
-        else return angle;
+        double modAngle = angle%360;
+        if(modAngle < -180) return modAngle + 360;
+        else if (modAngle > 180) return modAngle - 360;
+        else return modAngle;
     }
 
     /**
@@ -530,14 +536,24 @@ public class Drive2 {
         // The gain value determines how sensitive the correction is to direction changes.
         // You will have to experiment with your robot to get small smooth direction changes
         // to stay on a straight line.
-        double angleError, powerCorrection, angle, gain;
+        double angleError, powerCorrection, angle, pGain, iGain;
 
         angle = getAdjustedAngle();  //IMU angle converted to Euler angle (IMU may already deliver Euler angles)
 
-        angleError = mTargetAngle - angle;        // reverse sign of angle for correction.
+        angleError = getEulerAngleDegrees(mTargetAngle - angle);        // reverse sign of angle for correction.
+        mTargetAngleErrorSum += angleError;
+        int MAX_ERROR_ANGLE_SUM = 3;
+        if(mTargetAngleErrorSum > MAX_ERROR_ANGLE_SUM)
+            mTargetAngleErrorSum = MAX_ERROR_ANGLE_SUM;
+        else if(mTargetAngleErrorSum < -MAX_ERROR_ANGLE_SUM)
+            mTargetAngleErrorSum = -MAX_ERROR_ANGLE_SUM;
+        Log.i(TAG, String.format("getPowerCorrection: targetAngle: %.2f, imuAngle: %.2f, diffAngle: %.2f, diffAngleSum: %.2f", mTargetAngle, angle, angleError, mTargetAngleErrorSum));
 
-        gain = Math.max(-0.05*Math.abs(angleError) + 0.1, .05);  //Varies from .2 around zero to .05 for errors above 10 degrees
-        powerCorrection = angleError * gain;
+        //gain = Math.max(-0.05*Math.abs(angleError) + 0.1, .05);  //Varies from .2 around zero to .05 for errors above 10 degrees
+        pGain = Math.max(-0.05*Math.abs(angleError) + 0.1, .05)/3;  //Varies from .2 around zero to .05 for errors above 10 degrees
+        pGain = 0.06 / 8.0;
+        iGain = 0.04 / 8.0;
+        powerCorrection = angleError * pGain + mTargetAngleErrorSum * iGain;
 
         return powerCorrection;
     }

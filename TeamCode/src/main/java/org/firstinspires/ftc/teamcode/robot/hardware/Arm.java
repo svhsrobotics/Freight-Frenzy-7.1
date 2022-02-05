@@ -23,17 +23,16 @@ public class Arm {
         this.collector = collector;
     }
 
+
     public enum HubPosition {
         // TODO: Implement capping
-        FRONTTOP,
-        FRONTMID,
-        FRONTBOT,
-        FRONTLOAD,
+        TOP,
+        MID,
+        BOT,
+        COLLECT,
+        PARK,
 
-        BACKTOP,
-        BACKMID,
-        BACKBOT,
-        BACKLOAD,
+
 
         START
     }
@@ -48,9 +47,27 @@ public class Arm {
         switch (position) {
             case START:
                 setPositions(0, -1.0);
+                break;
 
-            case FRONTLOAD:
-                setPositions(0, -0.8);
+            case TOP:
+                setPositions(-2019, 0.71);
+                break;
+
+            case MID:
+                setPositions(-1270, 0.67);
+                break;
+
+            case BOT:
+                setPositions(-369, 0.57);
+                break;
+
+            case PARK:
+                setPositions(0, 0.38);
+                break;
+
+            case COLLECT:
+                setPositions(-432, 0.68);
+                break;
         }
     }
 
