@@ -45,9 +45,9 @@ public class CompetitionTeleOp extends LinearOpMode {
         leftCarousel = hardwareMap.get(CRServo.class, "leftCarousel");
 
         RevBlinkinLedDriver lights = hardwareMap.get(RevBlinkinLedDriver.class, "LED");
-        lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.LIGHT_CHASE_RED);
+        lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.SINELON_FOREST_PALETTE.previous());
         long time = System.currentTimeMillis();
-        int currentlight = -99;
+        int currentlight = 19;
 
         waitForStart();
 
@@ -269,6 +269,7 @@ public class CompetitionTeleOp extends LinearOpMode {
             telemetry.addData("magnitude left", ((float) Math.round(magLeft * 100)) / 100);
             telemetry.addData("thetaLeft", ((float) Math.round(thetaLeft / pi * 100)) / 100);
             telemetry.addData("Trim", carouselTrim);
+            telemetry.addData("Lights", currentlight);
 
             telemetry.update();
 
