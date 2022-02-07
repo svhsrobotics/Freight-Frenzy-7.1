@@ -107,7 +107,8 @@ public class NavigationTest extends LinearOpMode {
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         if (opModeIsActive()) {
-            drive.rotate(90, 10);
+            //drive.navigationMonitorTicksAngles(0, 88.5, 10, 10, 1500);
+            drive.navigationMonitorTicksAngles(0, 45, 10, 10, 1500);
             //drive.navigationMonitorTicks(1.0/4, -55, -11.75, 10);
             //drive.ceaseMotion();
             //drive.setNewTargetPosition(48, 48);

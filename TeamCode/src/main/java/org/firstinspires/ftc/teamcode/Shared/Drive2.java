@@ -309,8 +309,97 @@ public class Drive2 {
         getImuAngle();
         navigationByPhi(speed, theta);
         adjustThetaInit();
-        //setTargetAngle(mImuCalibrationAngle);
+        //setTargetAngle(angle);
         while (opMode.opModeIsActive() && runtime.seconds() < timeout && inchesTraveledTotal <= magnitude && !mIsStopped) {
+
+            TotalMotorCurrent = leftFrontDrive.getCurrent();
+            TotalMotorCurrent += leftBackDrive.getCurrent();
+            TotalMotorCurrent += rightFrontDrive.getCurrent();
+            TotalMotorCurrent += rightBackDrive.getCurrent();
+            Log.i(TAG,"navigationMonitorTicks: Total Motor Current= "+ TotalMotorCurrent);
+
+
+            int tickCountNowLeftFront = leftFrontDrive.getCurrentPosition();
+            int tickCountNowLeftBack = leftBackDrive.getCurrentPosition();
+            int tickCountNowRightFront = rightFrontDrive.getCurrentPosition();
+            int tickCountNowRightBack = rightBackDrive.getCurrentPosition();
+            int deltaTicksLeftFront = tickCountNowLeftFront - tickCountPriorLeftFront;
+            int deltaTicksLeftBack = tickCountNowLeftBack - tickCountPriorLeftBack;
+            int deltaTicksRightFront = tickCountNowRightFront - tickCountPriorRightFront;
+            int deltaTicksRightBack = tickCountNowRightBack - tickCountPriorRightBack;
+            ticksTraveledLeftFront += deltaTicksLeftFront;
+            ticksTraveledLeftBack += deltaTicksLeftBack;
+            ticksTraveledRightFront += deltaTicksRightFront;
+            ticksTraveledRightBack += deltaTicksRightBack;
+            double leftFrontInchesDelta = deltaTicksLeftFront / COUNTS_PER_INCH;
+            double rightFrontInchesDelta = -deltaTicksRightFront / COUNTS_PER_INCH;  //Minus sign converts to holonomic drive perspective
+            double rightBackInchesDelta = -deltaTicksRightBack / COUNTS_PER_INCH;  //Minus sign converts to holonomic drive perspective
+            double leftBackInchesDelta = deltaTicksLeftBack / COUNTS_PER_INCH;
+            double rotationAvgInchesDelta = (leftFrontInchesDelta + rightFrontInchesDelta + rightBackInchesDelta + leftBackInchesDelta)/4;
+            rotationInchesTotal += rotationAvgInchesDelta;
+            double leftFrontRobotInchesDelta = leftFrontInchesDelta - rotationAvgInchesDelta;
+            double rightFrontRobotInchesDelta = rightFrontInchesDelta - rotationAvgInchesDelta;
+            double rightBackRobotInchesDelta = rightBackInchesDelta - rotationAvgInchesDelta;
+            double leftBackRobotInchesDelta = leftBackInchesDelta - rotationAvgInchesDelta;
+            double deltaInchesRobotX = (leftFrontRobotInchesDelta + rightFrontRobotInchesDelta - rightBackRobotInchesDelta - leftBackRobotInchesDelta) / (2 * Math.sqrt(2));
+            double deltaInchesRobotY = (leftFrontRobotInchesDelta - rightFrontRobotInchesDelta - rightBackRobotInchesDelta + leftBackRobotInchesDelta) / (2 * Math.sqrt(2));
+            double deltaInchesRobot = Math.hypot(deltaInchesRobotX, deltaInchesRobotY);
+            double FUDGE_FACTOR = 36/51.0;
+            inchesTraveledX += deltaInchesRobotX * FUDGE_FACTOR;
+            inchesTraveledY += deltaInchesRobotY * FUDGE_FACTOR;
+            inchesTraveledTotal += Math.hypot(deltaInchesRobotX * FUDGE_FACTOR, deltaInchesRobotY * FUDGE_FACTOR);
+
+            //Provide feedback to keep robot moving in right direction based on encoder ticks
+            adjustTheta(xInches, yInches, speed, inchesTraveledX, inchesTraveledY);  //Must call adjustThetaInit() before a loop with adjustTheta()
+
+            cycleMillisNow = System.currentTimeMillis();
+            cycleMillisDelta = cycleMillisNow - cycleMillisPrior;
+            cycleMillisPrior = cycleMillisNow;
+            telemetry.addData("Ticks Traveled (lf, lb)", "%7d, %7d", ticksTraveledLeftFront, ticksTraveledLeftBack);
+            telemetry.addData("Ticks Traveled (rf, rb)", "%7d, %7d", ticksTraveledRightFront, ticksTraveledRightBack);
+            telemetry.addData("In Traveled (X, Y)", "X: %.1f, Y: %.1f", inchesTraveledX, inchesTraveledY);
+            telemetry.addData("In Traveled (Tot, Rot)", "%.1f, %.1f", inchesTraveledTotal,rotationInchesTotal);
+            telemetry.addData("Cycle Millis:", "%4f", cycleMillisDelta);
+            telemetry.update();
+            Log.i("Drive", String.format("Ticks Traveled (lf, lb): %7d, %7d", ticksTraveledLeftFront, ticksTraveledLeftBack));
+            Log.i("Drive", String.format("Ticks Traveled (rf, rb): %7d, %7d", ticksTraveledRightFront, ticksTraveledRightBack));
+            Log.i("Drive", String.format("Ticks Delta (lf, lb): %7d, %7d", deltaTicksLeftFront, deltaTicksLeftBack));
+            Log.i("Drive", String.format("Ticks Delta (rf, rb): %7d, %7d", deltaTicksRightFront, deltaTicksRightBack));
+            Log.i("Drive", String.format("In Traveled (X, Y): X: %.2f, Y: %.2f", inchesTraveledX, inchesTraveledY));
+            Log.i("Drive", String.format("In Traveled (Tot, Rot): %.2f, %.2f", inchesTraveledTotal,rotationInchesTotal));
+            Log.i("Drive", String.format("Incremental Speed (in/sec): %.2f", deltaInchesRobot/cycleMillisDelta * 1000));
+            Log.i("Drive", String.format("Cycle Millis: %.3f, Total Seconds: %.3f", cycleMillisDelta, (System.currentTimeMillis() - startMillis)/1000));
+
+            tickCountPriorLeftFront = tickCountNowLeftFront;
+            tickCountPriorLeftBack = tickCountNowLeftBack;
+            tickCountPriorRightFront = tickCountNowRightFront;
+            tickCountPriorRightBack = tickCountNowRightBack;
+        }
+    }
+
+    public void navigationMonitorTicksAngles(double speed, double angle, double xInches, double yInches, double timeout) {
+        //Borrowed Holonomic robot navigation ideas from https://www.bridgefusion.com/blog/2019/4/10/robot-localization-dead-reckoning-in-f  irst-tech-challenge-ftc
+        //    Robot Localization -- Dead Reckoning in First Tech Challenge (FTC)
+        double theta = Math.atan2(yInches, xInches);
+        double magnitude = Math.hypot(xInches, yInches);
+        int tickCountPriorLeftFront = leftFrontDrive.getCurrentPosition(), tickCountPriorLeftBack = leftBackDrive.getCurrentPosition();
+        int tickCountPriorRightFront = rightFrontDrive.getCurrentPosition(), tickCountPriorRightBack = rightBackDrive.getCurrentPosition();
+        int ticksTraveledLeftFront = 0, ticksTraveledLeftBack = 0, ticksTraveledRightFront = 0, ticksTraveledRightBack = 0;
+        double inchesTraveledX = 0, inchesTraveledY = 0, inchesTraveledTotal = 0, rotationInchesTotal = 0;
+        double cycleMillisNow = 0, cycleMillisPrior = System.currentTimeMillis(), cycleMillisDelta, startMillis = System.currentTimeMillis();
+        double timout_from_now = System.currentTimeMillis() + timeout;
+        //vroom_vroom(speed, theta, speed, theta);
+        mIsStopped = false;
+        mTargetAngleErrorSum = 0;
+        getImuAngle();
+        navigationByPhi(speed, theta);
+        adjustThetaInit();
+
+        // We fudge the angle a little, because something is wrong...
+        double angle_fudged = angle - (angle * (1.5 / 90.0));
+        setTargetAngle(angle_fudged);
+
+        while (opMode.opModeIsActive() && System.currentTimeMillis() < timout_from_now && inchesTraveledTotal <= magnitude && !mIsStopped) {
 
             TotalMotorCurrent = leftFrontDrive.getCurrent();
             TotalMotorCurrent += leftBackDrive.getCurrent();
