@@ -33,10 +33,10 @@ public class Robot {
 //        static final String backRightMotorName = "BR"; // CHM1
 //        static final String imuName = "imu";
 
-        static final String frontLeftMotorName = "left_front_drive"; // CHM2
-        static final String frontRightMotorName = "right_front_drive"; // CHM3
-        static final String backLeftMotorName = "left_back_drive"; // CHM0
-        static final String backRightMotorName = "right_back_drive"; // CHM1
+        static final String frontLeftMotorName = "FL"; // CHM2 //left_front_drive
+        static final String frontRightMotorName = "FR"; // CHM3 //right_front_drive
+        static final String backLeftMotorName = "BL"; // CHM0 //left_back_drive
+        static final String backRightMotorName = "BR"; // CHM1 //right_back_drive
         static final String imuName = "imu";
     }
 
