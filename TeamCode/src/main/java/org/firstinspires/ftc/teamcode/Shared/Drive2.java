@@ -239,6 +239,10 @@ public class Drive2 {
         int ticksTraveledLeftFront = 0, ticksTraveledLeftBack = 0, ticksTraveledRightFront = 0, ticksTraveledRightBack = 0;
         double inchesTraveledX = 0, inchesTraveledY = 0, inchesTraveledTotal = 0, rotationInchesTotal = 0;
         double cycleMillisNow = 0, cycleMillisPrior = System.currentTimeMillis(), cycleMillisDelta, startMillis = System.currentTimeMillis();
+
+        // Get the time it is right now, so we can start the timer
+        double start = System.currentTimeMillis();
+        
         //vroom_vroom(speed, theta, speed, theta);
         mIsStopped = false;
         mTargetAngleErrorSum = 0;
@@ -247,8 +251,8 @@ public class Drive2 {
         navigationByPhi(speed, theta);
         adjustThetaInit();
         //setTargetAngle(mImuCalibrationAngle);
-        double initialTime = opMode.getRuntime();
-        while (opMode.opModeIsActive() && runtime.seconds() < timeout && inchesTraveledTotal <= magnitude && !mIsStopped){
+
+        while (opMode.opModeIsActive() && System.currentTimeMillis() < start + timeout && inchesTraveledTotal <= magnitude && !mIsStopped){
 //For Speed Changing
 
 
