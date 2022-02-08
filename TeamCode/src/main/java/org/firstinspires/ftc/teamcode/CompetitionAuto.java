@@ -62,24 +62,27 @@ public class CompetitionAuto extends LinearOpMode {
         telemetry.log().add("Position of the Team Element: " + position); telemetry.update();
 
         // Drive away from wall so the arm doesn't hit it.
-        drive.navigationMonitorTicks(.125, 0, -10, 10, new NeverStops());
+        drive.navigationMonitorTicks(10, 0, -10, 10, new NeverStops());
         drive.ceaseMotion();
 
         // Raise the arm so it doesn't drag.
         robot.arm.setPositions(-1435, .52);
-
+        drive.navigationMonitorTicks(5, 12, 0, 10, new NeverStops());
+        drive.ceaseMotion();
+        sleep(1000);
+        drive.navigationMonitorTicks(20, -12, 0, 10, new NeverStops());
         if (position == TeamElementDetector.TeamElementPosition.RIGHT) {
             // Do an extra 8 inches to the left to get around the block- otherwise we plow it into the way
-            drive.navigationMonitorTicks(.25, 8, 0, 10, new NeverStops());
+            drive.navigationMonitorTicks(20, 8, 0, 10, new NeverStops());
         }
 
-        drive.navigationMonitorTicks(.25, 0, -53, 10, new NeverStops());
+        drive.navigationMonitorTicks(20, 0, -53, 10, new NeverStops());
         drive.ceaseMotion();
         sleep(1000);
         if (position == TeamElementDetector.TeamElementPosition.RIGHT) {
-            drive.navigationMonitorTicks(1.0/4, -30, 0, 10, new NeverStops());
+            drive.navigationMonitorTicks(15, -30, 0, 10, new NeverStops());
         } else {
-            drive.navigationMonitorTicks(1.0/4, -22, 0, 10, new NeverStops());
+            drive.navigationMonitorTicks(15, -22, 0, 10, new NeverStops());
         }
         drive.ceaseMotion();
 
@@ -100,33 +103,33 @@ public class CompetitionAuto extends LinearOpMode {
                 robot.arm.goToPosition(Arm.HubPosition.BOT);
                 //robot.arm.setPositions(-398, .42);
                 //robot.arm.setPositions(-369, .57);
-                drive.navigationMonitorTicks(1.0/4, 0, 5, 10, new NeverStops());
+                drive.navigationMonitorTicks(15, 0, 5, 10, new NeverStops());
                 drive.ceaseMotion();
                 robot.arm.setCollectorMode(Arm.CollectorMode.Eject);
                 sleep(4000);
-                drive.navigationMonitorTicks(1.0/4, 0, -11, 10, new NeverStops()); // Move back
+                drive.navigationMonitorTicks(15, 0, -11, 10, new NeverStops()); // Move back
                 drive.ceaseMotion();
                 break; // Break is *very* important
             case CENTER:
                 robot.arm.goToPosition(Arm.HubPosition.MID);//FRONTLOAD
                 //robot.arm.setPositions(-1157, .47);
                 //robot.arm.setPositions(-1270, .67);
-                drive.navigationMonitorTicks(1.0/4, 0, 5.75, 10, new NeverStops());
+                drive.navigationMonitorTicks(15, 0, 5.75, 10, new NeverStops());
                 drive.ceaseMotion();
                 robot.arm.setCollectorMode(Arm.CollectorMode.Eject);
                 sleep(4000);
-                drive.navigationMonitorTicks(1.0/4, 0, -11.75, 10, new NeverStops()); // Move back
+                drive.navigationMonitorTicks(15, 0, -11.75, 10, new NeverStops()); // Move back
                 drive.ceaseMotion();
                 break;
             case RIGHT:
                 robot.arm.goToPosition(Arm.HubPosition.TOP);
                 //robot.arm.setPositions(-2180, .57);
                 //robot.arm.setPositions(-2019, .71);
-                drive.navigationMonitorTicks(1.0/4, 0, 9, 10, new NeverStops());
+                drive.navigationMonitorTicks(15, 0, 9, 10, new NeverStops());
                 drive.ceaseMotion();
                 robot.arm.setCollectorMode(Arm.CollectorMode.Eject);
                 sleep(4000);
-                drive.navigationMonitorTicks(1.0/4, 0, -17, 10, new NeverStops()); // Move back
+                drive.navigationMonitorTicks(15, 0, -17, 10, new NeverStops()); // Move back
                 drive.ceaseMotion();
                 break;
         }
@@ -135,10 +138,10 @@ public class CompetitionAuto extends LinearOpMode {
 
         //robot.arm.setPositions(0, 1.0);
 
-        drive.navigationMonitorTicks(1.0/4, -55, 0,10, new NeverStops());
+        drive.navigationMonitorTicks(15, -55, 0,10, new NeverStops());
         drive.ceaseMotion();
 
-        drive.navigationMonitorTicks(1.0/2, 0, 64, 10, new NeverStops());
+        drive.navigationMonitorTicks(25, 0, 64, 10, new NeverStops());
         drive.ceaseMotion();
 
         robot.arm.goToPosition(Arm.HubPosition.PARK);
