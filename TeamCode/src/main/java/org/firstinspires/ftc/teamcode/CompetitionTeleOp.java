@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-
+import org.firstinspires.ftc.teamcode.util.ExMath;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.robot.hardware.Arm;
 
@@ -120,10 +120,10 @@ public class CompetitionTeleOp extends LinearOpMode {
             //leftBackDrive.setPower((backLeftPowerFactor * magLeft)*(backLeftPowerFactor * magLeft));
             //rightBackDrive.setPower(-(backRightPowerFactor * magRight)*(backRightPowerFactor * magRight));
 
-            leftFrontDrive.setPower(-((frontLeftPowerFactor * magLeft)));
-            rightFrontDrive.setPower((frontRightPowerFactor * magRight));
-            leftBackDrive.setPower(-((backLeftPowerFactor * magLeft)));
-            rightBackDrive.setPower((backRightPowerFactor * magRight));
+            leftFrontDrive.setPower(-((ExMath.square_with_sign(frontLeftPowerFactor) * magLeft)));
+            rightFrontDrive.setPower((ExMath.square_with_sign(frontRightPowerFactor) * magRight));
+            leftBackDrive.setPower(-((ExMath.square_with_sign(backLeftPowerFactor) * magLeft)));
+            rightBackDrive.setPower((ExMath.square_with_sign(backRightPowerFactor) * magRight));
 
             if (gamepad2.y) {
                 if(gamepad2.dpad_down){
