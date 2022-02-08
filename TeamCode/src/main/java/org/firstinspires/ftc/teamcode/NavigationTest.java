@@ -107,7 +107,7 @@ private ElapsedTime runtime = new ElapsedTime();
         double cycleMillisNow = System.currentTimeMillis();
         double cycleMillisPrior = cycleMillisNow;
 
-        drive.navigationMonitorTicks(1, 0, 32, 30, new NeverStops());
+        drive.navigationMonitorTicks(1, 0, 32, 30, false);
 
         cycleMillisNow = System.currentTimeMillis();
         double cycleMillisDelta = cycleMillisNow - cycleMillisPrior;

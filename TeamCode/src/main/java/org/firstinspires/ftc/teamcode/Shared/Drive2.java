@@ -229,7 +229,7 @@ public class Drive2 {
      * Imu heading tracks the direction the robot is pointing.
      * Tracking the location with the wheel encoders allows for a direct input for location and time in order to direect the robot's movement.
      */
-    public void navigationMonitorTicks(double inchesPerSecond, double xInches, double yInches, double timeout, External external) {
+    public void navigationMonitorTicks(double inchesPerSecond, double xInches, double yInches, double timeout, boolean isMonitorAcceleration) {
         //Borrowed Holonomic robot navigation ideas from https://www.bridgefusion.com/blog/2019/4/10/robot-localization-dead-reckoning-in-f  irst-tech-challenge-ftc
         //    Robot Localization -- Dead Reckoning in First Tech Challenge (FTC)
         Log.i("start", "#$#$#$#$#$#$#$#$#$");
@@ -239,10 +239,10 @@ public class Drive2 {
         int tickCountPriorRightFront = rightFrontDrive.getCurrentPosition(), tickCountPriorRightBack = rightBackDrive.getCurrentPosition();
         int ticksTraveledLeftFront = 0, ticksTraveledLeftBack = 0, ticksTraveledRightFront = 0, ticksTraveledRightBack = 0;
         double inchesTraveledX = 0, inchesTraveledY = 0, inchesTraveledTotal = 0, rotationInchesTotal = 0;
-        double cycleMillisNow = 0, cycleMillisPrior = System.currentTimeMillis(), cycleMillisDelta, startMillis = System.currentTimeMillis();
+        long cycleMillisNow = 0, cycleMillisPrior = System.currentTimeMillis(), cycleMillisDelta, startMillis = System.currentTimeMillis();
 
         // Get the time it is right now, so we can start the timer
-        double start = System.currentTimeMillis();
+        long start = System.currentTimeMillis();
 
         //vroom_vroom(speed, theta, speed, theta);
         mIsStopped = false;
@@ -253,7 +253,7 @@ public class Drive2 {
         adjustThetaInit();
         //setTargetAngle(mImuCalibrationAngle);
 
-        while (opMode.opModeIsActive() && System.currentTimeMillis() < start + timeout && inchesTraveledTotal <= magnitude && !mIsStopped && !external.shouldStop()){
+        while (opMode.opModeIsActive() && System.currentTimeMillis() < start + timeout && inchesTraveledTotal <= magnitude && !mIsStopped && !isHighAcceleration(isMonitorAcceleration, startMillis)){
 //For Speed Changing
 
 
@@ -875,5 +875,13 @@ public class Drive2 {
         Log.i(TAG, String.format("calculateAngleDifference: angleDiff0: %.2f, angleDiff180: %.2f, angleDifference: %.2f",
                 angleDiff0, angleDiff180, angleDifference));
         return angleDifference;
+    }
+
+    private boolean isHighAcceleration(boolean isActive, long startTimeMillis){
+        if(isActive) return false;
+        if(System.currentTimeMillis() - startTimeMillis < 1000) return false; //Wait 1 sec to allow for initial acceleration
+        if(robot.imu.getLinearAcceleration().xAccel > 1.0)
+            return true;
+        return false;
     }
 }

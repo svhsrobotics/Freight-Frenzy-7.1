@@ -22,7 +22,7 @@ public class CurrentTest extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()) {
             if (gamepad1.a) {
-                drive.navigationMonitorTicks(1 / 4, 0, 0, 10, new NeverStops());
+                drive.navigationMonitorTicks(1 / 4, 0, 0, 10, false);
             }
         }
 

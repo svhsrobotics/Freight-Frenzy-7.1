@@ -32,16 +32,16 @@ public class CompetitionNoVision extends LinearOpMode {
         // Wait for the OpMode to start
         waitForStart();
         //Drive away from wall
-        drive.navigationMonitorTicks(1/4, 0, -5, 10, new NeverStops());
+        drive.navigationMonitorTicks(1/4, 0, -5, 10, false);
 
         //To Hub
-        drive.navigationMonitorTicks(1/2, -5, -5, 10, new NeverStops());
+        drive.navigationMonitorTicks(1/2, -5, -5, 10, false);
         arm.setCollectorMode(Arm.CollectorMode.Eject);
         //Sleeping so the collector has time to eject before stopping the servo
         sleep(2000);
         arm.setCollectorMode(Arm.CollectorMode.Stop);
         //Drive over to Carousel
-        drive.navigationMonitorTicks(1, 10, 0,10, new NeverStops());
+        drive.navigationMonitorTicks(1, 10, 0,10, false);
         //TODO: Include Code Using Sensor Data
         telemetry.update();
 
