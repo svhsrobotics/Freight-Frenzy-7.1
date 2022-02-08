@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.robot.hardware.Drive;
 
 import java.util.HashMap;
+import org.firstinspires.ftc.teamcode.util.External;
 
 public class Drive2 {
     String TAG = "Drive";
@@ -228,7 +229,7 @@ public class Drive2 {
      * Imu heading tracks the direction the robot is pointing.
      * Tracking the location with the wheel encoders allows for a direct input for location and time in order to direect the robot's movement.
      */
-    public void navigationMonitorTicks(double inchesPerSecond, double xInches, double yInches, double timeout) {
+    public void navigationMonitorTicks(double inchesPerSecond, double xInches, double yInches, double timeout, External external) {
         //Borrowed Holonomic robot navigation ideas from https://www.bridgefusion.com/blog/2019/4/10/robot-localization-dead-reckoning-in-f  irst-tech-challenge-ftc
         //    Robot Localization -- Dead Reckoning in First Tech Challenge (FTC)
         Log.i("start", "#$#$#$#$#$#$#$#$#$");
@@ -252,7 +253,7 @@ public class Drive2 {
         adjustThetaInit();
         //setTargetAngle(mImuCalibrationAngle);
 
-        while (opMode.opModeIsActive() && System.currentTimeMillis() < start + timeout && inchesTraveledTotal <= magnitude && !mIsStopped){
+        while (opMode.opModeIsActive() && System.currentTimeMillis() < start + timeout && inchesTraveledTotal <= magnitude && !mIsStopped && !external.shouldStop()){
 //For Speed Changing
 
 

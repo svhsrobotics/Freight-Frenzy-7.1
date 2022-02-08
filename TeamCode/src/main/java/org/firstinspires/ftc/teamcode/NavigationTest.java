@@ -44,6 +44,7 @@ import org.firstinspires.ftc.teamcode.Shared.Drive2;
 import org.firstinspires.ftc.teamcode.Shared.Drive3;
 import org.firstinspires.ftc.teamcode.Shared.DriveOBJ;
 import org.firstinspires.ftc.teamcode.robot.Robot;
+import org.firstinspires.ftc.teamcode.util.NeverStops;
 
 /**
  * This file illustrates the concept of driving a path based on encoder counts.
@@ -106,7 +107,7 @@ private ElapsedTime runtime = new ElapsedTime();
         double cycleMillisNow = System.currentTimeMillis();
         double cycleMillisPrior = cycleMillisNow;
 
-        drive.navigationMonitorTicks(1, 0, 32, 30);
+        drive.navigationMonitorTicks(1, 0, 32, 30, new NeverStops());
 
         cycleMillisNow = System.currentTimeMillis();
         double cycleMillisDelta = cycleMillisNow - cycleMillisPrior;
