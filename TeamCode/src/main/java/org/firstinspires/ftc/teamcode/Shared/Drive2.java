@@ -53,7 +53,7 @@ public class Drive2 {
     double timePassed = 0;
     double actualSpeedX = 0;
     double actualSpeedY = 0;
-    final double SPEEDSCALE = 21.5;//Speed in inches/second at speed=1
+    final double SPEEDSCALE = 50;//Speed in inches/second at speed=1
     double speedScaled = 0;
 
     public Drive2(Robot robot, LinearOpMode opMode){
@@ -285,7 +285,7 @@ public class Drive2 {
             double deltaInchesRobotX = (leftFrontRobotInchesDelta + rightFrontRobotInchesDelta - rightBackRobotInchesDelta - leftBackRobotInchesDelta) / (2 * Math.sqrt(2));
             double deltaInchesRobotY = (leftFrontRobotInchesDelta - rightFrontRobotInchesDelta - rightBackRobotInchesDelta + leftBackRobotInchesDelta) / (2 * Math.sqrt(2));
             double deltaInchesRobot = Math.hypot(deltaInchesRobotX, deltaInchesRobotY);
-            double FUDGE_FACTOR = 36/51.0;
+            double FUDGE_FACTOR = ((36/51.0)*(38/32.0));
             inchesTraveledX += deltaInchesRobotX * FUDGE_FACTOR;
             inchesTraveledY += deltaInchesRobotY * FUDGE_FACTOR;
             inchesTraveledTotal += Math.hypot(deltaInchesRobotX * FUDGE_FACTOR, deltaInchesRobotY * FUDGE_FACTOR);
@@ -302,7 +302,7 @@ public class Drive2 {
                 actualSpeedX = 1000 * (deltaInchesRobotX / cycleMillisDelta);//gets the actual speed in inches/second in x direction
                 actualSpeedY = 1000 * (deltaInchesRobotY / cycleMillisDelta);//gets the actual speed in inches/second in y direction
                 //SPEEDSCALE = 24.0;//Speed in inches/second at speed=1
-                speedScaled = speed * SPEEDSCALE;//Speed in terms of inches/second instead of 0 to 1
+                //speedScaled = speed * SPEEDSCALE;//Speed in terms of inches/second instead of 0 to 1
 
 
                 double actualSpeed = Math.sqrt((actualSpeedX * actualSpeedX) + (actualSpeedY * actualSpeedY));//Take hypotenuse of speed in x and y
@@ -314,7 +314,7 @@ public class Drive2 {
 
                 Log.i("Speed", String.format("SpeedScale:, %.1f", SPEEDSCALE));
                 Log.i("Speed", String.format("Target Speed in/s:, %.1f", inchesPerSecond));
-                Log.i("Speed", String.format("SpeedScaled in/s:, %.2f", speedScaled));//log desired speed scaled should be input speed*12
+              //  Log.i("Speed", String.format("SpeedScaled in/s:, %.2f", speedScaled));//log desired speed scaled should be input speed*12
 
                 double speedError = (inchesPerSecond - actualSpeed);//error in speed in/s
                 Log.i("Speed", String.format("SpeedError in/s:, %.2f", speedError));

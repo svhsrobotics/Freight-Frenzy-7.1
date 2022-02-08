@@ -83,6 +83,40 @@ private ElapsedTime runtime = new ElapsedTime();
     @Override
     public void runOpMode() {
 
+        Robot robot = new Robot(hardwareMap);
+        // Initialize the hardware
+        robot.initDrives();
+        robot.initIMU();
+        // Create a drive. Note that passing the entire OpMode is not ideal, should be fixed later
+        Drive2 drive = new Drive2(robot, this);
+        //drive.setTargetAngle(0);
+
+        //Vuforia vuforia = new Vuforia(this);
+
+        // Send telemetry message to signify robot waiting;
+
+//        drive.stopResetEncoder();
+//        drive.runUsingEncoder();
+
+
+        // Wait for the game to start (driver presses PLAY)
+        waitForStart();
+
+
+        double cycleMillisNow = System.currentTimeMillis();
+        double cycleMillisPrior = cycleMillisNow;
+
+        drive.navigationMonitorTicks(1, 0, 32, 30);
+
+        cycleMillisNow = System.currentTimeMillis();
+        double cycleMillisDelta = cycleMillisNow - cycleMillisPrior;
+        final double DISTANCE= 32;
+        double speed = DISTANCE/(cycleMillisDelta/1000);
+        Log.i("Speed", "......................................................");
+        Log.i("Speed", "Time Elapsed:" +(cycleMillisDelta/1000));
+        Log.i("Speed", "Speed = "+ speed +" inches/second");
+
+
         /*
          * Initialize the drive system variables.
          * The init() method of the hardware class does all the work here
@@ -90,7 +124,7 @@ private ElapsedTime runtime = new ElapsedTime();
         // robot.init(hardwareMap);
         //Drive2 drive = new Drive2(this);
         //drive.init();
-
+/*
         //final Drive3 drive = new Drive3(this);
         Robot robot = new Robot(hardwareMap);
         // Initialize the hardware
@@ -131,7 +165,7 @@ private ElapsedTime runtime = new ElapsedTime();
             sleep(500);
         }
         if(1+1 == 2) return; */
-
+/*
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
    /*     if (opModeIsActive()) {
@@ -175,6 +209,8 @@ private ElapsedTime runtime = new ElapsedTime();
                 drive.setTargetAngle(i*3);
             }
 */
+
+            */
 
 //            drive.ceaseMotion();
 //            sleep(2000);
