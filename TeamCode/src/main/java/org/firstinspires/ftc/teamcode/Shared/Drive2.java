@@ -206,217 +206,117 @@ public class Drive2 {
         setMotorPowersPhi(speedsPhi);
     }
 
-
-    //               ^
-    //               |  Y axis
-    //               |
-    //    ---------------------
-    //    |        Front      |
-    //    |                   |
-    //    |                   |   X axis
-    //    |        Robot      |----------->
-    //    |                   |
-    //    |      top view     |
-    //    ---------------------
-
-    /** navigationMonitorTicks
-     *  @param inchesPerSecond
-     * @param xInches
-     * @param yInches
-     * @param timeout
-     *
-     * Utilizes wheel encoders in order to track the location of the robot.
-     * Imu heading tracks the direction the robot is pointing.
-     * Tracking the location with the wheel encoders allows for a direct input for location and time in order to direect the robot's movement.
+    /**
+     * This is the original navigation function, without anything fancy.
+     * @param speed inches per second
+     * @param x inches left/right
+     * @param y inches forward/backwards
+     * @param timout seconds
      */
-    public void navigationMonitorTicks(double inchesPerSecond, double xInches, double yInches, double timeout, boolean isMonitorAcceleration) {
-        //Borrowed Holonomic robot navigation ideas from https://www.bridgefusion.com/blog/2019/4/10/robot-localization-dead-reckoning-in-f  irst-tech-challenge-ftc
-        //    Robot Localization -- Dead Reckoning in First Tech Challenge (FTC)
-        Log.i("start", "#$#$#$#$#$#$#$#$#$");
-        double theta = Math.atan2(yInches, xInches);
-        double magnitude = Math.hypot(xInches, yInches);
-        int tickCountPriorLeftFront = leftFrontDrive.getCurrentPosition(), tickCountPriorLeftBack = leftBackDrive.getCurrentPosition();
-        int tickCountPriorRightFront = rightFrontDrive.getCurrentPosition(), tickCountPriorRightBack = rightBackDrive.getCurrentPosition();
-        int ticksTraveledLeftFront = 0, ticksTraveledLeftBack = 0, ticksTraveledRightFront = 0, ticksTraveledRightBack = 0;
-        double inchesTraveledX = 0, inchesTraveledY = 0, inchesTraveledTotal = 0, rotationInchesTotal = 0;
-        long cycleMillisNow = 0, cycleMillisPrior = System.currentTimeMillis(), cycleMillisDelta, startMillis = System.currentTimeMillis();
-
-        // Get the time it is right now, so we can start the timer
-        long start = System.currentTimeMillis();
-
-        //vroom_vroom(speed, theta, speed, theta);
-        mIsStopped = false;
-        mTargetAngleErrorSum = 0;
-        getImuAngle();
-        double speed = inchesPerSecond/SPEEDSCALE;
-        navigationByPhi(speed, theta);
-        adjustThetaInit();
-        //setTargetAngle(mImuCalibrationAngle);
-
-        while (opMode.opModeIsActive() && System.currentTimeMillis() < start + timeout && inchesTraveledTotal <= magnitude && !mIsStopped && !isHighAcceleration(isMonitorAcceleration, startMillis)){
-//For Speed Changing
-
-
-
-            TotalMotorCurrent = leftFrontDrive.getCurrent();
-            TotalMotorCurrent += leftBackDrive.getCurrent();
-            TotalMotorCurrent += rightFrontDrive.getCurrent();
-            TotalMotorCurrent += rightBackDrive.getCurrent();
-            Log.i(TAG,"navigationMonitorTicks: Total Motor Current= "+ TotalMotorCurrent);
-
-
-            int tickCountNowLeftFront = leftFrontDrive.getCurrentPosition();
-            int tickCountNowLeftBack = leftBackDrive.getCurrentPosition();
-            int tickCountNowRightFront = rightFrontDrive.getCurrentPosition();
-            int tickCountNowRightBack = rightBackDrive.getCurrentPosition();
-            int deltaTicksLeftFront = tickCountNowLeftFront - tickCountPriorLeftFront;
-            int deltaTicksLeftBack = tickCountNowLeftBack - tickCountPriorLeftBack;
-            int deltaTicksRightFront = tickCountNowRightFront - tickCountPriorRightFront;
-            int deltaTicksRightBack = tickCountNowRightBack - tickCountPriorRightBack;
-            ticksTraveledLeftFront += deltaTicksLeftFront;
-            ticksTraveledLeftBack += deltaTicksLeftBack;
-            ticksTraveledRightFront += deltaTicksRightFront;
-            ticksTraveledRightBack += deltaTicksRightBack;
-            double leftFrontInchesDelta = deltaTicksLeftFront / COUNTS_PER_INCH;
-            double rightFrontInchesDelta = -deltaTicksRightFront / COUNTS_PER_INCH;  //Minus sign converts to holonomic drive perspective
-            double rightBackInchesDelta = -deltaTicksRightBack / COUNTS_PER_INCH;  //Minus sign converts to holonomic drive perspective
-            double leftBackInchesDelta = deltaTicksLeftBack / COUNTS_PER_INCH;
-            double rotationAvgInchesDelta = (leftFrontInchesDelta + rightFrontInchesDelta + rightBackInchesDelta + leftBackInchesDelta)/4;
-            rotationInchesTotal += rotationAvgInchesDelta;
-            double leftFrontRobotInchesDelta = leftFrontInchesDelta - rotationAvgInchesDelta;
-            double rightFrontRobotInchesDelta = rightFrontInchesDelta - rotationAvgInchesDelta;
-            double rightBackRobotInchesDelta = rightBackInchesDelta - rotationAvgInchesDelta;
-            double leftBackRobotInchesDelta = leftBackInchesDelta - rotationAvgInchesDelta;
-            double deltaInchesRobotX = (leftFrontRobotInchesDelta + rightFrontRobotInchesDelta - rightBackRobotInchesDelta - leftBackRobotInchesDelta) / (2 * Math.sqrt(2));
-            double deltaInchesRobotY = (leftFrontRobotInchesDelta - rightFrontRobotInchesDelta - rightBackRobotInchesDelta + leftBackRobotInchesDelta) / (2 * Math.sqrt(2));
-            double deltaInchesRobot = Math.hypot(deltaInchesRobotX, deltaInchesRobotY);
-            double FUDGE_FACTOR = ((36/51.0)*(38/32.0));
-            inchesTraveledX += deltaInchesRobotX * FUDGE_FACTOR;
-            inchesTraveledY += deltaInchesRobotY * FUDGE_FACTOR;
-            inchesTraveledTotal += Math.hypot(deltaInchesRobotX * FUDGE_FACTOR, deltaInchesRobotY * FUDGE_FACTOR);
-
-            cycleMillisNow = System.currentTimeMillis();
-            cycleMillisDelta = cycleMillisNow - cycleMillisPrior;
-            cycleMillisPrior = cycleMillisNow;
-
-
-//Working on Changing Speed to be consistent
-
-            if(runtime.seconds()>.05 && inchesTraveledTotal <= magnitude) {
-                //  timePassed = opMode.getRuntime() - initialTime;//Length of time of the loop
-                actualSpeedX = 1000 * (deltaInchesRobotX / cycleMillisDelta);//gets the actual speed in inches/second in x direction
-                actualSpeedY = 1000 * (deltaInchesRobotY / cycleMillisDelta);//gets the actual speed in inches/second in y direction
-                //SPEEDSCALE = 24.0;//Speed in inches/second at speed=1
-                //speedScaled = speed * SPEEDSCALE;//Speed in terms of inches/second instead of 0 to 1
-
-
-                double actualSpeed = Math.sqrt((actualSpeedX * actualSpeedX) + (actualSpeedY * actualSpeedY));//Take hypotenuse of speed in x and y
-                Log.i("Speed", String.format("........................................................................................."));
-                Log.i("Speed", String.format("InchesDeltaX, %.3f, InchesDeltaY, %.3f", deltaInchesRobotX, deltaInchesRobotY));
-
-                Log.i("Speed", String.format("Actual Speed in/s:, %.2f", actualSpeed));//log actual speed
-                Log.i("Speed", String.format("Time:, %.2f", timePassed));//log actual speed
-
-                Log.i("Speed", String.format("SpeedScale:, %.1f", SPEEDSCALE));
-                Log.i("Speed", String.format("Target Speed in/s:, %.1f", inchesPerSecond));
-              //  Log.i("Speed", String.format("SpeedScaled in/s:, %.2f", speedScaled));//log desired speed scaled should be input speed*12
-
-                double speedError = (inchesPerSecond - actualSpeed);//error in speed in/s
-                Log.i("Speed", String.format("SpeedError in/s:, %.2f", speedError));
-                double speedGain = 0.005*.7;
-                if (speedError >= 1.25 * inchesPerSecond) {
-                    speedError = 1.25 * inchesPerSecond;
-                } else if (speedError <= -1.25 * inchesPerSecond) {
-                    speedError = -1.25 * inchesPerSecond;
-                }
-                speed = speed + speedGain * speedError;
-                //Log.i("Speed", String.format("speedFactor in/s:, %.2f", speedFactor));
-                // speedScaled *= (1 + speedFactor);//corrects adjusted speed with percent error
-
-                //Log.i("Speed", String.format("New Speed in/s:, %.2f", speed));//log actual speed
-                // speed = speedScaled / SPEEDSCALE;//converts adjusted speed to 0 to 1 scale
-                Log.i("Speed", String.format("New Speed from 0 to 1:, %.2f", speed));//log actual speed
-                Log.i("Speed", String.format("........................................................................................."));
-                //Provide feedback to keep robot moving in right direction based on encoder ticks
-
-
-                adjustTheta(xInches, yInches, speed, inchesTraveledX, inchesTraveledY);
-            }
-
-  //Must call adjustThetaInit() before a loop with adjustTheta()
-
-
-
-            telemetry.addData("Ticks Traveled (lf, lb)", "%7d, %7d", ticksTraveledLeftFront, ticksTraveledLeftBack);
-            telemetry.addData("Ticks Traveled (rf, rb)", "%7d, %7d", ticksTraveledRightFront, ticksTraveledRightBack);
-            telemetry.addData("In Traveled (X, Y)", "X: %.1f, Y: %.1f", inchesTraveledX, inchesTraveledY);
-            telemetry.addData("In Traveled (Tot, Rot)", "%.1f, %.1f", inchesTraveledTotal,rotationInchesTotal);
-            telemetry.addData("Cycle Millis:", "%4f", cycleMillisDelta);
-            telemetry.update();
-            Log.i("Drive", String.format("Ticks Traveled (lf, lb): %7d, %7d", ticksTraveledLeftFront, ticksTraveledLeftBack));
-            Log.i("Drive", String.format("Ticks Traveled (rf, rb): %7d, %7d", ticksTraveledRightFront, ticksTraveledRightBack));
-            Log.i("Drive", String.format("Ticks Delta (lf, lb): %7d, %7d", deltaTicksLeftFront, deltaTicksLeftBack));
-            Log.i("Drive", String.format("Ticks Delta (rf, rb): %7d, %7d", deltaTicksRightFront, deltaTicksRightBack));
-            Log.i("Drive", String.format("In Traveled (X, Y): X: %.2f, Y: %.2f", inchesTraveledX, inchesTraveledY));
-            Log.i("Drive", String.format("In Traveled (Tot, Rot): %.2f, %.2f", inchesTraveledTotal,rotationInchesTotal));
-            Log.i("Drive", String.format("Incremental Speed (in/sec): %.2f", deltaInchesRobot/cycleMillisDelta * 1000));
-            Log.i("Drive", String.format("Cycle Millis: %.3f, Total Seconds: %.3f", cycleMillisDelta, (System.currentTimeMillis() - startMillis)/1000));
-
-            tickCountPriorLeftFront = tickCountNowLeftFront;
-            tickCountPriorLeftBack = tickCountNowLeftBack;
-            tickCountPriorRightFront = tickCountNowRightFront;
-            tickCountPriorRightBack = tickCountNowRightBack;
-        }
+    public void navigationMonitorTicks(double speed, double x, double y, double timout) {
+        navigationMonitorTicksPhi(speed, x, y, 0, timout);
     }
 
-    /** navigationMonitorTicks
-     *  @param inchesPerSecond
-     * @param xInches
-     * @param yInches
-     * @param timeout
-     *
-     * Utilizes wheel encoders in order to track the location of the robot.
-     * Imu heading tracks the direction the robot is pointing.
-     * Tracking the location with the wheel encoders allows for a direct input for location and time in order to direect the robot's movement.
+    /**
+     * This is a slightly different version that adds phi rotation to the mix.
+     * Please don't try to move x/y *and* rotate just yet...
+     * @param speed inches per second
+     * @param x inches left/right
+     * @param y inches forward/backwards
+     * @param phi degrees heading (relative)
+     * @param timout seconds
      */
-    public void navigationRotation(double inchesPerSecond, double angle, double xInches, double yInches, double timeout) {
-        //Borrowed Holonomic robot navigation ideas from https://www.bridgefusion.com/blog/2019/4/10/robot-localization-dead-reckoning-in-f  irst-tech-challenge-ftc
-        //    Robot Localization -- Dead Reckoning in First Tech Challenge (FTC)
-        Log.i("start", "#$#$#$#$#$#$#$#$#$");
-        double theta = Math.atan2(yInches, xInches);
-        double magnitude = Math.hypot(xInches, yInches);
-        int tickCountPriorLeftFront = leftFrontDrive.getCurrentPosition(), tickCountPriorLeftBack = leftBackDrive.getCurrentPosition();
-        int tickCountPriorRightFront = rightFrontDrive.getCurrentPosition(), tickCountPriorRightBack = rightBackDrive.getCurrentPosition();
-        int ticksTraveledLeftFront = 0, ticksTraveledLeftBack = 0, ticksTraveledRightFront = 0, ticksTraveledRightBack = 0;
-        double inchesTraveledX = 0, inchesTraveledY = 0, inchesTraveledTotal = 0, rotationInchesTotal = 0;
-        double cycleMillisNow = 0, cycleMillisPrior = System.currentTimeMillis(), cycleMillisDelta, startMillis = System.currentTimeMillis();
+    public void navigationMonitorTicksPhi(double speed, double x, double y, double phi, double timout) {
+        navigationMonitorExternal(speed, x, y, phi, timout, () -> false);
+    }
 
-        // Get the time it is right now, so we can start the timer
-        double start = System.currentTimeMillis();
-
-        //vroom_vroom(speed, theta, speed, theta);
-        mIsStopped = false;
-        mTargetAngleErrorSum = 0;
-        getImuAngle();
-        double speed = inchesPerSecond/SPEEDSCALE;
-        navigationByPhi(speed, theta);
-        adjustThetaInit();
-
-        // We fudge the angle a little, because something is wrong...
-        double angle_fudged = angle - (angle * (1.5 / 90.0));
-        setTargetAngle(angle_fudged);
-
-        while (opMode.opModeIsActive() && System.currentTimeMillis() < start + timeout && inchesTraveledTotal <= magnitude && !mIsStopped){
-//For Speed Changing
+    /**
+     * This is the underlying version that also provides an "external" lambda that
+     * can decide to prematurely stop the control loop.
+     * @param speed inches per second
+     * @param x inches left/right
+     * @param y inches forward/backwards
+     * @param phi degrees heading (relative)
+     * @param timout seconds
+     * @param external lambda, return <code>true</code> in order to stop<br>
+     *                 Lambdas should be in the form <code>() -> { return false; }</code>
+     */
+    public void navigationMonitorExternal(double speed, double x, double y, double phi, double timout, External external) {
+        NavigationWrapper wrapper = new NavigationWrapper();
+        wrapper.internalNavigate(speed, x, y, phi, timout, external);
+    }
 
 
+    // Hope to contain some side effects...
+    private class NavigationWrapper {
+        // Save the current positions for each of the drives
+        int tickCountPriorLeftFront = leftFrontDrive.getCurrentPosition();
+        int tickCountPriorLeftBack = leftBackDrive.getCurrentPosition();
+        int tickCountPriorRightFront = rightFrontDrive.getCurrentPosition();
+        int tickCountPriorRightBack = rightBackDrive.getCurrentPosition();
 
-            TotalMotorCurrent = leftFrontDrive.getCurrent();
-            TotalMotorCurrent += leftBackDrive.getCurrent();
-            TotalMotorCurrent += rightFrontDrive.getCurrent();
-            TotalMotorCurrent += rightBackDrive.getCurrent();
-            Log.i(TAG,"navigationMonitorTicks: Total Motor Current= "+ TotalMotorCurrent);
+        int ticksTraveledLeftFront = 0;
+        int ticksTraveledLeftBack = 0;
+        int ticksTraveledRightFront = 0;
+        int ticksTraveledRightBack = 0;
 
+        double rotationInchesTotal = 0;
+        double inchesTraveledTotal = 0;
+
+        double inchesTraveledX = 0;
+        double inchesTraveledY = 0;
+
+        double cycleMillisNow = 0;
+
+        double startMillis = System.currentTimeMillis();
+        double cycleMillisPrior = startMillis;
+        double cycleMillisDelta = startMillis;
+
+        double xInches = 0;
+        double yInches = 0;
+        double theta = 0; // Why do we have both x/y inches *and* theta?
+        double magnitude = 0;
+        double inchesPerSecond = 0;
+        double speed = inchesPerSecond / SPEEDSCALE;
+
+        public void internalNavigate(double speed, double x, double y, double phi, double timout, External external) {
+            // Setup all are local side effects based upon the parameters...
+            this.xInches = x;
+            this.yInches = y;
+            this.inchesPerSecond = speed;
+            this.speed = this.inchesPerSecond / SPEEDSCALE;
+            this.theta = Math.atan2(yInches, xInches);
+            this.magnitude = Math.hypot(xInches, yInches);
+
+            // Set up the proper side effects on the outer class...
+            mIsStopped = false; // What the heck does this do? Needs more investigation
+            mTargetAngleErrorSum = 0; // These are from the outer class so IDK.
+
+            getImuAngle(); // What is this for???
+            navigationByPhi(this.speed, this.theta);
+            adjustThetaInit(); // ...
+
+            // We fudge the angle a little, because something is wrong...
+            double angle_fudged = phi - (phi * (1.5 / 90.0));
+            setTargetAngle(angle_fudged);
+
+            while (System.currentTimeMillis() < this.startMillis + (timout * 1000) && this.inchesTraveledTotal < this.magnitude && !mIsStopped && !external.shouldStop()) {
+                update(); // Just run this function in a loop until we need to stop
+            }
+        }
+
+        // This was low-hanging fruit, so I encapsulated it
+        private void logMotorCurrent() {
+            // This gets the total motor current for debugging purposes
+            double current = leftFrontDrive.getCurrent()
+                + leftBackDrive.getCurrent()
+                + rightFrontDrive.getCurrent()
+                + rightBackDrive.getCurrent();
+            Log.d(TAG, "navigation.update: Total motor current is " + current + "A");
+        }
+
+        private void update() {
+            logMotorCurrent();
 
             int tickCountNowLeftFront = leftFrontDrive.getCurrentPosition();
             int tickCountNowLeftBack = leftBackDrive.getCurrentPosition();
@@ -451,9 +351,6 @@ public class Drive2 {
             cycleMillisNow = System.currentTimeMillis();
             cycleMillisDelta = cycleMillisNow - cycleMillisPrior;
             cycleMillisPrior = cycleMillisNow;
-
-
-//Working on Changing Speed to be consistent
 
             if(runtime.seconds()>.05 && inchesTraveledTotal <= magnitude) {
                 //  timePassed = opMode.getRuntime() - initialTime;//Length of time of the loop

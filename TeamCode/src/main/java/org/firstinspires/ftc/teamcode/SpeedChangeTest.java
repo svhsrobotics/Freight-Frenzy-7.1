@@ -5,12 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Shared.Drive2;
 import org.firstinspires.ftc.teamcode.robot.Robot;
-import org.firstinspires.ftc.teamcode.robot.hardware.Webcam;
-import org.firstinspires.ftc.teamcode.util.Configuration;
-import org.firstinspires.ftc.teamcode.util.Configurator;
-import org.firstinspires.ftc.teamcode.util.NeverStops;
-import org.firstinspires.ftc.teamcode.vision.HSVColor;
-import org.firstinspires.ftc.teamcode.vision.TeamElementDetector;
 
 @Autonomous(name = "SpeedChangeTest", group = "Calibration")
 public class SpeedChangeTest extends LinearOpMode {
@@ -31,7 +25,7 @@ public class SpeedChangeTest extends LinearOpMode {
         // Wait for the OpMode to start
         waitForStart();
 
-        drive.navigationMonitorTicks(20, 0, 40, 30, false);
+        drive.navigationMonitorTicks(20, 0, 40, 30);
        // drive.navigationMonitorTicks(10, 0, 10, 30);
         drive.ceaseMotion();
     }

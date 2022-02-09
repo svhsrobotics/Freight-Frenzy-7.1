@@ -32,19 +32,11 @@ package org.firstinspires.ftc.teamcode;
 import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Shared.Drive2;
-import org.firstinspires.ftc.teamcode.Shared.Drive2;
-import org.firstinspires.ftc.teamcode.Shared.Drive3;
-import org.firstinspires.ftc.teamcode.Shared.DriveOBJ;
 import org.firstinspires.ftc.teamcode.robot.Robot;
-import org.firstinspires.ftc.teamcode.util.NeverStops;
 
 /**
  * This file illustrates the concept of driving a path based on encoder counts.
@@ -107,7 +99,7 @@ private ElapsedTime runtime = new ElapsedTime();
         double cycleMillisNow = System.currentTimeMillis();
         double cycleMillisPrior = cycleMillisNow;
 
-        drive.navigationMonitorTicks(1, 0, 32, 30, false);
+        drive.navigationMonitorTicks(1, 0, 32, 30);
 
         cycleMillisNow = System.currentTimeMillis();
         double cycleMillisDelta = cycleMillisNow - cycleMillisPrior;
