@@ -210,25 +210,33 @@ public class Drive2 {
     /**
      * This is the original navigation function, without anything fancy.
      * @param speed inches per second
-     * @param x inches left/right
-     * @param y inches forward/backwards
+     * @param xInches inches left/right
+     * @param yInches inches forward/backwards
      * @param timout seconds
      */
-    public void navigationMonitorTicks(double speed, double x, double y, double timout) {
-        navigationMonitorTicksPhi(speed, x, y, 0, timout);
+    public void navigationMonitorTicks(double speed, double xInches, double yInches, double timout) {
+        navigationMonitorTicksPhi(speed, xInches, yInches, 0, timout);
     }
 
     /**
      * This is a slightly different version that adds phi rotation to the mix.
      * Please don't try to move x/y *and* rotate just yet...
      * @param speed inches per second
-     * @param x inches left/right
-     * @param y inches forward/backwards
+     * @param xInches inches left/right
+     * @param yInches inches forward/backwards
      * @param phi degrees heading (relative)
      * @param timout seconds
      */
-    public void navigationMonitorTicksPhi(double speed, double x, double y, double phi, double timout) {
-        navigationMonitorExternal(speed, x, y, phi, timout, () -> false);
+    public void navigationMonitorTicksPhi(double speed, double xInches, double yInches, double phi, double timout) {
+        navigationMonitorExternal(speed, xInches, yInches, phi, timout, false);
+    }
+
+    /**
+     * This function is exclusively for localizing the carousel
+     */
+    public void navigationLocalizeCarousel(double speed, double xInches, double yInches, double timout) {
+        long start = System.currentTimeMillis();
+        navigationMonitorExternal(speed, xInches, yInches, 0, timout, true);
     }
 
     /**
@@ -239,10 +247,9 @@ public class Drive2 {
      * @param yInches inches forward/backwards
      * @param phi degrees heading (relative)
      * @param timout seconds
-     * @param external lambda, return <code>true</code> in order to stop<br>
-     *                 Lambdas should be in the form <code>() -> { return false; }</code>
+     * @param shouldMonitorAcceleration should we monitor the acceleration
      */
-    public void navigationMonitorExternal(double inchesPerSecond, double xInches, double yInches, double phi, double timout, External external) {
+    public void navigationMonitorExternal(double inchesPerSecond, double xInches, double yInches, double phi, double timout, boolean shouldMonitorAcceleration) {
         //Borrowed Holonomic robot navigation ideas from https://www.bridgefusion.com/blog/2019/4/10/robot-localization-dead-reckoning-in-f  irst-tech-challenge-ftc
         //    Robot Localization -- Dead Reckoning in First Tech Challenge (FTC)
         Log.i("start", "#$#$#$#$#$#$#$#$#$");
@@ -266,7 +273,7 @@ public class Drive2 {
         double angle_fudged = phi - (phi * (1.5 / 90.0));
         setTargetAngle(angle_fudged);
 
-        while (opMode.opModeIsActive() && System.currentTimeMillis() < startMillis + (timout * 1000) && inchesTraveledTotal <= magnitude && !mIsStopped && !external.shouldStop()){
+        while (opMode.opModeIsActive() && System.currentTimeMillis() < startMillis + (timout * 1000) && inchesTraveledTotal <= magnitude && !mIsStopped && !shouldStopIfApplicable(shouldMonitorAcceleration, startMillis)){
 //For Speed Changing
 
 
@@ -737,11 +744,9 @@ public class Drive2 {
         return angleDifference;
     }
 
-    private boolean isHighAcceleration(boolean isActive, long startTimeMillis){
-        if(isActive) return false;
-        if(System.currentTimeMillis() - startTimeMillis < 1000) return false; //Wait 1 sec to allow for initial acceleration
-        if(robot.imu.getLinearAcceleration().xAccel > 1.0)
-            return true;
-        return false;
+    private boolean shouldStopIfApplicable(boolean shouldMonitorAcceleration, long startTimeMillis){
+        if(!shouldMonitorAcceleration) return false;
+        if((System.currentTimeMillis() - startTimeMillis) < 1000) return false; //Wait 1 sec to allow for initial acceleration
+        return robot.imu.getLinearAcceleration().xAccel > 1.0;
     }
 }
