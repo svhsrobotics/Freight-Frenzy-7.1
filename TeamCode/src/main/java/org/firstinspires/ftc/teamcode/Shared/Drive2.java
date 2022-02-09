@@ -266,7 +266,7 @@ public class Drive2 {
         double angle_fudged = phi - (phi * (1.5 / 90.0));
         setTargetAngle(angle_fudged);
 
-        while (opMode.opModeIsActive() && System.currentTimeMillis() < startMillis + timout && inchesTraveledTotal <= magnitude && !mIsStopped && !external.shouldStop()){
+        while (opMode.opModeIsActive() && System.currentTimeMillis() < startMillis + (timout * 1000) && inchesTraveledTotal <= magnitude && !mIsStopped && !external.shouldStop()){
 //For Speed Changing
 
 
@@ -364,7 +364,7 @@ public class Drive2 {
             telemetry.addData("Ticks Traveled (rf, rb)", "%7d, %7d", ticksTraveledRightFront, ticksTraveledRightBack);
             telemetry.addData("In Traveled (X, Y)", "X: %.1f, Y: %.1f", inchesTraveledX, inchesTraveledY);
             telemetry.addData("In Traveled (Tot, Rot)", "%.1f, %.1f", inchesTraveledTotal,rotationInchesTotal);
-            telemetry.addData("Cycle Millis:", "%4f", cycleMillisDelta);
+            telemetry.addData("Cycle Millis:", "%d", cycleMillisDelta);
             telemetry.update();
             Log.i("Drive", String.format("Ticks Traveled (lf, lb): %7d, %7d", ticksTraveledLeftFront, ticksTraveledLeftBack));
             Log.i("Drive", String.format("Ticks Traveled (rf, rb): %7d, %7d", ticksTraveledRightFront, ticksTraveledRightBack));
@@ -373,7 +373,7 @@ public class Drive2 {
             Log.i("Drive", String.format("In Traveled (X, Y): X: %.2f, Y: %.2f", inchesTraveledX, inchesTraveledY));
             Log.i("Drive", String.format("In Traveled (Tot, Rot): %.2f, %.2f", inchesTraveledTotal,rotationInchesTotal));
             Log.i("Drive", String.format("Incremental Speed (in/sec): %.2f", deltaInchesRobot/cycleMillisDelta * 1000));
-            Log.i("Drive", String.format("Cycle Millis: %.3f, Total Seconds: %.3f", cycleMillisDelta, (System.currentTimeMillis() - startMillis)/1000));
+            Log.i("Drive", String.format("Cycle Millis: %d, Total Seconds: %d", cycleMillisDelta, (System.currentTimeMillis() - startMillis)/1000));
 
             tickCountPriorLeftFront = tickCountNowLeftFront;
             tickCountPriorLeftBack = tickCountNowLeftBack;
