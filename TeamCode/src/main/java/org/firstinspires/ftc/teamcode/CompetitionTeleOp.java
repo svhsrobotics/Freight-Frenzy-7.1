@@ -45,16 +45,15 @@ public class CompetitionTeleOp extends LinearOpMode {
         leftCarousel = hardwareMap.get(CRServo.class, "leftCarousel");
 
         RevBlinkinLedDriver lights = hardwareMap.get(RevBlinkinLedDriver.class, "LED");
-        lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.SINELON_FOREST_PALETTE.previous());
-        long time = System.currentTimeMillis();
-        int currentlight = 19;
+        lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.TWINKLES_OCEAN_PALETTE.previous());
+
 
         waitForStart();
 
         long carouselRStart = 0;
         long carouselLStart = 0;
         long carouselTimout = 2000 * 1000 * 1000;
-
+        long time = System.currentTimeMillis();
 
 
         while (opModeIsActive()) {
@@ -245,14 +244,8 @@ public class CompetitionTeleOp extends LinearOpMode {
             } else {
                 Collector.setPower(0);
             }
-            if (gamepad2.right_bumper && currentlight < 0.99 && System.currentTimeMillis() - time >= 150) {
-                lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.values()[(currentlight + 2)]);
-                time = System.currentTimeMillis();
-
-            }
-            if (gamepad2.left_bumper && currentlight > -0.99 && System.currentTimeMillis() - time >= 150) {
-                lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.values()[(currentlight - 2)]);
-                time = System.currentTimeMillis();
+            if (System.currentTimeMillis() - time == 80000) {
+                lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.YELLOW.previous());
             }
 
 
@@ -269,7 +262,7 @@ public class CompetitionTeleOp extends LinearOpMode {
             telemetry.addData("magnitude left", ((float) Math.round(magLeft * 100)) / 100);
             telemetry.addData("thetaLeft", ((float) Math.round(thetaLeft / pi * 100)) / 100);
             telemetry.addData("Trim", carouselTrim);
-            telemetry.addData("Lights", currentlight);
+
 
             telemetry.update();
 
