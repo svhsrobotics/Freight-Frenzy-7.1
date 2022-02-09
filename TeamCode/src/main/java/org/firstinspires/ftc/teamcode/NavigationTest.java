@@ -83,6 +83,8 @@ private ElapsedTime runtime = new ElapsedTime();
         // Create a drive. Note that passing the entire OpMode is not ideal, should be fixed later
         Drive2 drive = new Drive2(robot, this);
 
+        waitForStart();
+
         long nanos = System.nanoTime();
         // Move to the left until we encounter the carousel
         drive.navigationMonitorExternal(0.125, 8, 8, 0, 1000, () -> {
@@ -93,7 +95,7 @@ private ElapsedTime runtime = new ElapsedTime();
             }
             return false;
         });
-        
+
         //drive.setTargetAngle(0);
 
         //Vuforia vuforia = new Vuforia(this);
@@ -102,10 +104,6 @@ private ElapsedTime runtime = new ElapsedTime();
 
 //        drive.stopResetEncoder();
 //        drive.runUsingEncoder();
-
-
-        // Wait for the game to start (driver presses PLAY)
-        waitForStart();
 
 /*
         double cycleMillisNow = System.currentTimeMillis();
