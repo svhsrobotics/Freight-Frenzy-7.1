@@ -21,9 +21,12 @@ public class CompetitionTeleOp extends LinearOpMode {
     double pivotCollectorDifference = (0.17 / 2) + 0.36;
     DcMotor leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive = null;
     CRServo rightCarousel, leftCarousel=null;
+    Servo cap=null;
     double carouselTrim = 0;
     int rightSign;
     int leftSign;
+
+
 
     public int offset = org.firstinspires.ftc.teamcode.robot.hardware.Arm.ARM_OFFSET;
     @Override
@@ -44,8 +47,10 @@ public class CompetitionTeleOp extends LinearOpMode {
         rightBackDrive = hardwareMap.get(DcMotor.class, "BR");
         rightCarousel = hardwareMap.get(CRServo.class, "rightCarousel");
         leftCarousel = hardwareMap.get(CRServo.class, "leftCarousel");
+        cap = hardwareMap.get(Servo.class, "cap");
         Robot robot = new Robot(hardwareMap);
         robot.initArm();
+        cap.setPosition(.5);
 
 
 

@@ -223,13 +223,13 @@ public class Drive2 {
      *  @param inchesPerSecond
      * @param xInches
      * @param yInches
-     * @param timeout
+     * @param timeoutSec
      *
      * Utilizes wheel encoders in order to track the location of the robot.
      * Imu heading tracks the direction the robot is pointing.
      * Tracking the location with the wheel encoders allows for a direct input for location and time in order to direect the robot's movement.
      */
-    public void navigationMonitorTicks(double inchesPerSecond, double xInches, double yInches, double timeout, boolean isMonitorAcceleration) {
+    public void navigationMonitorTicks(double inchesPerSecond, double xInches, double yInches, double timeoutSec, boolean isMonitorAcceleration) {
         //Borrowed Holonomic robot navigation ideas from https://www.bridgefusion.com/blog/2019/4/10/robot-localization-dead-reckoning-in-f  irst-tech-challenge-ftc
         //    Robot Localization -- Dead Reckoning in First Tech Challenge (FTC)
         Log.i("start", "#$#$#$#$#$#$#$#$#$");
@@ -242,7 +242,7 @@ public class Drive2 {
         long cycleMillisNow = 0, cycleMillisPrior = System.currentTimeMillis(), cycleMillisDelta, startMillis = System.currentTimeMillis();
 
         // Get the time it is right now, so we can start the timer
-        long start = System.currentTimeMillis();
+        //long start = System.currentTimeMillis();
 
         //vroom_vroom(speed, theta, speed, theta);
         mIsStopped = false;
@@ -253,7 +253,7 @@ public class Drive2 {
         adjustThetaInit();
         //setTargetAngle(mImuCalibrationAngle);
 
-        while (opMode.opModeIsActive() && System.currentTimeMillis() < start + timeout && inchesTraveledTotal <= magnitude && !mIsStopped && !isHighAcceleration(isMonitorAcceleration, startMillis)){
+        while (opMode.opModeIsActive() && System.currentTimeMillis() < startMillis + (1000 * timeoutSec) && inchesTraveledTotal <= magnitude && !mIsStopped && !isHighAcceleration(isMonitorAcceleration, startMillis)){
 //For Speed Changing
 
 
@@ -351,7 +351,7 @@ public class Drive2 {
             telemetry.addData("Ticks Traveled (rf, rb)", "%7d, %7d", ticksTraveledRightFront, ticksTraveledRightBack);
             telemetry.addData("In Traveled (X, Y)", "X: %.1f, Y: %.1f", inchesTraveledX, inchesTraveledY);
             telemetry.addData("In Traveled (Tot, Rot)", "%.1f, %.1f", inchesTraveledTotal,rotationInchesTotal);
-            telemetry.addData("Cycle Millis:", "%4f", cycleMillisDelta);
+            telemetry.addData("Cycle Millis:", "%d", cycleMillisDelta);
             telemetry.update();
             Log.i("Drive", String.format("Ticks Traveled (lf, lb): %7d, %7d", ticksTraveledLeftFront, ticksTraveledLeftBack));
             Log.i("Drive", String.format("Ticks Traveled (rf, rb): %7d, %7d", ticksTraveledRightFront, ticksTraveledRightBack));
@@ -360,7 +360,7 @@ public class Drive2 {
             Log.i("Drive", String.format("In Traveled (X, Y): X: %.2f, Y: %.2f", inchesTraveledX, inchesTraveledY));
             Log.i("Drive", String.format("In Traveled (Tot, Rot): %.2f, %.2f", inchesTraveledTotal,rotationInchesTotal));
             Log.i("Drive", String.format("Incremental Speed (in/sec): %.2f", deltaInchesRobot/cycleMillisDelta * 1000));
-            Log.i("Drive", String.format("Cycle Millis: %.3f, Total Seconds: %.3f", cycleMillisDelta, (System.currentTimeMillis() - startMillis)/1000));
+            Log.i("Drive", String.format("Cycle Millis: %d, Total Seconds: %d", cycleMillisDelta, (System.currentTimeMillis() - startMillis)/1000));
 
             tickCountPriorLeftFront = tickCountNowLeftFront;
             tickCountPriorLeftBack = tickCountNowLeftBack;
@@ -373,13 +373,13 @@ public class Drive2 {
      *  @param inchesPerSecond
      * @param xInches
      * @param yInches
-     * @param timeout
+     * @param timeoutSec
      *
      * Utilizes wheel encoders in order to track the location of the robot.
      * Imu heading tracks the direction the robot is pointing.
      * Tracking the location with the wheel encoders allows for a direct input for location and time in order to direect the robot's movement.
      */
-    public void navigationRotation(double inchesPerSecond, double angle, double xInches, double yInches, double timeout) {
+    public void navigationRotation(double inchesPerSecond, double angle, double xInches, double yInches, double timeoutSec) {
         //Borrowed Holonomic robot navigation ideas from https://www.bridgefusion.com/blog/2019/4/10/robot-localization-dead-reckoning-in-f  irst-tech-challenge-ftc
         //    Robot Localization -- Dead Reckoning in First Tech Challenge (FTC)
         Log.i("start", "#$#$#$#$#$#$#$#$#$");
@@ -406,7 +406,7 @@ public class Drive2 {
         double angle_fudged = angle - (angle * (1.5 / 90.0));
         setTargetAngle(angle_fudged);
 
-        while (opMode.opModeIsActive() && System.currentTimeMillis() < start + timeout && inchesTraveledTotal <= magnitude && !mIsStopped){
+        while (opMode.opModeIsActive() && System.currentTimeMillis() < startMillis + (timeoutSec * 1000) && inchesTraveledTotal <= magnitude && !mIsStopped){
 //For Speed Changing
 
 
@@ -504,7 +504,7 @@ public class Drive2 {
             telemetry.addData("Ticks Traveled (rf, rb)", "%7d, %7d", ticksTraveledRightFront, ticksTraveledRightBack);
             telemetry.addData("In Traveled (X, Y)", "X: %.1f, Y: %.1f", inchesTraveledX, inchesTraveledY);
             telemetry.addData("In Traveled (Tot, Rot)", "%.1f, %.1f", inchesTraveledTotal,rotationInchesTotal);
-            telemetry.addData("Cycle Millis:", "%4f", cycleMillisDelta);
+            telemetry.addData("Cycle Millis:", "%d", cycleMillisDelta);
             telemetry.update();
             Log.i("Drive", String.format("Ticks Traveled (lf, lb): %7d, %7d", ticksTraveledLeftFront, ticksTraveledLeftBack));
             Log.i("Drive", String.format("Ticks Traveled (rf, rb): %7d, %7d", ticksTraveledRightFront, ticksTraveledRightBack));
@@ -513,7 +513,7 @@ public class Drive2 {
             Log.i("Drive", String.format("In Traveled (X, Y): X: %.2f, Y: %.2f", inchesTraveledX, inchesTraveledY));
             Log.i("Drive", String.format("In Traveled (Tot, Rot): %.2f, %.2f", inchesTraveledTotal,rotationInchesTotal));
             Log.i("Drive", String.format("Incremental Speed (in/sec): %.2f", deltaInchesRobot/cycleMillisDelta * 1000));
-            Log.i("Drive", String.format("Cycle Millis: %.3f, Total Seconds: %.3f", cycleMillisDelta, (System.currentTimeMillis() - startMillis)/1000));
+            Log.i("Drive", String.format("Cycle Millis: %d, Total Seconds: %d", cycleMillisDelta, (System.currentTimeMillis() - startMillis)/1000));
 
             tickCountPriorLeftFront = tickCountNowLeftFront;
             tickCountPriorLeftBack = tickCountNowLeftBack;
