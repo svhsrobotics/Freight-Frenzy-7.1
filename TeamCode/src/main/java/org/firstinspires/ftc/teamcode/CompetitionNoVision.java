@@ -7,11 +7,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Shared.Drive2;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.robot.hardware.Arm;
-import org.firstinspires.ftc.teamcode.robot.hardware.Webcam;
 import org.firstinspires.ftc.teamcode.util.Configuration;
-import org.firstinspires.ftc.teamcode.util.NeverStops;
 import org.firstinspires.ftc.teamcode.vision.HSVColor;
-import org.firstinspires.ftc.teamcode.vision.TeamElementDetector;
 import org.opencv.core.Scalar;
 
 @Autonomous
@@ -32,16 +29,16 @@ public class CompetitionNoVision extends LinearOpMode {
         // Wait for the OpMode to start
         waitForStart();
         //Drive away from wall
-        drive.navigationMonitorTicks(1/4, 0, -5, 10, false);
+        drive.navigationMonitorTicks(1/4, 0, -5, 10);
 
         //To Hub
-        drive.navigationMonitorTicks(1/2, -5, -5, 10, false);
+        drive.navigationMonitorTicks(1/2, -5, -5, 10);
         arm.setCollectorMode(Arm.CollectorMode.Eject);
         //Sleeping so the collector has time to eject before stopping the servo
         sleep(2000);
         arm.setCollectorMode(Arm.CollectorMode.Stop);
         //Drive over to Carousel
-        drive.navigationMonitorTicks(1, 10, 0,10, false);
+        drive.navigationMonitorTicks(1, 10, 0,10);
         //TODO: Include Code Using Sensor Data
         telemetry.update();
 
