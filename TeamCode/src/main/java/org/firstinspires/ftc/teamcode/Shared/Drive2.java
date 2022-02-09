@@ -323,7 +323,7 @@ public class Drive2 {
 
                 double speedError = (inchesPerSecond - actualSpeed);//error in speed in/s
                 Log.i("Speed", String.format("SpeedError in/s:, %.2f", speedError));
-                double speedGain = 0.005*.7;
+                double speedGain = 0.005*.1;
                 if (speedError >= 1.25 * inchesPerSecond) {
                     speedError = 1.25 * inchesPerSecond;
                 } else if (speedError <= -1.25 * inchesPerSecond) {

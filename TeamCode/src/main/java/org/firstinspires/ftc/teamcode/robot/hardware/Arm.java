@@ -78,8 +78,9 @@ public class Arm {
 
     // Helper for goToPosition
     public void setPositions(int arm, double wrist) {
-        setPosition(this.arm, arm + ARM_OFFSET, MAX_ARM);
         this.wrist.setPosition(wrist);
+        setPosition(this.arm, arm + ARM_OFFSET, MAX_ARM);
+
     }
 
     public void setArmPosition(int arm) {

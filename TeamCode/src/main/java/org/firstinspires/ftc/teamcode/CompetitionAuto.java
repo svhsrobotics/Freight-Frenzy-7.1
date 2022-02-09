@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Shared.Drive2;
@@ -22,6 +23,7 @@ public class CompetitionAuto extends LinearOpMode {
         // Get the webcam from the hardware map
         Webcam webcam = new Webcam("Webcam 1", hardwareMap);
         Servo cap;
+        CRServo rightCarousel;
         cap = hardwareMap.get(Servo.class, "cap");
         // Load the configuration
         Configuration config = Configurator.load();
@@ -38,6 +40,7 @@ public class CompetitionAuto extends LinearOpMode {
         webcam.setPipeline(detector);
         // Create the robot from the hardware map
         Robot robot = new Robot(hardwareMap);
+        rightCarousel = hardwareMap.get(CRServo.class, "rightCarousel");
         // Initialize the hardware
         robot.initHardware();
         // Reset the arm encoder to 0 to prevent some issues...
@@ -49,11 +52,10 @@ public class CompetitionAuto extends LinearOpMode {
 
         // Open the camera; also begins streaming the pipeline
         webcam.open();
-        cap.setPosition(0);
+        cap.setPosition(1);
 
         // Wait for the OpMode to start
         // Make sure to do this after the camera is opened; otherwise "View Camera Stream" won't work
-        cap.setPosition(0);
         waitForStart();
 
         while (!detector.isReady()) {
@@ -72,18 +74,26 @@ public class CompetitionAuto extends LinearOpMode {
 
         // Raise the arm so it doesn't drag.
         robot.arm.setPositions(-1435, .52);
-        drive.navigationMonitorTicks(10, 15, 0, 10, false);
+        drive.navigationMonitorTicks(10, 10, 0, 10, false);
         sleep(1000);
-        drive.navigationMonitorTicks(2, 2, 0, 10, true);
+        drive.navigationMonitorTicks(5, 2, 10, 10, true);
+        drive.navigationMonitorTicks(1, 0, .2,10, true);
         drive.ceaseMotion();
-        sleep(10000);
-        drive.navigationMonitorTicks(20, -15, 0, 10, false);
+        rightCarousel.setPower(-80);
+        sleep(3000);
+        rightCarousel.setPower(0);
+        //sleep(10000);
+
+        drive.navigationMonitorTicks(20, -30, -66, 15, false);
+        drive.ceaseMotion();
+        if(1+1 > 1)return;
+
         if (position == TeamElementDetector.TeamElementPosition.RIGHT) {
             // Do an extra 8 inches to the left to get around the block- otherwise we plow it into the way
             drive.navigationMonitorTicks(20, 10, 0, 10, false);
         }
 
-        drive.navigationMonitorTicks(20, 0, -70, 10, false);
+        drive.navigationMonitorTicks(20, 0, -65, 10, false);
         drive.ceaseMotion();
         sleep(1000);
         if (position == TeamElementDetector.TeamElementPosition.RIGHT) {
@@ -91,7 +101,6 @@ public class CompetitionAuto extends LinearOpMode {
         } else {
             drive.navigationMonitorTicks(15, -22, 0, 10, false);
         }
-        drive.ceaseMotion();
 
         // Position to level mapping:
         //        []
