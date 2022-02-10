@@ -76,18 +76,18 @@ public class CompetitionAuto extends LinearOpMode {
         robot.arm.setPositions(-1435, .52);
         drive.navigationMonitorTicks(10, 10, 0, 10, false);
         sleep(1000);
-        drive.navigationMonitorTicks(5, 2, 10, 10, true);
-        drive.navigationMonitorTicks(1, 0, .2,10, true);
+        drive.navigationMonitorTicks(10, 2, 15, 10, true);
+        //drive.navigationMonitorTicks(.1, 0, .5,10, true);
         drive.ceaseMotion();
         rightCarousel.setPower(-80);
         sleep(3000);
         rightCarousel.setPower(0);
         //sleep(10000);
-
-        drive.navigationMonitorTicks(20, -30, -66, 15, false);
+        drive.navigationMonitorTicks(20, 0, -40, 5, false);
+        drive.navigationMonitorTicks(20, -54, -38, 15, false);
         drive.ceaseMotion();
-        if(1+1 > 1)return;
 
+/*
         if (position == TeamElementDetector.TeamElementPosition.RIGHT) {
             // Do an extra 8 inches to the left to get around the block- otherwise we plow it into the way
             drive.navigationMonitorTicks(20, 10, 0, 10, false);
@@ -101,6 +101,7 @@ public class CompetitionAuto extends LinearOpMode {
         } else {
             drive.navigationMonitorTicks(15, -22, 0, 10, false);
         }
+        */
 
         // Position to level mapping:
         //        []
@@ -119,33 +120,33 @@ public class CompetitionAuto extends LinearOpMode {
                 robot.arm.goToPosition(Arm.HubPosition.BOT);
                 //robot.arm.setPositions(-398, .42);
                 //robot.arm.setPositions(-369, .57);
-                drive.navigationMonitorTicks(15, 0, 5, 10, false);
+                drive.navigationMonitorTicks(15, 0, 10.5, 10, false);
                 drive.ceaseMotion();
                 robot.arm.setCollectorMode(Arm.CollectorMode.Eject);
                 sleep(4000);
-                drive.navigationMonitorTicks(15, 0, -11, 10, false); // Move back
+                drive.navigationMonitorTicks(15, 0, -15, 10, false); // Move back
                 drive.ceaseMotion();
                 break; // Break is *very* important
             case CENTER:
                 robot.arm.goToPosition(Arm.HubPosition.MID);//FRONTLOAD
                 //robot.arm.setPositions(-1157, .47);
                 //robot.arm.setPositions(-1270, .67);
-                drive.navigationMonitorTicks(15, 0, 5.75, 10, false);
+                drive.navigationMonitorTicks(15, 0, 11, 10, false);
                 drive.ceaseMotion();
                 robot.arm.setCollectorMode(Arm.CollectorMode.Eject);
                 sleep(4000);
-                drive.navigationMonitorTicks(15, 0, -11.75, 10, false); // Move back
+                drive.navigationMonitorTicks(15, 0, -17, 10, false); // Move back
                 drive.ceaseMotion();
                 break;
             case RIGHT:
                 robot.arm.goToPosition(Arm.HubPosition.TOP);
                 //robot.arm.setPositions(-2180, .57);
                 //robot.arm.setPositions(-2019, .71);
-                drive.navigationMonitorTicks(15, 0, 9, 10, false);
+                drive.navigationMonitorTicks(15, 0, 16, 10, false);
                 drive.ceaseMotion();
                 robot.arm.setCollectorMode(Arm.CollectorMode.Eject);
                 sleep(4000);
-                drive.navigationMonitorTicks(15, 0, -17, 10, false); // Move back
+                drive.navigationMonitorTicks(15, 0, -20.5, 10, false); // Move back
                 drive.ceaseMotion();
                 break;
         }
@@ -154,10 +155,10 @@ public class CompetitionAuto extends LinearOpMode {
 
         //robot.arm.setPositions(0, 1.0);
 
-        drive.navigationMonitorTicks(15, -55, 0,10, false);
+        drive.navigationMonitorTicks(20, -72, 0,10, false);
         drive.ceaseMotion();
 
-        drive.navigationMonitorTicks(25, 0, 64, 10, false);
+        drive.navigationMonitorTicks(40, 0, 70, 10, false);
         drive.ceaseMotion();
 
         robot.arm.goToPosition(Arm.HubPosition.PARK);

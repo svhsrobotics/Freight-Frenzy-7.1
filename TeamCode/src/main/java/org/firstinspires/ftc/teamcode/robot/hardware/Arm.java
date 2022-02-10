@@ -50,11 +50,11 @@ public class Arm {
                 break;
 
             case TOP:
-                setPositions(-2019, 0.71);
+                setPositions(-2030, 0.67);
                 break;
 
             case MID:
-                setPositions(-1270, 0.67);
+                setPositions(-1300, 0.63);
                 break;
 
             case BOT:

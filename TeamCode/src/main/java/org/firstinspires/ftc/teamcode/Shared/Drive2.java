@@ -878,10 +878,30 @@ public class Drive2 {
     }
 
     private boolean isHighAcceleration(boolean isActive, long startTimeMillis){
-        if(isActive) return false;
-        if(System.currentTimeMillis() - startTimeMillis < 1000) return false; //Wait 1 sec to allow for initial acceleration
-        if(robot.imu.getLinearAcceleration().xAccel > 1.0)
-            return true;
+        if (isActive) {
+            //android.util.Log.w("#%#%", "WE GOT HERE");
+
+            if ((System.currentTimeMillis() - startTimeMillis) < 400)
+                return false; //Wait 1 sec to allow for initial acceleration
+            double a = robot.imu.getLinearAcceleration().yAccel;
+            double current = 0;
+            for (Drive drive : robot.Drives.values()) {
+                //double c = drive.getCurrent();
+                //android.util.Log.w("current", "" + c);
+                current += drive.getCurrent();
+            }
+            android.util.Log.w("isHighAcceleration", "Y Accel: " + a + " Current: " + current);
+            /*if (a > 0.5) {
+                android.util.Log.w("isHighAcceleration", "High acceleration detected... Crashed into carousel?");
+                return true;
+            }*/
+            if (current > 8) {
+                android.util.Log.w("isHighAcceleration", "High current detected... Crashed into carousel?");
+                return true;
+            }
+            //if(robot.imu.getLinearAcceleration().xAccel > 1.0)
+            //    return true;
+        }
         return false;
     }
 }
