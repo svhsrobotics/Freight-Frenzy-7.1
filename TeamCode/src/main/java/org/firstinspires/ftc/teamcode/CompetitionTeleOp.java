@@ -54,7 +54,7 @@ public class CompetitionTeleOp extends LinearOpMode {
         cap.setPosition(.5);
 
         RevBlinkinLedDriver lights = hardwareMap.get(RevBlinkinLedDriver.class, "LED");
-        lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN.previous());
+        lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
         currentColor = "default";
 
         waitForStart();
@@ -258,7 +258,7 @@ public class CompetitionTeleOp extends LinearOpMode {
                 Collector.setPower(0);
             }
             if (System.currentTimeMillis() - time >= 75000) {
-                lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.YELLOW.previous());
+                lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
                 currentColor = "yellow";
             }
 
