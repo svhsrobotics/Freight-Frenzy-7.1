@@ -143,7 +143,7 @@ public class CompetitionAuto extends LinearOpMode {
                 robot.arm.goToPosition(Arm.HubPosition.TOP);
                 //robot.arm.setPositions(-2180, .57);
                 //robot.arm.setPositions(-2019, .71);
-                drive.navigationMonitorTicks(15, 0, 15, 10, false);
+                drive.navigationMonitorTicks(15, 0, 14, 10, false);
                 drive.ceaseMotion();
                 robot.arm.setCollectorMode(Arm.CollectorMode.Eject);
                 sleep(4000);

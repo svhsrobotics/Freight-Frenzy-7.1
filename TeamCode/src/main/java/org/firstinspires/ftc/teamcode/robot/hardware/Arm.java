@@ -50,7 +50,7 @@ public class Arm {
                 break;
 
             case TOP:
-                setPositions(-2030, 0.67);
+                setPositions(-2030, 0.70);
                 break;
 
             case MID:
@@ -66,7 +66,7 @@ public class Arm {
                 break;
 
             case COLLECT:
-                setPositions(-432, 0.68);
+                setPositions(-402, 0.68);
                 break;
         }
     }

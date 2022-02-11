@@ -58,7 +58,6 @@ public class CompetitionTeleOp extends LinearOpMode {
         currentColor = "default";
 
         waitForStart();
-
         double startMillis = System.currentTimeMillis();
 
         long carouselRStart = 0;
@@ -259,7 +258,7 @@ public class CompetitionTeleOp extends LinearOpMode {
             } else {
                 Collector.setPower(0);
             }
-            if (System.currentTimeMillis() - startMillis >= 75000) {
+            if (System.currentTimeMillis() - startMillis >= 85000) {
                 lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.YELLOW);
                 currentColor = "yellow";
             }
