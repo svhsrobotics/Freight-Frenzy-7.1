@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-
+import org.firstinspires.ftc.teamcode.util.ExMath;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.robot.hardware.Arm;
 
@@ -21,9 +21,12 @@ public class CompetitionTeleOp extends LinearOpMode {
     double pivotCollectorDifference = (0.17 / 2) + 0.36;
     DcMotor leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive = null;
     CRServo rightCarousel, leftCarousel=null;
+    Servo cap=null;
     double carouselTrim = 0;
     int rightSign;
     int leftSign;
+
+
 
     public int offset = org.firstinspires.ftc.teamcode.robot.hardware.Arm.ARM_OFFSET;
     @Override
@@ -44,8 +47,10 @@ public class CompetitionTeleOp extends LinearOpMode {
         rightBackDrive = hardwareMap.get(DcMotor.class, "BR");
         rightCarousel = hardwareMap.get(CRServo.class, "rightCarousel");
         leftCarousel = hardwareMap.get(CRServo.class, "leftCarousel");
+        cap = hardwareMap.get(Servo.class, "cap");
         Robot robot = new Robot(hardwareMap);
         robot.initArm();
+        cap.setPosition(.5);
 
 
 
@@ -120,10 +125,10 @@ public class CompetitionTeleOp extends LinearOpMode {
             //leftBackDrive.setPower((backLeftPowerFactor * magLeft)*(backLeftPowerFactor * magLeft));
             //rightBackDrive.setPower(-(backRightPowerFactor * magRight)*(backRightPowerFactor * magRight));
 
-            leftFrontDrive.setPower(-((frontLeftPowerFactor * magLeft)));
-            rightFrontDrive.setPower((frontRightPowerFactor * magRight));
-            leftBackDrive.setPower(-((backLeftPowerFactor * magLeft)));
-            rightBackDrive.setPower((backRightPowerFactor * magRight));
+            leftFrontDrive.setPower(-((ExMath.square_with_sign(frontLeftPowerFactor) * magLeft)));
+            rightFrontDrive.setPower((ExMath.square_with_sign(frontRightPowerFactor) * magRight));
+            leftBackDrive.setPower(-((ExMath.square_with_sign(backLeftPowerFactor) * magLeft)));
+            rightBackDrive.setPower((ExMath.square_with_sign(backRightPowerFactor) * magRight));
 
             if (gamepad2.y) {
                 if(gamepad2.dpad_down){

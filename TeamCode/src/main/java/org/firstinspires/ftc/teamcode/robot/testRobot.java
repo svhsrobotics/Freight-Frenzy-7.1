@@ -19,10 +19,10 @@ public class testRobot {
         static final double gearReduction = 40;
         static final double wheelDiameter = 3;
 
-        static final String frontLeftMotorName = "left_front_drive";
-        static final String frontRightMotorName = "right_front_drive";
-        static final String backLeftMotorName = "left_back_drive";
-        static final String backRightMotorName = "right_back_drive";
+        static final String frontLeftMotorName = "FL";//left_front_drive
+        static final String frontRightMotorName = "FR";//right_front_drive
+        static final String backLeftMotorName = "BL";//left_back_drive
+        static final String backRightMotorName = "BR";//right_back_drive
         static final String imuName = "imu";
     }
 

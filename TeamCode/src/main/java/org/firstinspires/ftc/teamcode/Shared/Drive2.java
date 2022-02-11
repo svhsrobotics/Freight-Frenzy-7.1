@@ -15,9 +15,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.robot.hardware.Drive;
-import org.firstinspires.ftc.teamcode.robot.testRobot;
 
 import java.util.HashMap;
+import org.firstinspires.ftc.teamcode.util.External;
 
 public class Drive2 {
     String TAG = "Drive";
@@ -29,10 +29,10 @@ public class Drive2 {
     public HardwareMap hardwareMap; // will be set in OpModeManager.runActiveOpMode
     private ElapsedTime runtime = new ElapsedTime();
     static final double     COUNTS_PER_MOTOR_REV    = 28 ;    // eg: TETRIX Motor Encoder
-    //static final double     DRIVE_GEAR_REDUCTION    = 40 ;     // This is < 1.0 if geared UP //For test robot
+//    static final double     DRIVE_GEAR_REDUCTION    = 40 ;     // This is < 1.0 if geared UP //For test robot
     static final double     DRIVE_GEAR_REDUCTION    = 19.2 ;     // This is < 1.0 if geared UP //For competition robot
     static final double     WHEEL_DIAMETER_INCHES   = 6 ;     // For figuring circumference  //For test robot
-    //static final double     WHEEL_DIAMETER_INCHES   = 3.75 ;     // For figuring circumference //For competition robot
+   // static final double     WHEEL_DIAMETER_INCHES   = 3.75 ;     // For figuring circumference //For competition robot
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
     static final double     DRIVE_SPEED             = 1;
@@ -49,6 +49,13 @@ public class Drive2 {
     double TotalMotorCurrent;
 
     boolean mIsStopped = false;
+
+    //For Speed Conservation
+    double timePassed = 0;
+    double actualSpeedX = 0;
+    double actualSpeedY = 0;
+    final double SPEEDSCALE = 50;//Speed in inches/second at speed=1
+    double speedScaled = 0;
 
     public Drive2(Robot robot, LinearOpMode opMode){
         this.robot = robot;
@@ -213,34 +220,43 @@ public class Drive2 {
     //    ---------------------
 
     /** navigationMonitorTicks
-     *
-     * @param speed
+     *  @param inchesPerSecond
      * @param xInches
      * @param yInches
-     * @param timeout
+     * @param timeoutSec
      *
      * Utilizes wheel encoders in order to track the location of the robot.
      * Imu heading tracks the direction the robot is pointing.
      * Tracking the location with the wheel encoders allows for a direct input for location and time in order to direect the robot's movement.
      */
-    public void navigationMonitorTicks(double speed, double xInches, double yInches, double timeout) {
+    public void navigationMonitorTicks(double inchesPerSecond, double xInches, double yInches, double timeoutSec, boolean isMonitorAcceleration) {
         //Borrowed Holonomic robot navigation ideas from https://www.bridgefusion.com/blog/2019/4/10/robot-localization-dead-reckoning-in-f  irst-tech-challenge-ftc
         //    Robot Localization -- Dead Reckoning in First Tech Challenge (FTC)
+        Log.i("start", "#$#$#$#$#$#$#$#$#$");
         double theta = Math.atan2(yInches, xInches);
         double magnitude = Math.hypot(xInches, yInches);
         int tickCountPriorLeftFront = leftFrontDrive.getCurrentPosition(), tickCountPriorLeftBack = leftBackDrive.getCurrentPosition();
         int tickCountPriorRightFront = rightFrontDrive.getCurrentPosition(), tickCountPriorRightBack = rightBackDrive.getCurrentPosition();
         int ticksTraveledLeftFront = 0, ticksTraveledLeftBack = 0, ticksTraveledRightFront = 0, ticksTraveledRightBack = 0;
         double inchesTraveledX = 0, inchesTraveledY = 0, inchesTraveledTotal = 0, rotationInchesTotal = 0;
-        double cycleMillisNow = 0, cycleMillisPrior = System.currentTimeMillis(), cycleMillisDelta, startMillis = System.currentTimeMillis();
+        long cycleMillisNow = 0, cycleMillisPrior = System.currentTimeMillis(), cycleMillisDelta, startMillis = System.currentTimeMillis();
+
+        // Get the time it is right now, so we can start the timer
+        //long start = System.currentTimeMillis();
+
         //vroom_vroom(speed, theta, speed, theta);
         mIsStopped = false;
         mTargetAngleErrorSum = 0;
         getImuAngle();
+        double speed = inchesPerSecond/SPEEDSCALE;
         navigationByPhi(speed, theta);
         adjustThetaInit();
         //setTargetAngle(mImuCalibrationAngle);
-        while (opMode.opModeIsActive() && runtime.seconds() < timeout && inchesTraveledTotal <= magnitude && !mIsStopped) {
+
+        while (opMode.opModeIsActive() && System.currentTimeMillis() < startMillis + (1000 * timeoutSec) && inchesTraveledTotal <= magnitude && !mIsStopped && !isHighAcceleration(isMonitorAcceleration, startMillis)){
+//For Speed Changing
+
+
 
             TotalMotorCurrent = leftFrontDrive.getCurrent();
             TotalMotorCurrent += leftBackDrive.getCurrent();
@@ -274,22 +290,68 @@ public class Drive2 {
             double deltaInchesRobotX = (leftFrontRobotInchesDelta + rightFrontRobotInchesDelta - rightBackRobotInchesDelta - leftBackRobotInchesDelta) / (2 * Math.sqrt(2));
             double deltaInchesRobotY = (leftFrontRobotInchesDelta - rightFrontRobotInchesDelta - rightBackRobotInchesDelta + leftBackRobotInchesDelta) / (2 * Math.sqrt(2));
             double deltaInchesRobot = Math.hypot(deltaInchesRobotX, deltaInchesRobotY);
-            double FUDGE_FACTOR = 36/51.0;
+            double FUDGE_FACTOR = ((36/51.0)*(38/32.0));
             inchesTraveledX += deltaInchesRobotX * FUDGE_FACTOR;
             inchesTraveledY += deltaInchesRobotY * FUDGE_FACTOR;
             inchesTraveledTotal += Math.hypot(deltaInchesRobotX * FUDGE_FACTOR, deltaInchesRobotY * FUDGE_FACTOR);
 
-            //Provide feedback to keep robot moving in right direction based on encoder ticks
-            adjustTheta(xInches, yInches, speed, inchesTraveledX, inchesTraveledY);  //Must call adjustThetaInit() before a loop with adjustTheta()
-
             cycleMillisNow = System.currentTimeMillis();
             cycleMillisDelta = cycleMillisNow - cycleMillisPrior;
             cycleMillisPrior = cycleMillisNow;
+
+
+//Working on Changing Speed to be consistent
+
+            if(runtime.seconds()>.05 && inchesTraveledTotal <= magnitude) {
+                //  timePassed = opMode.getRuntime() - initialTime;//Length of time of the loop
+                actualSpeedX = 1000 * (deltaInchesRobotX / cycleMillisDelta);//gets the actual speed in inches/second in x direction
+                actualSpeedY = 1000 * (deltaInchesRobotY / cycleMillisDelta);//gets the actual speed in inches/second in y direction
+                //SPEEDSCALE = 24.0;//Speed in inches/second at speed=1
+                //speedScaled = speed * SPEEDSCALE;//Speed in terms of inches/second instead of 0 to 1
+
+
+                double actualSpeed = Math.sqrt((actualSpeedX * actualSpeedX) + (actualSpeedY * actualSpeedY));//Take hypotenuse of speed in x and y
+                Log.i("Speed", String.format("........................................................................................."));
+                Log.i("Speed", String.format("InchesDeltaX, %.3f, InchesDeltaY, %.3f", deltaInchesRobotX, deltaInchesRobotY));
+
+                Log.i("Speed", String.format("Actual Speed in/s:, %.2f", actualSpeed));//log actual speed
+                Log.i("Speed", String.format("Time:, %.2f", timePassed));//log actual speed
+
+                Log.i("Speed", String.format("SpeedScale:, %.1f", SPEEDSCALE));
+                Log.i("Speed", String.format("Target Speed in/s:, %.1f", inchesPerSecond));
+              //  Log.i("Speed", String.format("SpeedScaled in/s:, %.2f", speedScaled));//log desired speed scaled should be input speed*12
+
+                double speedError = (inchesPerSecond - actualSpeed);//error in speed in/s
+                Log.i("Speed", String.format("SpeedError in/s:, %.2f", speedError));
+                double speedGain = 0.005*.1;
+                if (speedError >= 1.25 * inchesPerSecond) {
+                    speedError = 1.25 * inchesPerSecond;
+                } else if (speedError <= -1.25 * inchesPerSecond) {
+                    speedError = -1.25 * inchesPerSecond;
+                }
+                speed = speed + speedGain * speedError;
+                //Log.i("Speed", String.format("speedFactor in/s:, %.2f", speedFactor));
+                // speedScaled *= (1 + speedFactor);//corrects adjusted speed with percent error
+
+                //Log.i("Speed", String.format("New Speed in/s:, %.2f", speed));//log actual speed
+                // speed = speedScaled / SPEEDSCALE;//converts adjusted speed to 0 to 1 scale
+                Log.i("Speed", String.format("New Speed from 0 to 1:, %.2f", speed));//log actual speed
+                Log.i("Speed", String.format("........................................................................................."));
+                //Provide feedback to keep robot moving in right direction based on encoder ticks
+
+
+                adjustTheta(xInches, yInches, speed, inchesTraveledX, inchesTraveledY);
+            }
+
+  //Must call adjustThetaInit() before a loop with adjustTheta()
+
+
+
             telemetry.addData("Ticks Traveled (lf, lb)", "%7d, %7d", ticksTraveledLeftFront, ticksTraveledLeftBack);
             telemetry.addData("Ticks Traveled (rf, rb)", "%7d, %7d", ticksTraveledRightFront, ticksTraveledRightBack);
             telemetry.addData("In Traveled (X, Y)", "X: %.1f, Y: %.1f", inchesTraveledX, inchesTraveledY);
             telemetry.addData("In Traveled (Tot, Rot)", "%.1f, %.1f", inchesTraveledTotal,rotationInchesTotal);
-            telemetry.addData("Cycle Millis:", "%4f", cycleMillisDelta);
+            telemetry.addData("Cycle Millis:", "%d", cycleMillisDelta);
             telemetry.update();
             Log.i("Drive", String.format("Ticks Traveled (lf, lb): %7d, %7d", ticksTraveledLeftFront, ticksTraveledLeftBack));
             Log.i("Drive", String.format("Ticks Traveled (rf, rb): %7d, %7d", ticksTraveledRightFront, ticksTraveledRightBack));
@@ -298,7 +360,160 @@ public class Drive2 {
             Log.i("Drive", String.format("In Traveled (X, Y): X: %.2f, Y: %.2f", inchesTraveledX, inchesTraveledY));
             Log.i("Drive", String.format("In Traveled (Tot, Rot): %.2f, %.2f", inchesTraveledTotal,rotationInchesTotal));
             Log.i("Drive", String.format("Incremental Speed (in/sec): %.2f", deltaInchesRobot/cycleMillisDelta * 1000));
-            Log.i("Drive", String.format("Cycle Millis: %.3f, Total Seconds: %.3f", cycleMillisDelta, (System.currentTimeMillis() - startMillis)/1000));
+            Log.i("Drive", String.format("Cycle Millis: %d, Total Seconds: %d", cycleMillisDelta, (System.currentTimeMillis() - startMillis)/1000));
+
+            tickCountPriorLeftFront = tickCountNowLeftFront;
+            tickCountPriorLeftBack = tickCountNowLeftBack;
+            tickCountPriorRightFront = tickCountNowRightFront;
+            tickCountPriorRightBack = tickCountNowRightBack;
+        }
+    }
+
+    /** navigationMonitorTicks
+     *  @param inchesPerSecond
+     * @param xInches
+     * @param yInches
+     * @param timeoutSec
+     *
+     * Utilizes wheel encoders in order to track the location of the robot.
+     * Imu heading tracks the direction the robot is pointing.
+     * Tracking the location with the wheel encoders allows for a direct input for location and time in order to direect the robot's movement.
+     */
+    public void navigationRotation(double inchesPerSecond, double angle, double xInches, double yInches, double timeoutSec) {
+        //Borrowed Holonomic robot navigation ideas from https://www.bridgefusion.com/blog/2019/4/10/robot-localization-dead-reckoning-in-f  irst-tech-challenge-ftc
+        //    Robot Localization -- Dead Reckoning in First Tech Challenge (FTC)
+        Log.i("start", "#$#$#$#$#$#$#$#$#$");
+        double theta = Math.atan2(yInches, xInches);
+        double magnitude = Math.hypot(xInches, yInches);
+        int tickCountPriorLeftFront = leftFrontDrive.getCurrentPosition(), tickCountPriorLeftBack = leftBackDrive.getCurrentPosition();
+        int tickCountPriorRightFront = rightFrontDrive.getCurrentPosition(), tickCountPriorRightBack = rightBackDrive.getCurrentPosition();
+        int ticksTraveledLeftFront = 0, ticksTraveledLeftBack = 0, ticksTraveledRightFront = 0, ticksTraveledRightBack = 0;
+        double inchesTraveledX = 0, inchesTraveledY = 0, inchesTraveledTotal = 0, rotationInchesTotal = 0;
+        double cycleMillisNow = 0, cycleMillisPrior = System.currentTimeMillis(), cycleMillisDelta, startMillis = System.currentTimeMillis();
+
+        // Get the time it is right now, so we can start the timer
+        double start = System.currentTimeMillis();
+
+        //vroom_vroom(speed, theta, speed, theta);
+        mIsStopped = false;
+        mTargetAngleErrorSum = 0;
+        getImuAngle();
+        double speed = inchesPerSecond/SPEEDSCALE;
+        navigationByPhi(speed, theta);
+        adjustThetaInit();
+
+        // We fudge the angle a little, because something is wrong...
+        double angle_fudged = angle - (angle * (1.5 / 90.0));
+        setTargetAngle(angle_fudged);
+
+        while (opMode.opModeIsActive() && System.currentTimeMillis() < startMillis + (timeoutSec * 1000) && inchesTraveledTotal <= magnitude && !mIsStopped){
+//For Speed Changing
+
+
+
+            TotalMotorCurrent = leftFrontDrive.getCurrent();
+            TotalMotorCurrent += leftBackDrive.getCurrent();
+            TotalMotorCurrent += rightFrontDrive.getCurrent();
+            TotalMotorCurrent += rightBackDrive.getCurrent();
+            Log.i(TAG,"navigationMonitorTicks: Total Motor Current= "+ TotalMotorCurrent);
+
+
+            int tickCountNowLeftFront = leftFrontDrive.getCurrentPosition();
+            int tickCountNowLeftBack = leftBackDrive.getCurrentPosition();
+            int tickCountNowRightFront = rightFrontDrive.getCurrentPosition();
+            int tickCountNowRightBack = rightBackDrive.getCurrentPosition();
+            int deltaTicksLeftFront = tickCountNowLeftFront - tickCountPriorLeftFront;
+            int deltaTicksLeftBack = tickCountNowLeftBack - tickCountPriorLeftBack;
+            int deltaTicksRightFront = tickCountNowRightFront - tickCountPriorRightFront;
+            int deltaTicksRightBack = tickCountNowRightBack - tickCountPriorRightBack;
+            ticksTraveledLeftFront += deltaTicksLeftFront;
+            ticksTraveledLeftBack += deltaTicksLeftBack;
+            ticksTraveledRightFront += deltaTicksRightFront;
+            ticksTraveledRightBack += deltaTicksRightBack;
+            double leftFrontInchesDelta = deltaTicksLeftFront / COUNTS_PER_INCH;
+            double rightFrontInchesDelta = -deltaTicksRightFront / COUNTS_PER_INCH;  //Minus sign converts to holonomic drive perspective
+            double rightBackInchesDelta = -deltaTicksRightBack / COUNTS_PER_INCH;  //Minus sign converts to holonomic drive perspective
+            double leftBackInchesDelta = deltaTicksLeftBack / COUNTS_PER_INCH;
+            double rotationAvgInchesDelta = (leftFrontInchesDelta + rightFrontInchesDelta + rightBackInchesDelta + leftBackInchesDelta)/4;
+            rotationInchesTotal += rotationAvgInchesDelta;
+            double leftFrontRobotInchesDelta = leftFrontInchesDelta - rotationAvgInchesDelta;
+            double rightFrontRobotInchesDelta = rightFrontInchesDelta - rotationAvgInchesDelta;
+            double rightBackRobotInchesDelta = rightBackInchesDelta - rotationAvgInchesDelta;
+            double leftBackRobotInchesDelta = leftBackInchesDelta - rotationAvgInchesDelta;
+            double deltaInchesRobotX = (leftFrontRobotInchesDelta + rightFrontRobotInchesDelta - rightBackRobotInchesDelta - leftBackRobotInchesDelta) / (2 * Math.sqrt(2));
+            double deltaInchesRobotY = (leftFrontRobotInchesDelta - rightFrontRobotInchesDelta - rightBackRobotInchesDelta + leftBackRobotInchesDelta) / (2 * Math.sqrt(2));
+            double deltaInchesRobot = Math.hypot(deltaInchesRobotX, deltaInchesRobotY);
+            double FUDGE_FACTOR = ((36/51.0)*(38/32.0));
+            inchesTraveledX += deltaInchesRobotX * FUDGE_FACTOR;
+            inchesTraveledY += deltaInchesRobotY * FUDGE_FACTOR;
+            inchesTraveledTotal += Math.hypot(deltaInchesRobotX * FUDGE_FACTOR, deltaInchesRobotY * FUDGE_FACTOR);
+
+            cycleMillisNow = System.currentTimeMillis();
+            cycleMillisDelta = cycleMillisNow - cycleMillisPrior;
+            cycleMillisPrior = cycleMillisNow;
+
+
+//Working on Changing Speed to be consistent
+
+            if(runtime.seconds()>.05 && inchesTraveledTotal <= magnitude) {
+                //  timePassed = opMode.getRuntime() - initialTime;//Length of time of the loop
+                actualSpeedX = 1000 * (deltaInchesRobotX / cycleMillisDelta);//gets the actual speed in inches/second in x direction
+                actualSpeedY = 1000 * (deltaInchesRobotY / cycleMillisDelta);//gets the actual speed in inches/second in y direction
+                //SPEEDSCALE = 24.0;//Speed in inches/second at speed=1
+                //speedScaled = speed * SPEEDSCALE;//Speed in terms of inches/second instead of 0 to 1
+
+
+                double actualSpeed = Math.sqrt((actualSpeedX * actualSpeedX) + (actualSpeedY * actualSpeedY));//Take hypotenuse of speed in x and y
+                Log.i("Speed", String.format("........................................................................................."));
+                Log.i("Speed", String.format("InchesDeltaX, %.3f, InchesDeltaY, %.3f", deltaInchesRobotX, deltaInchesRobotY));
+
+                Log.i("Speed", String.format("Actual Speed in/s:, %.2f", actualSpeed));//log actual speed
+                Log.i("Speed", String.format("Time:, %.2f", timePassed));//log actual speed
+
+                Log.i("Speed", String.format("SpeedScale:, %.1f", SPEEDSCALE));
+                Log.i("Speed", String.format("Target Speed in/s:, %.1f", inchesPerSecond));
+                //  Log.i("Speed", String.format("SpeedScaled in/s:, %.2f", speedScaled));//log desired speed scaled should be input speed*12
+
+                double speedError = (inchesPerSecond - actualSpeed);//error in speed in/s
+                Log.i("Speed", String.format("SpeedError in/s:, %.2f", speedError));
+                double speedGain = 0.005*.7;
+                if (speedError >= 1.25 * inchesPerSecond) {
+                    speedError = 1.25 * inchesPerSecond;
+                } else if (speedError <= -1.25 * inchesPerSecond) {
+                    speedError = -1.25 * inchesPerSecond;
+                }
+                speed = speed + speedGain * speedError;
+                //Log.i("Speed", String.format("speedFactor in/s:, %.2f", speedFactor));
+                // speedScaled *= (1 + speedFactor);//corrects adjusted speed with percent error
+
+                //Log.i("Speed", String.format("New Speed in/s:, %.2f", speed));//log actual speed
+                // speed = speedScaled / SPEEDSCALE;//converts adjusted speed to 0 to 1 scale
+                Log.i("Speed", String.format("New Speed from 0 to 1:, %.2f", speed));//log actual speed
+                Log.i("Speed", String.format("........................................................................................."));
+                //Provide feedback to keep robot moving in right direction based on encoder ticks
+
+
+                adjustTheta(xInches, yInches, speed, inchesTraveledX, inchesTraveledY);
+            }
+
+            //Must call adjustThetaInit() before a loop with adjustTheta()
+
+
+
+            telemetry.addData("Ticks Traveled (lf, lb)", "%7d, %7d", ticksTraveledLeftFront, ticksTraveledLeftBack);
+            telemetry.addData("Ticks Traveled (rf, rb)", "%7d, %7d", ticksTraveledRightFront, ticksTraveledRightBack);
+            telemetry.addData("In Traveled (X, Y)", "X: %.1f, Y: %.1f", inchesTraveledX, inchesTraveledY);
+            telemetry.addData("In Traveled (Tot, Rot)", "%.1f, %.1f", inchesTraveledTotal,rotationInchesTotal);
+            telemetry.addData("Cycle Millis:", "%d", cycleMillisDelta);
+            telemetry.update();
+            Log.i("Drive", String.format("Ticks Traveled (lf, lb): %7d, %7d", ticksTraveledLeftFront, ticksTraveledLeftBack));
+            Log.i("Drive", String.format("Ticks Traveled (rf, rb): %7d, %7d", ticksTraveledRightFront, ticksTraveledRightBack));
+            Log.i("Drive", String.format("Ticks Delta (lf, lb): %7d, %7d", deltaTicksLeftFront, deltaTicksLeftBack));
+            Log.i("Drive", String.format("Ticks Delta (rf, rb): %7d, %7d", deltaTicksRightFront, deltaTicksRightBack));
+            Log.i("Drive", String.format("In Traveled (X, Y): X: %.2f, Y: %.2f", inchesTraveledX, inchesTraveledY));
+            Log.i("Drive", String.format("In Traveled (Tot, Rot): %.2f, %.2f", inchesTraveledTotal,rotationInchesTotal));
+            Log.i("Drive", String.format("Incremental Speed (in/sec): %.2f", deltaInchesRobot/cycleMillisDelta * 1000));
+            Log.i("Drive", String.format("Cycle Millis: %d, Total Seconds: %d", cycleMillisDelta, (System.currentTimeMillis() - startMillis)/1000));
 
             tickCountPriorLeftFront = tickCountNowLeftFront;
             tickCountPriorLeftBack = tickCountNowLeftBack;
@@ -660,5 +875,33 @@ public class Drive2 {
         Log.i(TAG, String.format("calculateAngleDifference: angleDiff0: %.2f, angleDiff180: %.2f, angleDifference: %.2f",
                 angleDiff0, angleDiff180, angleDifference));
         return angleDifference;
+    }
+
+    private boolean isHighAcceleration(boolean isActive, long startTimeMillis){
+        if (isActive) {
+            //android.util.Log.w("#%#%", "WE GOT HERE");
+
+            if ((System.currentTimeMillis() - startTimeMillis) < 400)
+                return false; //Wait 1 sec to allow for initial acceleration
+            double a = robot.imu.getLinearAcceleration().yAccel;
+            double current = 0;
+            for (Drive drive : robot.Drives.values()) {
+                //double c = drive.getCurrent();
+                //android.util.Log.w("current", "" + c);
+                current += drive.getCurrent();
+            }
+            android.util.Log.w("isHighAcceleration", "Y Accel: " + a + " Current: " + current);
+            /*if (a > 0.5) {
+                android.util.Log.w("isHighAcceleration", "High acceleration detected... Crashed into carousel?");
+                return true;
+            }*/
+            if (current > 8) {
+                android.util.Log.w("isHighAcceleration", "High current detected... Crashed into carousel?");
+                return true;
+            }
+            //if(robot.imu.getLinearAcceleration().xAccel > 1.0)
+            //    return true;
+        }
+        return false;
     }
 }

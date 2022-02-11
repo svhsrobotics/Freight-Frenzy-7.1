@@ -50,15 +50,15 @@ public class Arm {
                 break;
 
             case TOP:
-                setPositions(-2019, 0.71);
+                setPositions(-2030, 0.67);
                 break;
 
             case MID:
-                setPositions(-1270, 0.67);
+                setPositions(-1311, 0.67);
                 break;
 
             case BOT:
-                setPositions(-369, 0.57);
+                setPositions(-502, 0.6);
                 break;
 
             case PARK:
@@ -78,8 +78,9 @@ public class Arm {
 
     // Helper for goToPosition
     public void setPositions(int arm, double wrist) {
-        setPosition(this.arm, arm + ARM_OFFSET, MAX_ARM);
         this.wrist.setPosition(wrist);
+        setPosition(this.arm, arm + ARM_OFFSET, MAX_ARM);
+
     }
 
     public void setArmPosition(int arm) {
@@ -110,6 +111,7 @@ public class Arm {
 
     public enum CollectorMode {
         Eject,
+        SuperEject,
         Collect,
         Stop,
     }
@@ -120,6 +122,8 @@ public class Arm {
      */
     public void setCollectorMode(@NonNull CollectorMode mode) {
         switch (mode) {
+            case SuperEject:
+                collector.setPower(-0.50);
             case Eject:
                 // TODO: Figure out which one of these should be negative
                 collector.setPower(-0.15);
