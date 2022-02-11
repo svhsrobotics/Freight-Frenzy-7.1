@@ -25,6 +25,7 @@ public class CompetitionTeleOp extends LinearOpMode {
     double carouselTrim = 0;
     int rightSign;
     int leftSign;
+    String currentColor;
 
 
 
@@ -52,8 +53,9 @@ public class CompetitionTeleOp extends LinearOpMode {
         robot.initArm();
         cap.setPosition(.5);
 
-
-
+        RevBlinkinLedDriver lights = hardwareMap.get(RevBlinkinLedDriver.class, "LED");
+        lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN.previous());
+        currentColor = "default";
 
         waitForStart();
 
@@ -255,6 +257,10 @@ public class CompetitionTeleOp extends LinearOpMode {
             } else {
                 Collector.setPower(0);
             }
+            if (System.currentTimeMillis() - time >= 75000) {
+                lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.YELLOW.previous());
+                currentColor = "yellow";
+            }
 
             telemetry.addData("Ticks", Arm.getCurrentPosition());
             telemetry.addData("WristPos", Wrist.getPosition());
@@ -269,6 +275,7 @@ public class CompetitionTeleOp extends LinearOpMode {
             telemetry.addData("magnitude left", ((float) Math.round(magLeft * 100)) / 100);
             telemetry.addData("thetaLeft", ((float) Math.round(thetaLeft / pi * 100)) / 100);
             telemetry.addData("Trim", carouselTrim);
+            telemetry.addData("Current Color", currentColor);
 
             telemetry.update();
 
