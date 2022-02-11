@@ -73,7 +73,7 @@ public class CompetitionAuto extends LinearOpMode {
         cap.setPosition(.5);
 
         // Raise the arm so it doesn't drag.
-        robot.arm.setPositions(-1435, .52);
+        robot.arm.setPositions(-1435, .38);
         drive.navigationMonitorTicks(10, 10, 0, 10, false);
         sleep(1000);
         drive.navigationMonitorTicks(10, 2, 15, 10, true);
@@ -84,6 +84,7 @@ public class CompetitionAuto extends LinearOpMode {
         rightCarousel.setPower(0);
         //sleep(10000);
         drive.navigationMonitorTicks(20, 0, -40, 5, false);
+        robot.arm.setPositions(-1435, .58);
         drive.navigationMonitorTicks(20, -54, -38, 15, false);
         drive.ceaseMotion();
 
@@ -120,11 +121,11 @@ public class CompetitionAuto extends LinearOpMode {
                 robot.arm.goToPosition(Arm.HubPosition.BOT);
                 //robot.arm.setPositions(-398, .42);
                 //robot.arm.setPositions(-369, .57);
-                drive.navigationMonitorTicks(15, 0, 10.5, 10, false);
+                drive.navigationMonitorTicks(15, 0, 10, 10, false);
                 drive.ceaseMotion();
-                robot.arm.setCollectorMode(Arm.CollectorMode.Eject);
+                robot.arm.setCollectorMode(Arm.CollectorMode.SuperEject);
                 sleep(4000);
-                drive.navigationMonitorTicks(15, 0, -15, 10, false); // Move back
+                drive.navigationMonitorTicks(15, 0, -14.5, 10, false); // Move back
                 drive.ceaseMotion();
                 break; // Break is *very* important
             case CENTER:
@@ -142,7 +143,7 @@ public class CompetitionAuto extends LinearOpMode {
                 robot.arm.goToPosition(Arm.HubPosition.TOP);
                 //robot.arm.setPositions(-2180, .57);
                 //robot.arm.setPositions(-2019, .71);
-                drive.navigationMonitorTicks(15, 0, 16, 10, false);
+                drive.navigationMonitorTicks(15, 0, 15, 10, false);
                 drive.ceaseMotion();
                 robot.arm.setCollectorMode(Arm.CollectorMode.Eject);
                 sleep(4000);
