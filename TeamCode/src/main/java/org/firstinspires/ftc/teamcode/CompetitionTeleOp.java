@@ -23,6 +23,7 @@ public class CompetitionTeleOp extends LinearOpMode {
     double carouselTrim = 0;
     int rightSign;
     int leftSign;
+    String currentColor;
 
     public int offset = org.firstinspires.ftc.teamcode.robot.hardware.Arm.ARM_OFFSET;
     @Override
@@ -45,8 +46,8 @@ public class CompetitionTeleOp extends LinearOpMode {
         leftCarousel = hardwareMap.get(CRServo.class, "leftCarousel");
 
         RevBlinkinLedDriver lights = hardwareMap.get(RevBlinkinLedDriver.class, "LED");
-        lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.TWINKLES_OCEAN_PALETTE.previous());
-
+        lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN.previous());
+        currentColor = "default";
 
         waitForStart();
 
@@ -244,8 +245,9 @@ public class CompetitionTeleOp extends LinearOpMode {
             } else {
                 Collector.setPower(0);
             }
-            if (System.currentTimeMillis() - time == 80000) {
+            if (System.currentTimeMillis() - time >= 75000) {
                 lights.setPattern(RevBlinkinLedDriver.BlinkinPattern.YELLOW.previous());
+                currentColor = "yellow";
             }
 
 
@@ -262,7 +264,7 @@ public class CompetitionTeleOp extends LinearOpMode {
             telemetry.addData("magnitude left", ((float) Math.round(magLeft * 100)) / 100);
             telemetry.addData("thetaLeft", ((float) Math.round(thetaLeft / pi * 100)) / 100);
             telemetry.addData("Trim", carouselTrim);
-
+            telemetry.addData("Current Color", currentColor);
 
             telemetry.update();
 
