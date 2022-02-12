@@ -248,7 +248,7 @@ public class Drive2 {
      * @param timout seconds
      * @param shouldMonitorAcceleration should we monitor the acceleration
      */
-    public void navigationMonitorExternal(double inchesPerSecond, double xInches, double yInches, double phi, double timout, boolean shouldMonitorAcceleration) {
+    public void navigationMonitorExternal(double inchesPerSecond, double xInches, double yInches, double timeoutSec, boolean isMonitorAcceleration) {
         //Borrowed Holonomic robot navigation ideas from https://www.bridgefusion.com/blog/2019/4/10/robot-localization-dead-reckoning-in-f  irst-tech-challenge-ftc
         //    Robot Localization -- Dead Reckoning in First Tech Challenge (FTC)
         Log.i("start", "#$#$#$#$#$#$#$#$#$");
@@ -260,6 +260,9 @@ public class Drive2 {
         double inchesTraveledX = 0, inchesTraveledY = 0, inchesTraveledTotal = 0, rotationInchesTotal = 0;
         long cycleMillisNow = 0, cycleMillisPrior = System.currentTimeMillis(), cycleMillisDelta, startMillis = System.currentTimeMillis();
 
+        // Get the time it is right now, so we can start the timer
+        //long start = System.currentTimeMillis();
+
         //vroom_vroom(speed, theta, speed, theta);
         mIsStopped = false;
         mTargetAngleErrorSum = 0;
@@ -267,12 +270,9 @@ public class Drive2 {
         double speed = inchesPerSecond/SPEEDSCALE;
         navigationByPhi(speed, theta);
         adjustThetaInit();
+        //setTargetAngle(mImuCalibrationAngle);
 
-        // We fudge the angle a little, because something is wrong...
-        double angle_fudged = phi - (phi * (1.5 / 90.0));
-        setTargetAngle(angle_fudged);
-
-        while (opMode.opModeIsActive() && System.currentTimeMillis() < startMillis + (timout * 1000) && inchesTraveledTotal <= magnitude && !mIsStopped && !shouldStopIfApplicable(shouldMonitorAcceleration, startMillis)){
+        while (opMode.opModeIsActive() && System.currentTimeMillis() < startMillis + (1000 * timeoutSec) && inchesTraveledTotal <= magnitude && !mIsStopped && !shouldStopIfApplicable(isMonitorAcceleration, startMillis)){
 //For Speed Changing
 
 
@@ -338,11 +338,11 @@ public class Drive2 {
 
                 Log.i("Speed", String.format("SpeedScale:, %.1f", SPEEDSCALE));
                 Log.i("Speed", String.format("Target Speed in/s:, %.1f", inchesPerSecond));
-              //  Log.i("Speed", String.format("SpeedScaled in/s:, %.2f", speedScaled));//log desired speed scaled should be input speed*12
+                //  Log.i("Speed", String.format("SpeedScaled in/s:, %.2f", speedScaled));//log desired speed scaled should be input speed*12
 
                 double speedError = (inchesPerSecond - actualSpeed);//error in speed in/s
                 Log.i("Speed", String.format("SpeedError in/s:, %.2f", speedError));
-                double speedGain = 0.005*.7;
+                double speedGain = 0.005*.1;
                 if (speedError >= 1.25 * inchesPerSecond) {
                     speedError = 1.25 * inchesPerSecond;
                 } else if (speedError <= -1.25 * inchesPerSecond) {
@@ -362,7 +362,7 @@ public class Drive2 {
                 adjustTheta(xInches, yInches, speed, inchesTraveledX, inchesTraveledY);
             }
 
-  //Must call adjustThetaInit() before a loop with adjustTheta()
+            //Must call adjustThetaInit() before a loop with adjustTheta()
 
 
 
