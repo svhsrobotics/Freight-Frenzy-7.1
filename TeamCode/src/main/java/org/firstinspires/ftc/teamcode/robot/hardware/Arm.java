@@ -27,8 +27,8 @@ public class Arm {
     public enum HubPosition {
         // TODO: Implement capping
         TOP,
-        MID,
-        BOT,
+        MIDDLE,
+        BOTTOM,
         COLLECT,
         PARK,
 
@@ -43,6 +43,23 @@ public class Arm {
     }
 
     // Go to the position, check done for status
+    public void goToBackPosition(HubPosition position) {
+        switch (position) {
+            case TOP:
+                setPositions(-4710, 0.49);
+                break;
+
+            case MIDDLE:
+                setPositions(-5405, 0.52);
+                break;
+
+            case BOTTOM:
+                setPositions(-6239, 0.60);
+                break;
+        }
+    }
+
+    // Go to the position, check done for status
     public void goToPosition(HubPosition position) {
         switch (position) {
             case START:
@@ -53,11 +70,11 @@ public class Arm {
                 setPositions(-2030, 0.70);
                 break;
 
-            case MID:
+            case MIDDLE:
                 setPositions(-1321, 0.67);
                 break;
 
-            case BOT:
+            case BOTTOM:
                 setPositions(0, 0.51);
                 break;
 

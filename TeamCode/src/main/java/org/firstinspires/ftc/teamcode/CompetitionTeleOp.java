@@ -5,11 +5,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.util.ExMath;
 import org.firstinspires.ftc.teamcode.robot.Robot;
-import org.firstinspires.ftc.teamcode.robot.hardware.Arm;
 
 @TeleOp(name = "Competition TeleOp", group = "Competition")
 public class CompetitionTeleOp extends LinearOpMode {
@@ -154,10 +152,10 @@ public class CompetitionTeleOp extends LinearOpMode {
                     robot.arm.goToPosition(org.firstinspires.ftc.teamcode.robot.hardware.Arm.HubPosition.TOP);
                 //GoToHubLevel(2);
             } else if (gamepad2.b) {
-                    robot.arm.goToPosition(org.firstinspires.ftc.teamcode.robot.hardware.Arm.HubPosition.MID);
+                    robot.arm.goToPosition(org.firstinspires.ftc.teamcode.robot.hardware.Arm.HubPosition.MIDDLE);
                 //GoToHubLevel(3);
             } else if (gamepad2.a) {
-                    robot.arm.goToPosition(org.firstinspires.ftc.teamcode.robot.hardware.Arm.HubPosition.BOT);
+                    robot.arm.goToPosition(org.firstinspires.ftc.teamcode.robot.hardware.Arm.HubPosition.BOTTOM);
                 //GoToHubLevel(4);
           //  } else if (gamepad2.dpad_right) {
           //      Wrist.setPosition(-gamepad2.right_stick_y * pivotCollectorFactor + pivotCollectorDifference);

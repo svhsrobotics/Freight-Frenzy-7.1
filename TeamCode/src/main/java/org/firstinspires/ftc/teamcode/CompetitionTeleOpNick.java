@@ -110,10 +110,10 @@ public class CompetitionTeleOpNick extends LinearOpMode {
                     robot.arm.goToPosition(Arm.HubPosition.TOP);
                 //GoToHubLevel(2);
             } else if (gamepad2.b) {
-                    robot.arm.goToPosition(Arm.HubPosition.MID);
+                    robot.arm.goToPosition(Arm.HubPosition.MIDDLE);
                 //GoToHubLevel(3);
             } else if (gamepad2.a) {
-                    robot.arm.goToPosition(Arm.HubPosition.BOT);
+                    robot.arm.goToPosition(Arm.HubPosition.BOTTOM);
                // GoToHubLevel(4);
           //  } else if (gamepad2.dpad_right) {
           //      Wrist.setPosition(-gamepad2.right_stick_y * pivotCollectorFactor + pivotCollectorDifference);

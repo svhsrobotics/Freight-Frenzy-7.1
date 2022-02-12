@@ -117,7 +117,7 @@ public class CompetitionAuto extends LinearOpMode {
         // Also need to get a few inches closer
         switch (position) {
             case LEFT:
-                robot.arm.goToPosition(Arm.HubPosition.BOT);
+                robot.arm.goToPosition(Arm.HubPosition.BOTTOM);
                 //robot.arm.setPositions(-398, .42);
                 //robot.arm.setPositions(-369, .57);
                 drive.navigationMonitorTicks(15, 0, 8, 10);
@@ -128,7 +128,7 @@ public class CompetitionAuto extends LinearOpMode {
                 drive.ceaseMotion();
                 break; // Break is *very* important
             case CENTER:
-                robot.arm.goToPosition(Arm.HubPosition.MID);//FRONTLOAD
+                robot.arm.goToPosition(Arm.HubPosition.MIDDLE);//FRONTLOAD
                 //robot.arm.setPositions(-1157, .47);
                 //robot.arm.setPositions(-1270, .67);
                 drive.navigationMonitorTicks(15, 0, 11, 10);
