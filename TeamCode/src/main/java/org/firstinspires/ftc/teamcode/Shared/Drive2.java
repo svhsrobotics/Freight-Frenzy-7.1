@@ -17,7 +17,6 @@ import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.robot.hardware.Drive;
 
 import java.util.HashMap;
-import org.firstinspires.ftc.teamcode.util.External;
 
 public class Drive2 {
     String TAG = "Drive";
@@ -745,7 +744,7 @@ public class Drive2 {
     }
 
     private boolean shouldStopIfApplicable(boolean shouldMonitorAcceleration, long startTimeMillis){
-        if (isActive) {
+        if (shouldMonitorAcceleration) {
             //android.util.Log.w("#%#%", "WE GOT HERE");
 
             if ((System.currentTimeMillis() - startTimeMillis) < 400)

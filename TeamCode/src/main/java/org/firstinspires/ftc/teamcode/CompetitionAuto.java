@@ -6,12 +6,10 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Shared.Drive2;
-import org.firstinspires.ftc.teamcode.Shared.Drive3;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.robot.hardware.Arm;
 import org.firstinspires.ftc.teamcode.util.Configuration;
 import org.firstinspires.ftc.teamcode.util.Configurator;
-import org.firstinspires.ftc.teamcode.util.NeverStops;
 import org.firstinspires.ftc.teamcode.vision.HSVColor;
 import org.firstinspires.ftc.teamcode.vision.TeamElementDetector;
 import org.firstinspires.ftc.teamcode.robot.hardware.Webcam;
@@ -68,24 +66,25 @@ public class CompetitionAuto extends LinearOpMode {
         telemetry.log().add("Position of the Team Element: " + position); telemetry.update();
 
         // Drive away from wall so the arm doesn't hit it.
-        drive.navigationMonitorTicks(10, 0, -15, 10, false);
+        drive.navigationMonitorTicks(10, 0, -15, 10);
         drive.ceaseMotion();
         cap.setPosition(.5);
 
         // Raise the arm so it doesn't drag.
         robot.arm.setPositions(-1435, .38);
-        drive.navigationMonitorTicks(10, 10, 0, 10, false);
+        drive.navigationMonitorTicks(10, 10, 0, 10);
         sleep(1000);
-        drive.navigationMonitorTicks(10, 2, 15, 10, true);
+        //drive.navigationMonitorTicks(10, 2, 15, 10, true);
+        drive.navigationLocalizeCarousel(10, 2, 15, 10);
         //drive.navigationMonitorTicks(.1, 0, .5,10, true);
         drive.ceaseMotion();
         rightCarousel.setPower(-80);
         sleep(3000);
         rightCarousel.setPower(0);
         //sleep(10000);
-        drive.navigationMonitorTicks(20, 0, -40, 5, false);
+        drive.navigationMonitorTicks(20, 0, -40, 5);
         robot.arm.setPositions(-1435, .58);
-        drive.navigationMonitorTicks(20, -54, -38, 15, false);
+        drive.navigationMonitorTicks(20, -54, -38, 15);
         drive.ceaseMotion();
 
 /*
@@ -121,33 +120,33 @@ public class CompetitionAuto extends LinearOpMode {
                 robot.arm.goToPosition(Arm.HubPosition.BOT);
                 //robot.arm.setPositions(-398, .42);
                 //robot.arm.setPositions(-369, .57);
-                drive.navigationMonitorTicks(15, 0, 8, 10, false);
+                drive.navigationMonitorTicks(15, 0, 8, 10);
                 drive.ceaseMotion();
                 robot.arm.setCollectorMode(Arm.CollectorMode.SuperEject);
                 sleep(4000);
-                drive.navigationMonitorTicks(15, 0, -12.75, 10, false); // Move back
+                drive.navigationMonitorTicks(15, 0, -12.75, 10); // Move back
                 drive.ceaseMotion();
                 break; // Break is *very* important
             case CENTER:
                 robot.arm.goToPosition(Arm.HubPosition.MID);//FRONTLOAD
                 //robot.arm.setPositions(-1157, .47);
                 //robot.arm.setPositions(-1270, .67);
-                drive.navigationMonitorTicks(15, 0, 11, 10, false);
+                drive.navigationMonitorTicks(15, 0, 11, 10);
                 drive.ceaseMotion();
                 robot.arm.setCollectorMode(Arm.CollectorMode.Eject);
                 sleep(4000);
-                drive.navigationMonitorTicks(15, 0, -17, 10, false); // Move back
+                drive.navigationMonitorTicks(15, 0, -17, 10); // Move back
                 drive.ceaseMotion();
                 break;
             case RIGHT:
                 robot.arm.goToPosition(Arm.HubPosition.TOP);
                 //robot.arm.setPositions(-2180, .57);
                 //robot.arm.setPositions(-2019, .71);
-                drive.navigationMonitorTicks(15, 0, 14, 10, false);
+                drive.navigationMonitorTicks(15, 0, 14, 10);
                 drive.ceaseMotion();
                 robot.arm.setCollectorMode(Arm.CollectorMode.Eject);
                 sleep(4000);
-                drive.navigationMonitorTicks(15, 0, -20.5, 10, false); // Move back
+                drive.navigationMonitorTicks(15, 0, -20.5, 10); // Move back
                 drive.ceaseMotion();
                 break;
         }
@@ -156,10 +155,10 @@ public class CompetitionAuto extends LinearOpMode {
 
         //robot.arm.setPositions(0, 1.0);
 
-        drive.navigationMonitorTicks(20, -72, 0,10, false);
+        drive.navigationMonitorTicks(20, -72, 0,10);
         drive.ceaseMotion();
 
-        drive.navigationMonitorTicks(40, 0, 70, 10, false);
+        drive.navigationMonitorTicks(40, 0, 70, 10);
         drive.ceaseMotion();
 
         robot.arm.goToPosition(Arm.HubPosition.PARK);
