@@ -58,7 +58,7 @@ public class Arm {
                 break;
 
             case BOT:
-                setPositions(-517, 0.6);
+                setPositions(0, 0.51);
                 break;
 
             case PARK:
