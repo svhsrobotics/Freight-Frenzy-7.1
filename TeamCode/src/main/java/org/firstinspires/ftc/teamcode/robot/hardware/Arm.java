@@ -54,11 +54,11 @@ public class Arm {
                 break;
 
             case MID:
-                setPositions(-1311, 0.67);
+                setPositions(-1321, 0.67);
                 break;
 
             case BOT:
-                setPositions(-502, 0.6);
+                setPositions(-517, 0.6);
                 break;
 
             case PARK:
