@@ -248,7 +248,7 @@ public class Drive2 {
      * @param timout seconds
      * @param shouldMonitorAcceleration should we monitor the acceleration
      */
-    public void navigationMonitorExternal(double inchesPerSecond, double xInches, double yInches, double timeoutSec, boolean isMonitorAcceleration) {
+    public void navigationMonitorExternal(double inchesPerSecond, double xInches, double yInches, double phi, double timeoutSec, boolean isMonitorAcceleration) {
         //Borrowed Holonomic robot navigation ideas from https://www.bridgefusion.com/blog/2019/4/10/robot-localization-dead-reckoning-in-f  irst-tech-challenge-ftc
         //    Robot Localization -- Dead Reckoning in First Tech Challenge (FTC)
         Log.i("start", "#$#$#$#$#$#$#$#$#$");
@@ -271,6 +271,10 @@ public class Drive2 {
         navigationByPhi(speed, theta);
         adjustThetaInit();
         //setTargetAngle(mImuCalibrationAngle);
+
+        // We fudge the angle a little, because something is wrong...
+        double angle_fudged = phi - (phi * (1.5 / 90.0));
+        setTargetAngle(angle_fudged);
 
         while (opMode.opModeIsActive() && System.currentTimeMillis() < startMillis + (1000 * timeoutSec) && inchesTraveledTotal <= magnitude && !mIsStopped && !shouldStopIfApplicable(isMonitorAcceleration, startMillis)){
 //For Speed Changing
