@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.Shared.Drive2;
 import org.firstinspires.ftc.teamcode.robot.Robot;
+import org.firstinspires.ftc.teamcode.robot.hardware.Arm.CollectorMode;
 import org.firstinspires.ftc.teamcode.robot.hardware.Arm.HubPosition;
 import org.firstinspires.ftc.teamcode.robot.hardware.Webcam;
 import org.firstinspires.ftc.teamcode.util.Configuration;
@@ -76,26 +77,59 @@ public class RedCarousel extends LinearOpMode {
         sleep(1000);
         //drive.navigationMonitorTicks(10, 2, 15, 10, true);
         drive.navigationLocalizeCarousel(10, 2, 15, 10);
+        drive.navigationMonitorTicks(10, 0, 0.05, 10);
         //drive.navigationMonitorTicks(.1, 0, .5,10, true);
         drive.ceaseMotion();
         rightCarousel.setPower(-80);
         sleep(3000);
         rightCarousel.setPower(0);
 
-        drive.navigationMonitorTicks(20, 0, -36, 10);
-        drive.navigationMonitorTicksPhi(0, 10, 10, -90, 3);
+
+        drive.navigationMonitorTicks(20, -1, -29.5, 10);
+
+        // Rotate 90deg (no movement)
+        drive.navigationMonitorTicksPhi(0, 10, 10, -92, 2.5);
         drive.ceaseMotion();
 
         switch (position) {
             case LEFT:
                 robot.arm.goToBackPosition(HubPosition.BOTTOM);
-                drive.navigationMonitorTicksPhi(10, 0, -16, -90, 10);
+                sleep(3000);
+                drive.navigationMonitorTicksPhi(10, 0, -18, -92, 10);
+                drive.ceaseMotion();
+                robot.arm.setCollectorMode(CollectorMode.Eject);
+                sleep(2000);
+                robot.arm.setCollectorMode(CollectorMode.Stop);
+                // 20 total
+                drive.navigationMonitorTicksPhi(10, 0, 6, -92, 10);
+                robot.arm.goToBackPosition(HubPosition.PARK);
+                drive.navigationMonitorTicksPhi(10, 0, 14, -92, 10);
+                drive.navigationMonitorTicksPhi(10, -14, 0, -92, 10);
+                drive.ceaseMotion();
                 break;
             case CENTER:
                 robot.arm.goToBackPosition(HubPosition.MIDDLE);
+                sleep(3000);
+                drive.navigationMonitorTicksPhi(10, 0, -17, -92, 10);
+                drive.ceaseMotion();
+                robot.arm.setCollectorMode(CollectorMode.Eject);
+                sleep(2000);
+                robot.arm.setCollectorMode(CollectorMode.Stop);
+
+                drive.navigationMonitorTicksPhi(10, 0, 6, -92, 10);
+                robot.arm.goToBackPosition(HubPosition.PARK);
+                drive.navigationMonitorTicksPhi(10, 0, 14, -92, 10);
+                drive.navigationMonitorTicksPhi(10, -15, 0, -92, 10);
+                drive.ceaseMotion();
                 break;
             case RIGHT:
                 robot.arm.goToBackPosition(HubPosition.TOP);
+                sleep(3000);
+                drive.navigationMonitorTicksPhi(10, 0, -21, -92, 10);
+                drive.ceaseMotion();
+                robot.arm.setCollectorMode(CollectorMode.Eject);
+                sleep(2000);
+                robot.arm.setCollectorMode(CollectorMode.Stop);
                 break;
         }
 
