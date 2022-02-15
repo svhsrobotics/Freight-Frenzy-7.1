@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -18,6 +20,9 @@ import org.firstinspires.ftc.teamcode.vision.TeamElementDetector;
 public class RedCarousel extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
+        RevBlinkinLedDriver lights = hardwareMap.get(RevBlinkinLedDriver.class, "LED");
+        lights.setPattern(BlinkinPattern.RED);
+
         // Get the webcam from the hardware map
         Webcam webcam = new Webcam("Webcam 1", hardwareMap);
         Servo cap;
@@ -51,6 +56,8 @@ public class RedCarousel extends LinearOpMode {
         // Open the camera; also begins streaming the pipeline
         webcam.open();
         cap.setPosition(1);
+
+        lights.setPattern(BlinkinPattern.LIGHT_CHASE_RED);
 
         // Wait for the OpMode to start
         // Make sure to do this after the camera is opened; otherwise "View Camera Stream" won't work
