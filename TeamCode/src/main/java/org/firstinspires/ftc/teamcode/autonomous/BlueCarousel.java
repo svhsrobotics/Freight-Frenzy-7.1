@@ -119,7 +119,7 @@ public class BlueCarousel extends LinearOpMode {
             case CENTER:
                 robot.arm.goToBackPosition(HubPosition.MIDDLE);
                 sleep(3000);
-                drive.navigationMonitorTicksPhi(10, 0, -17, 92, 10);
+                drive.navigationMonitorTicksPhi(10, 0, -19, 92, 10);
                 drive.ceaseMotion();
                 robot.arm.setCollectorMode(CollectorMode.Eject);
                 sleep(3000);
