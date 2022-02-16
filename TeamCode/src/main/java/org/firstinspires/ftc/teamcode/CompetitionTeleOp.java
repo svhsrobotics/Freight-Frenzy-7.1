@@ -23,6 +23,7 @@ public class CompetitionTeleOp extends LinearOpMode {
     double carouselTrim = 0;
     int rightSign;
     int leftSign;
+    int carouselPower=0;
     String currentColor;
 
 
@@ -191,6 +192,8 @@ public class CompetitionTeleOp extends LinearOpMode {
                     carouselRStart = System.nanoTime();
                 }*/
                 carouselRStart = System.nanoTime();
+                carouselLStart = System.nanoTime();
+                carouselPower = 80;
                     //right carousel
                     /*rightCarousel.setPower(-80-carouselTrim);
                     sleep(2000);
@@ -208,7 +211,9 @@ public class CompetitionTeleOp extends LinearOpMode {
                     leftCarousel.setPower(-80-carouselTrim);
                     carouselLStart = System.nanoTime();
                 }*/
+                carouselRStart = System.nanoTime();
                 carouselLStart = System.nanoTime();
+                carouselPower = -80;
                     //left carousel
                     /*leftCarousel.setPower(-80-carouselTrim);
                     sleep(2000);
@@ -230,7 +235,7 @@ public class CompetitionTeleOp extends LinearOpMode {
                     carouselRStart = 0;
                     rightCarousel.setPower(0);
                 } else {
-                    rightCarousel.setPower(-80-carouselTrim);
+                    rightCarousel.setPower(carouselPower-carouselTrim);
                 }
             }
 
@@ -239,7 +244,7 @@ public class CompetitionTeleOp extends LinearOpMode {
                     carouselLStart = 0;
                     leftCarousel.setPower(0);
                 } else {
-                    leftCarousel.setPower(-80-carouselTrim);
+                    leftCarousel.setPower(carouselPower-carouselTrim);
                 }
             }
             if (gamepad1.b){
