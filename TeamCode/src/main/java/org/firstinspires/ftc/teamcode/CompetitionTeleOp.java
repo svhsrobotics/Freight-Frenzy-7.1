@@ -268,15 +268,19 @@ public class CompetitionTeleOp extends LinearOpMode {
             double pickup = 0.05;
             double top = 0.31;
             double drop_off = 0.225;
+            double half = 0.5;
 
-            if (gamepad1.x) {
+            if (gamepad1.x) { // Pickup
                 lowering = raising = false;
                 currentCap = pickup;
-            } else if (gamepad1.b) {
+            } else if (gamepad1.dpad_right) {
+                lowering = raising = false;
+                currentCap = half;
+            } else if (gamepad1.dpad_left) { // Max
                 lowering = false;
                 raising = true;
                 //currentCap = 0.31;
-            } else if (gamepad1.a) {
+            } else if (gamepad1.a) { // Drop off + auto
                 raising = false;
                 lowering = true;
                 //currentCap = 0.23;
