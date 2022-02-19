@@ -90,7 +90,7 @@ public class BlueCarousel extends LinearOpMode {
         drive.navigationMonitorTicks(10, 0, 0.1, 10);
         //drive.navigationMonitorTicks(.1, 0, .5,10, true);
         drive.ceaseMotion();
-        leftCarousel.setPower(-0.4);
+        leftCarousel.setPower(0.4);
         sleep(3000);
         leftCarousel.setPower(0);
 
@@ -129,7 +129,7 @@ public class BlueCarousel extends LinearOpMode {
                 drive.navigationMonitorTicksPhi(10, 0, 6, 92, 10);
                 robot.arm.goToBackPosition(HubPosition.PARK);
                 drive.navigationMonitorTicksPhi(10, 0, 14, 92, 10);
-                drive.navigationMonitorTicksPhi(10, 17, 0, 92, 10);
+                drive.navigationMonitorTicksPhi(10, 19, 0, 92, 10);
                 drive.ceaseMotion();
                 break;
             case RIGHT:
