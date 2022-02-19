@@ -86,10 +86,11 @@ public class BlueCarousel extends LinearOpMode {
         sleep(1000);
         //drive.navigationMonitorTicks(10, 2, 15, 10, true);
         drive.navigationLocalizeCarousel(10, -2, 15, 10);
-        drive.navigationMonitorTicks(10, 0, 0.05, 10);
+        drive.ceaseMotion();
+        drive.navigationMonitorTicks(10, 0, 0.1, 10);
         //drive.navigationMonitorTicks(.1, 0, .5,10, true);
         drive.ceaseMotion();
-        leftCarousel.setPower(80);
+        leftCarousel.setPower(-0.4);
         sleep(3000);
         leftCarousel.setPower(0);
 
@@ -113,7 +114,7 @@ public class BlueCarousel extends LinearOpMode {
                 drive.navigationMonitorTicksPhi(10, 0, 6, 92, 10);
                 robot.arm.goToBackPosition(HubPosition.PARK);
                 drive.navigationMonitorTicksPhi(10, 0, 14, 92, 10);
-                drive.navigationMonitorTicksPhi(10, 14, 0, 92, 10);
+                drive.navigationMonitorTicksPhi(10, 16, 0, 92, 10);
                 drive.ceaseMotion();
                 break;
             case CENTER:
@@ -128,7 +129,7 @@ public class BlueCarousel extends LinearOpMode {
                 drive.navigationMonitorTicksPhi(10, 0, 6, 92, 10);
                 robot.arm.goToBackPosition(HubPosition.PARK);
                 drive.navigationMonitorTicksPhi(10, 0, 14, 92, 10);
-                drive.navigationMonitorTicksPhi(10, 15, 0, 92, 10);
+                drive.navigationMonitorTicksPhi(10, 17, 0, 92, 10);
                 drive.ceaseMotion();
                 break;
             case RIGHT:
@@ -143,7 +144,7 @@ public class BlueCarousel extends LinearOpMode {
                 drive.navigationMonitorTicksPhi(10, 0, 6, 92, 10);
                 robot.arm.goToBackPosition(HubPosition.PARK);
                 drive.navigationMonitorTicksPhi(10, 0, 16, 92, 10);
-                drive.navigationMonitorTicksPhi(10, 16, 0, 92, 10);
+                drive.navigationMonitorTicksPhi(10, 18, 0, 92, 10);
                 drive.ceaseMotion();
                 break;
         }
