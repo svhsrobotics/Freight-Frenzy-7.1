@@ -5,15 +5,16 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import org.firstinspires.ftc.teamcode.Shared.Drive2;
+import org.firstinspires.ftc.teamcode.robot.hardware.Arm.HubPosition;
 import org.firstinspires.ftc.teamcode.util.ExMath;
 import org.firstinspires.ftc.teamcode.robot.Robot;
-import org.firstinspires.ftc.teamcode.robot.hardware.Arm;
 
 @TeleOp(name = "Competition TeleOp", group = "Competition")
 public class CompetitionTeleOp extends LinearOpMode {
     //private final String TAG = getClass().getName();
+    Robot robot;
     DcMotor Arm = null;
     Servo Wrist = null;
     CRServo Collector = null;
@@ -25,7 +26,9 @@ public class CompetitionTeleOp extends LinearOpMode {
     double carouselTrim = 0;
     int rightSign;
     int leftSign;
+    int carouselPower=0;
     String currentColor;
+    Drive2 drive = null;
 
 
 
@@ -49,8 +52,9 @@ public class CompetitionTeleOp extends LinearOpMode {
         rightCarousel = hardwareMap.get(CRServo.class, "rightCarousel");
         leftCarousel = hardwareMap.get(CRServo.class, "leftCarousel");
         cap = hardwareMap.get(Servo.class, "cap");
-        Robot robot = new Robot(hardwareMap);
-        robot.initArm();
+        robot = new Robot(hardwareMap);
+        robot.initHardware();
+        drive = new Drive2(robot, this);
         cap.setPosition(.5);
 
         RevBlinkinLedDriver lights = hardwareMap.get(RevBlinkinLedDriver.class, "LED");
@@ -64,6 +68,9 @@ public class CompetitionTeleOp extends LinearOpMode {
         long carouselLStart = 0;
         long carouselTimout = 2000 * 1000 * 1000;
 
+        double currentCap = .5;
+        boolean lowering = false;
+        boolean raising = false;
 
         while (opModeIsActive()) {
 
@@ -74,6 +81,11 @@ public class CompetitionTeleOp extends LinearOpMode {
             double magLeft = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
             double thetaLeft = Math.atan2(-gamepad1.left_stick_y, gamepad1.left_stick_x);
             double pi = Math.PI;
+
+            if (gamepad1.left_trigger > 0.5) {
+                magRight = ExMath.square_with_sign(magRight) / 2;
+                magLeft = ExMath.square_with_sign(magLeft) / 2;
+            }
 
             if (thetaRight > 0 && thetaRight < pi / 2) {
                 frontRightPowerFactor = -Math.cos(2 * thetaRight);
@@ -128,9 +140,9 @@ public class CompetitionTeleOp extends LinearOpMode {
             //leftBackDrive.setPower((backLeftPowerFactor * magLeft)*(backLeftPowerFactor * magLeft));
             //rightBackDrive.setPower(-(backRightPowerFactor * magRight)*(backRightPowerFactor * magRight));
 
-            leftFrontDrive.setPower(-((ExMath.square_with_sign(frontLeftPowerFactor) * magLeft)));
+            leftFrontDrive.setPower(((ExMath.square_with_sign(frontLeftPowerFactor) * magLeft)));
             rightFrontDrive.setPower((ExMath.square_with_sign(frontRightPowerFactor) * magRight));
-            leftBackDrive.setPower(-((ExMath.square_with_sign(backLeftPowerFactor) * magLeft)));
+            leftBackDrive.setPower(((ExMath.square_with_sign(backLeftPowerFactor) * magLeft)));
             rightBackDrive.setPower((ExMath.square_with_sign(backRightPowerFactor) * magRight));
 
             if (gamepad2.y) {
@@ -151,13 +163,28 @@ public class CompetitionTeleOp extends LinearOpMode {
                 else if (gamepad2.back) {
                 //GoToHubLevel(1);
             } else if (gamepad2.x) {
-                    robot.arm.goToPosition(org.firstinspires.ftc.teamcode.robot.hardware.Arm.HubPosition.TOP);
+                    if (gamepad2.dpad_down) {
+                        robot.arm.goToBackPosition(HubPosition.TOP);
+                    } else {
+                        robot.arm.goToPosition(HubPosition.TOP);
+                    }
+                    //robot.arm.goToPosition(org.firstinspires.ftc.teamcode.robot.hardware.Arm.HubPosition.TOP);
                 //GoToHubLevel(2);
             } else if (gamepad2.b) {
-                    robot.arm.goToPosition(org.firstinspires.ftc.teamcode.robot.hardware.Arm.HubPosition.MID);
+                    if (gamepad2.dpad_down) {
+                        robot.arm.goToBackPosition(HubPosition.MIDDLE);
+                    } else {
+                        robot.arm.goToPosition(HubPosition.MIDDLE);
+                    }
+                    //robot.arm.goToPosition(org.firstinspires.ftc.teamcode.robot.hardware.Arm.HubPosition.MIDDLE);
                 //GoToHubLevel(3);
             } else if (gamepad2.a) {
-                    robot.arm.goToPosition(org.firstinspires.ftc.teamcode.robot.hardware.Arm.HubPosition.BOT);
+                    if (gamepad2.dpad_down) {
+                        robot.arm.goToBackPosition(HubPosition.BOTTOM);
+                    } else {
+                        robot.arm.goToPosition(HubPosition.BOTTOM);
+                    }
+                    //robot.arm.goToPosition(org.firstinspires.ftc.teamcode.robot.hardware.Arm.HubPosition.BOTTOM);
                 //GoToHubLevel(4);
           //  } else if (gamepad2.dpad_right) {
           //      Wrist.setPosition(-gamepad2.right_stick_y * pivotCollectorFactor + pivotCollectorDifference);
@@ -193,6 +220,8 @@ public class CompetitionTeleOp extends LinearOpMode {
                     carouselRStart = System.nanoTime();
                 }*/
                 carouselRStart = System.nanoTime();
+                carouselLStart = System.nanoTime();
+                carouselPower = 80;
                     //right carousel
                     /*rightCarousel.setPower(-80-carouselTrim);
                     sleep(2000);
@@ -210,7 +239,9 @@ public class CompetitionTeleOp extends LinearOpMode {
                     leftCarousel.setPower(-80-carouselTrim);
                     carouselLStart = System.nanoTime();
                 }*/
+                carouselRStart = System.nanoTime();
                 carouselLStart = System.nanoTime();
+                carouselPower = -80;
                     //left carousel
                     /*leftCarousel.setPower(-80-carouselTrim);
                     sleep(2000);
@@ -222,17 +253,61 @@ public class CompetitionTeleOp extends LinearOpMode {
                 carouselTrim = carouselTrim +5;
                 sleep(100);
             }else if (gamepad1.y){
-                Arm.setTargetPosition(-3204+offset);
-                Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Wrist.setPosition(.59);
+                robot.arm.goToBackPosition(HubPosition.PARK);
             }
+
+            // Cap arm
+            if (gamepad1.dpad_up && currentCap <= 1.0) {
+                lowering = raising = false;
+                currentCap += 0.01;
+            } else if (gamepad1.dpad_down && currentCap >= 0.0) {
+                lowering = raising = false;
+                currentCap -= 0.01;
+            }
+
+            double pickup = 0.05;
+            double top = 0.31;
+            double drop_off = 0.225;
+            double half = 0.5;
+
+            if (gamepad1.x) { // Pickup
+                lowering = raising = false;
+                currentCap = pickup;
+            } else if (gamepad1.dpad_right) {
+                lowering = raising = false;
+                currentCap = half;
+            } else if (gamepad1.dpad_left) { // Max
+                lowering = false;
+                raising = true;
+                //currentCap = 0.31;
+            } else if (gamepad1.a) { // Drop off + auto
+                raising = false;
+                lowering = true;
+                //currentCap = 0.23;
+            }
+
+
+            if (lowering && currentCap > drop_off) {
+                currentCap -= ((top - drop_off) / 300);
+            } else if (lowering) {
+                backoff_hub();
+                lowering = false;
+            }
+
+            if (raising && currentCap < top) {
+                currentCap += ((top - pickup) / 300);
+            } else {
+                raising = false;
+            }
+
+            cap.setPosition(currentCap);
 
             if (carouselRStart != 0) {
                 if ((System.nanoTime() - carouselRStart) > carouselTimout) {
                     carouselRStart = 0;
                     rightCarousel.setPower(0);
                 } else {
-                    rightCarousel.setPower(-80-carouselTrim);
+                    rightCarousel.setPower(carouselPower-carouselTrim);
                 }
             }
 
@@ -241,7 +316,7 @@ public class CompetitionTeleOp extends LinearOpMode {
                     carouselLStart = 0;
                     leftCarousel.setPower(0);
                 } else {
-                    leftCarousel.setPower(-80-carouselTrim);
+                    leftCarousel.setPower(carouselPower-carouselTrim);
                 }
             }
             if (gamepad1.b){
@@ -277,7 +352,7 @@ public class CompetitionTeleOp extends LinearOpMode {
             telemetry.addData("thetaLeft", ((float) Math.round(thetaLeft / pi * 100)) / 100);
             telemetry.addData("Trim", carouselTrim);
             telemetry.addData("Current Color", currentColor);
-
+            telemetry.addData("Cap", currentCap);
             telemetry.update();
 
 
@@ -285,6 +360,13 @@ public class CompetitionTeleOp extends LinearOpMode {
 
         // Only do this in simulator; real robot needs time to stop.
         //drive.ceaseMotion();
+    }
+
+    private void backoff_hub() {
+        this.drive = new Drive2(robot, this);
+        double angle = drive.getImuAngle();
+        drive.navigationMonitorTicksPhi(10, 0, 10, angle, 10);
+        drive.ceaseMotion();
     }
 
     /*private void GoToHubLevel(int hubLevel) {

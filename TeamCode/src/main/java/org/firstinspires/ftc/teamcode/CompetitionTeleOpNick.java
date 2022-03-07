@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -9,6 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.robot.hardware.Arm;
 
+@Disabled
 @TeleOp(name = "Nick's Competition TeleOp", group = "Competition")
 public class CompetitionTeleOpNick extends LinearOpMode {
     //private final String TAG = getClass().getName();
@@ -110,10 +112,10 @@ public class CompetitionTeleOpNick extends LinearOpMode {
                     robot.arm.goToPosition(Arm.HubPosition.TOP);
                 //GoToHubLevel(2);
             } else if (gamepad2.b) {
-                    robot.arm.goToPosition(Arm.HubPosition.MID);
+                    robot.arm.goToPosition(Arm.HubPosition.MIDDLE);
                 //GoToHubLevel(3);
             } else if (gamepad2.a) {
-                    robot.arm.goToPosition(Arm.HubPosition.BOT);
+                    robot.arm.goToPosition(Arm.HubPosition.BOTTOM);
                // GoToHubLevel(4);
           //  } else if (gamepad2.dpad_right) {
           //      Wrist.setPosition(-gamepad2.right_stick_y * pivotCollectorFactor + pivotCollectorDifference);
