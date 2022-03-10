@@ -87,7 +87,7 @@ public class Arm {
                 break;
 
             case COLLECT:
-                setPositions(-402, 0.68);
+                setPositions(-302, 0.65);
                 break;
         }
     }
