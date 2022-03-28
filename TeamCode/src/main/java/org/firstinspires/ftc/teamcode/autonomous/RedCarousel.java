@@ -113,7 +113,7 @@ public class RedCarousel extends LinearOpMode {
                 drive.navigationMonitorTicksPhi(10, 0, 6, -92, 10);
                 robot.arm.goToBackPosition(HubPosition.PARK);
                 drive.navigationMonitorTicksPhi(10, 0, 14, -92, 10);
-                drive.navigationMonitorTicksPhi(10, -18, 0, -92, 10);
+                drive.navigationMonitorTicksPhi(10, -16, 0, -92, 10);
                 drive.ceaseMotion();
                 break;
             case CENTER:
@@ -128,7 +128,7 @@ public class RedCarousel extends LinearOpMode {
                 drive.navigationMonitorTicksPhi(10, 0, 6, -92, 10);
                 robot.arm.goToBackPosition(HubPosition.PARK);
                 drive.navigationMonitorTicksPhi(10, 0, 14, -92, 10);
-                drive.navigationMonitorTicksPhi(10, -19, 0, -92, 10);
+                drive.navigationMonitorTicksPhi(10, -17, 0, -92, 10);
                 drive.ceaseMotion();
                 break;
             case RIGHT:
@@ -143,7 +143,7 @@ public class RedCarousel extends LinearOpMode {
                 drive.navigationMonitorTicksPhi(10, 0, 6, -92, 10);
                 robot.arm.goToBackPosition(HubPosition.PARK);
                 drive.navigationMonitorTicksPhi(10, 0, 16, -92, 10);
-                drive.navigationMonitorTicksPhi(10, -20, 0, -92, 10);
+                drive.navigationMonitorTicksPhi(10, -17, 0, -92, 10);
                 drive.ceaseMotion();
                 break;
         }
